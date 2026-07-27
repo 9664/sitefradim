@@ -28,14 +28,17 @@
       "action": "preserve",
       "status": 200,
       "target": null,
-      "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e proveniência exata do asset mantida em curadoria."
+      "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e mídia antiga rejeitada quando não há condição segura de republicação."
+    },
+    {
+      "source": "/quemsou/",
+      "action": "redirect",
+      "status": 301,
+      "target": "/restauracao-fotografica/",
+      "reason": "A página antiga 'Quem Sou' é, na prática, uma apresentação do trabalho de colorização/restauração de fotografias. A landing /restauracao-fotografica preserva a mesma intenção com conteúdo atual e semanticamente equivalente."
     }
   ],
   "pending": [
-    {
-      "source": "/quemsou/",
-      "reason": "O slug sugere identidade pessoal, mas o conteúdo/indexação atual não é evidência suficiente para escolher com segurança entre /sobre, /memoria ou /restauracao-fotografica. Auditar conteúdo histórico e backlinks antes de definir resposta."
-    },
     {
       "source": "/campanhas/",
       "reason": "Galeria antiga sem equivalente semântico exato. Avaliar backlinks e valor de arquivo antes de preservar ou redirecionar."
