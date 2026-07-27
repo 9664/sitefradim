@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./inner-pages.css";
 
+const isStaging = process.env.NEXT_PUBLIC_SITE_ENV === "staging";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://fradim.com.br"),
   title: {
@@ -26,10 +28,21 @@ export const metadata: Metadata = {
     description:
       "Inteligência artificial, inovação, negócios, tecnologia, cultura e experimentação.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: isStaging
+    ? {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
+          index: false,
+          follow: false,
+          noimageindex: true,
+        },
+      }
+    : {
+        index: true,
+        follow: true,
+      },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
