@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNav } from "@/components/SiteNav";
 import { ideas } from "@/lib/ideas";
 import styles from "./IdeasPage.module.css";
 
@@ -32,10 +33,7 @@ export default function IdeasPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="ideas-title">
         <p className="eyebrow">IDEIAS / THINK IN PUBLIC</p>
@@ -46,7 +44,7 @@ export default function IdeasPage() {
       <section className={styles.ideas} aria-label="Ensaios publicados">
         <div className={styles.list}>
           {ideas.map((idea, index) => (
-            <Link className={styles.card} href={`/ideias/${idea.slug}`} key={idea.slug}>
+            <Link className={styles.card} href={`/ideias/${idea.slug}`} prefetch={false} key={idea.slug}>
               <span className={styles.index}>{String(index + 1).padStart(2, "0")}</span>
               <div>
                 <span className={styles.category}>{idea.category}</span>
@@ -63,7 +61,7 @@ export default function IdeasPage() {
         <p className="eyebrow">REGRA EDITORIAL</p>
         <h2 id="writing-title">Uma ideia não precisa parecer definitiva.<span> Precisa ser clara o bastante para ser confrontada.</span></h2>
         <p>O objetivo aqui não é prever o futuro com confiança artificial. É registrar hipóteses, explicar raciocínios e voltar a eles quando a prática trouxer evidências melhores.</p>
-        <Link href="/lab">Ver onde as ideias viram experimentos →</Link>
+        <Link href="/lab" prefetch={false}>Ver onde as ideias viram experimentos →</Link>
       </section>
     </main>
   );
