@@ -6,6 +6,7 @@ const configPath = process.argv[2] ?? 'config/legacy-media.json';
 const inputDir = process.argv[3] ?? 'quarantine';
 const outputPath = process.argv[4] ?? path.join(inputDir, 'media-audit.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+const auditableItems = config.items.filter((item) => item.audit !== false && typeof item.legacyUrl === 'string' && item.legacyUrl.length > 0);
 
 function jpegDimensions(buffer) {
   if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) {
@@ -52,13 +53,14 @@ function jpegDimensions(buffer) {
 const results = [];
 let failed = false;
 
-for (const item of config.items) {
+for (const item of auditableItems) {
   const filePath = path.join(inputDir, item.filename);
   const result = {
     slug: item.slug,
     filename: item.filename,
     sourcePage: item.sourcePage,
     legacyUrl: item.legacyUrl,
+    curationStatus: item.status,
     status: 'failed',
   };
 
@@ -69,6 +71,9 @@ for (const item of config.items) {
 
     const { width, height } = jpegDimensions(buffer);
     const sha256 = crypto.createHash('sha256').update(buffer).digest('hex');
+    if (item.expectedSha256 && sha256 !== item.expectedSha256) {
+      throw new Error(`SHA-256 mismatch: expected ${item.expectedSha256}, received ${sha256}`);
+    }
 
     result.status = 'validated';
     result.bytes = buffer.length;
@@ -87,6 +92,8 @@ for (const item of config.items) {
 const report = {
   generatedAt: new Date().toISOString(),
   source: configPath,
+  totalConfigured: config.items.length,
+  skipped: config.items.length - auditableItems.length,
   count: results.length,
   validated: results.filter((item) => item.status === 'validated').length,
   failed: results.filter((item) => item.status === 'failed').length,
@@ -96,7 +103,7 @@ const report = {
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`);
 
-console.log(`Legacy media audit: ${report.validated}/${report.count} validated`);
+console.log(`Legacy media audit: ${report.validated}/${report.count} validated; ${report.skipped} skipped by curation policy`);
 for (const item of results) {
   if (item.status === 'validated') {
     console.log(`OK ${item.filename}: ${item.width}x${item.height}, ${item.bytes} bytes, sha256 ${item.sha256}`);
