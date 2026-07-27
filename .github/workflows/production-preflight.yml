@@ -1,0 +1,101 @@
+name: Production preflight — no deploy
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - app/**
+      - components/**
+      - lib/**
+      - public/**
+      - config/**
+      - scripts/**
+      - worker/**
+      - wrangler.jsonc
+      - next.config.ts
+      - package.json
+      - .github/workflows/production-preflight.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SITE_ENV: production
+      NEXT_PUBLIC_BASE_PATH: ""
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate resolved legacy manifest
+        run: npm run validate:legacy
+
+      - name: Validate published legacy media
+        run: npm run validate:legacy-media
+
+      - name: Generate Cloudflare routing artifacts
+        run: npm run generate:cloudflare
+
+      - name: Verify generated routing is committed
+        run: git diff --exit-code -- public/_redirects worker/generated-legacy-removals.mjs
+
+      - name: Test legacy 410 worker behavior
+        run: npm run test:cloudflare-worker
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build exact production export
+        run: npm run build
+
+      - name: Validate 200 redirect and removal output
+        run: npm run validate:cloudflare-output
+
+      - name: Validate production SEO state
+        run: npm run validate:production-seo
+
+      - name: Verify Cloudflare asset adapter points to production output
+        run: |
+          grep -F '"main": "worker/index.mjs"' wrangler.jsonc
+          grep -F '"directory": "./out"' wrangler.jsonc
+          grep -F '"binding": "ASSETS"' wrangler.jsonc
+
+      - name: Upload preflight report
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-production-preflight
+          path: preflight
+          retention-days: 7
+
+      - name: Publish preflight result on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo '### Production preflight — sem deploy ✅'
+            echo
+            cat preflight/seo-report.md
+            echo
+            echo "Run ID: \`${GITHUB_RUN_ID}\`"
+            echo "Commit: \`${GITHUB_SHA}\`"
+            echo
+            echo '**Nenhum DNS foi alterado e nenhuma publicação de produção foi executada.**'
+          } > preflight/pr-comment.md
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body-file preflight/pr-comment.md
