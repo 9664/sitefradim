@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "validate:legacy": "node scripts/validate-legacy-routes.mjs"
+    "validate:legacy": "node scripts/validate-legacy-routes.mjs",
+    "generate:cloudflare": "node scripts/generate-cloudflare-routing.mjs",
+    "validate:cloudflare-output": "node scripts/validate-cloudflare-output.mjs",
+    "build:cloudflare": "npm run validate:legacy && npm run generate:cloudflare && npm run build && npm run validate:cloudflare-output"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
