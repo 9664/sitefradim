@@ -1,34 +1,22 @@
 "use client";
 
-import { Float, Sparkles } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
-import type { Group } from "three";
+import { Sparkles } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 
 function Core() {
-  const group = useRef<Group>(null);
-
-  useFrame((state, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y += delta * 0.055;
-    group.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.18) * 0.08;
-  });
-
   return (
-    <group ref={group}>
-      <Float speed={1.2} rotationIntensity={0.18} floatIntensity={0.45}>
-        <mesh>
-          <icosahedronGeometry args={[1.05, 3]} />
-          <meshPhysicalMaterial
-            color="#c9d1d9"
-            roughness={0.2}
-            metalness={0.72}
-            transmission={0.12}
-            transparent
-            opacity={0.34}
-          />
-        </mesh>
-      </Float>
+    <group rotation={[0.035, -0.22, 0.02]}>
+      <mesh>
+        <icosahedronGeometry args={[1.05, 3]} />
+        <meshPhysicalMaterial
+          color="#c9d1d9"
+          roughness={0.2}
+          metalness={0.72}
+          transmission={0.12}
+          transparent
+          opacity={0.34}
+        />
+      </mesh>
 
       <mesh rotation={[Math.PI / 2.8, 0.3, 0]}>
         <torusGeometry args={[2.25, 0.008, 8, 180]} />
@@ -46,7 +34,8 @@ function Core() {
 export function UniverseScene() {
   return (
     <Canvas
-      dpr={[1, 1.6]}
+      frameloop="demand"
+      dpr={[1, 1.35]}
       camera={{ position: [0, 0, 7.2], fov: 42 }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
@@ -54,7 +43,7 @@ export function UniverseScene() {
       <directionalLight position={[4, 5, 5]} intensity={2.2} />
       <pointLight position={[-4, -2, 2]} intensity={6} distance={8} />
       <Core />
-      <Sparkles count={75} scale={[10, 7, 6]} size={1.2} speed={0.12} opacity={0.28} />
+      <Sparkles count={54} scale={[10, 7, 6]} size={1.2} speed={0} opacity={0.28} />
     </Canvas>
   );
 }
