@@ -7,6 +7,9 @@ const routes = [
   "/inteligencia-artificial",
   "/trajetoria",
   "/projetos",
+  "/projetos/intelig-cloud",
+  "/projetos/amo-franca",
+  "/projetos/gestor-360",
   "/lab",
   "/ideias",
   "/imprensa",
@@ -20,6 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `https://fradim.com.br${route}`,
     lastModified: now,
     changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : 0.8,
+    priority: route === "" ? 1 : route.startsWith("/projetos/") ? 0.75 : 0.8,
   }));
 }
