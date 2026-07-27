@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SiteNav } from "@/components/SiteNav";
 import { getIdea, ideas } from "@/lib/ideas";
 import styles from "./ArticlePage.module.css";
 
@@ -46,10 +47,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ slug: str
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/ideias">← Ideias</Link>
-      </nav>
+      <SiteNav backHref="/ideias" backLabel="Ideias" />
 
       <header className={styles.hero}>
         <div className={styles.meta}><span>{idea.category}</span><span>{idea.readingTime} de leitura</span><span>Por Marcelo Fradim</span></div>
@@ -71,7 +69,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ slug: str
       <section className={styles.more} aria-labelledby="more-title">
         <p className="eyebrow">CONTINUE PENSANDO</p>
         <h2 id="more-title">Outras ideias.</h2>
-        <div className={styles.links}>{related.map((item) => <Link href={`/ideias/${item.slug}`} key={item.slug}><small>{item.category}</small><h3>{item.title}</h3></Link>)}</div>
+        <div className={styles.links}>{related.map((item) => <Link href={`/ideias/${item.slug}`} prefetch={false} key={item.slug}><small>{item.category}</small><h3>{item.title}</h3></Link>)}</div>
       </section>
     </main>
   );
