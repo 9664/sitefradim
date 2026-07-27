@@ -35,6 +35,9 @@ jobs:
       - name: Validate legacy route manifest
         run: npm run validate:legacy
 
+      - name: Validate published legacy media provenance
+        run: npm run validate:legacy-media
+
       - name: Generate Cloudflare routing artifacts
         run: npm run generate:cloudflare
 
