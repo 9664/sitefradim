@@ -197,6 +197,79 @@
   letter-spacing: 0.18em;
 }
 
+.reducedMotionFallback {
+  display: none;
+}
+
+.reducedMotionFallback > header {
+  width: min(1280px, calc(100% - 2.5rem));
+  margin: 0 auto 4rem;
+}
+
+.reducedMotionFallback > header h2 {
+  max-width: 900px;
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+  font-weight: 450;
+}
+
+.fallbackGrid {
+  width: min(1280px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.fallbackGrid article {
+  min-height: 320px;
+  padding: 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.fallbackGrid article > p {
+  margin: 0;
+  color: #718091;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.fallbackGrid h3 {
+  margin: 4rem 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  font-weight: 500;
+}
+
+.fallbackGrid strong {
+  display: block;
+  color: #d3dce4;
+  font-weight: 500;
+}
+
+.fallbackGrid article > div {
+  max-width: 520px;
+  margin-top: 1rem;
+  color: #98a5b2;
+  line-height: 1.65;
+}
+
+.fallbackGrid a {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
 @media (max-width: 900px) {
   .journey {
     height: 470vh;
@@ -240,20 +313,23 @@
   .scrollHint {
     display: none;
   }
+
+  .fallbackGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .journey {
     height: auto;
-    min-height: 100svh;
+    padding: 8rem 0;
   }
 
   .sticky {
-    position: relative;
-    min-height: 100svh;
+    display: none;
   }
 
-  .canvas {
-    opacity: 0.42;
+  .reducedMotionFallback {
+    display: block;
   }
 }
