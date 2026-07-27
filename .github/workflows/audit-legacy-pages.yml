@@ -110,9 +110,16 @@ jobs:
           const browser = await chromium.launch({ headless: true });
           const failures = [];
 
+          async function collectErrors(page, label, errors) {
+            if (!errors.length) return;
+            await fs.writeFile(`legacy-screenshots/${label}-errors.txt`, errors.join('\n'));
+            failures.push(`${label}: ${errors.length} browser error(s)`);
+          }
+
           try {
             for (const target of targets) {
               for (const device of devices) {
+                const label = `${target.name}-${device.label}`;
                 const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
                 const errors = [];
                 page.on('console', (message) => {
@@ -124,64 +131,53 @@ jobs:
                   waitUntil: 'networkidle',
                   timeout: 60000,
                 });
-
-                if (!response?.ok()) {
-                  failures.push(`${target.name}/${device.label}: HTTP ${response?.status() ?? 'no response'}`);
-                }
+                if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
 
                 const title = await page.locator('h1').first().textContent();
-                if (!title?.trim()) failures.push(`${target.name}/${device.label}: missing h1`);
+                if (!title?.trim()) failures.push(`${label}: missing h1`);
 
                 const archiveImages = page.locator('figure img');
                 const imageCount = await archiveImages.count();
 
                 if (target.published) {
                   if (imageCount !== 1) {
-                    failures.push(`${target.name}/${device.label}: expected one published archive image, found ${imageCount}`);
+                    failures.push(`${label}: expected one published archive image, found ${imageCount}`);
                   } else {
                     const image = archiveImages.first();
+                    await image.scrollIntoViewIfNeeded();
                     await image.waitFor({ state: 'visible', timeout: 10000 });
-                    const naturalWidth = await image.evaluate((element) => element.naturalWidth);
-                    const naturalHeight = await image.evaluate((element) => element.naturalHeight);
+                    await page.waitForFunction(
+                      (element) => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0,
+                      await image.elementHandle(),
+                      { timeout: 10000 },
+                    );
+                    const dimensions = await image.evaluate((element) => ({
+                      width: element.naturalWidth,
+                      height: element.naturalHeight,
+                    }));
                     const alt = await image.getAttribute('alt');
-                    if (!naturalWidth || !naturalHeight) {
-                      failures.push(`${target.name}/${device.label}: archive image did not decode`);
-                    }
-                    if (!alt?.includes(target.expectedAlt)) {
-                      failures.push(`${target.name}/${device.label}: unexpected alt text`);
-                    }
+                    if (!dimensions.width || !dimensions.height) failures.push(`${label}: archive image did not decode`);
+                    if (!alt?.includes(target.expectedAlt)) failures.push(`${label}: unexpected alt text`);
+
                     const caption = page.locator('figcaption');
                     if ((await caption.count()) !== 1 || !(await caption.innerText()).includes('ARQUIVO REINTEGRADO')) {
-                      failures.push(`${target.name}/${device.label}: provenance caption missing`);
+                      failures.push(`${label}: provenance caption missing`);
                     }
                   }
                 } else {
-                  if (imageCount !== 0) {
-                    failures.push(`${target.name}/${device.label}: non-published asset leaked into page`);
-                  }
+                  if (imageCount !== 0) failures.push(`${label}: non-published asset leaked into page`);
                   const bodyText = await page.locator('body').innerText();
-                  if (!bodyText.includes(target.expectedNote)) {
-                    failures.push(`${target.name}/${device.label}: curation hold/rejection note missing`);
-                  }
+                  if (!bodyText.includes(target.expectedNote)) failures.push(`${label}: curation hold/rejection note missing`);
                 }
 
-                if (errors.length) {
-                  await fs.writeFile(
-                    `legacy-screenshots/${target.name}-${device.label}-errors.txt`,
-                    errors.join('\n'),
-                  );
-                  failures.push(`${target.name}/${device.label}: ${errors.length} browser error(s)`);
-                }
-
-                await page.screenshot({
-                  path: `legacy-screenshots/${target.name}-${device.label}.png`,
-                  fullPage: true,
-                });
+                await collectErrors(page, label, errors);
+                await page.screenshot({ path: `legacy-screenshots/${label}.png`, fullPage: true });
                 await page.close();
               }
             }
 
             for (const device of devices) {
+              const label = `memory-index-${device.label}`;
               const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
               const errors = [];
               page.on('console', (message) => {
@@ -193,29 +189,34 @@ jobs:
                 waitUntil: 'networkidle',
                 timeout: 60000,
               });
-              if (!response?.ok()) {
-                failures.push(`memory-index/${device.label}: HTTP ${response?.status() ?? 'no response'}`);
-              }
+              if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
 
-              const archive = page.locator('section[aria-labelledby="memory-archive-title"]');
+              const archive = page.locator('[data-memory-archive]');
               if ((await archive.count()) !== 1) {
-                failures.push(`memory-index/${device.label}: archive section missing`);
+                failures.push(`${label}: archive section missing`);
               } else {
                 await archive.scrollIntoViewIfNeeded();
-                await page.waitForTimeout(900);
 
-                const images = archive.locator('img');
+                const publishedCards = archive.locator('[data-media-state="published"]');
+                const unpublishedCards = archive.locator('[data-media-state="unpublished"]');
+                const publishedCount = await publishedCards.count();
+                const unpublishedCount = await unpublishedCards.count();
+
+                if (publishedCount !== 2) failures.push(`${label}: expected 2 published cards, found ${publishedCount}`);
+                if (unpublishedCount !== 2) failures.push(`${label}: expected 2 unpublished cards, found ${unpublishedCount}`);
+
+                const images = archive.locator('img[data-archive-media="published"]');
                 const imageCount = await images.count();
-                if (imageCount !== 2) {
-                  failures.push(`memory-index/${device.label}: expected exactly 2 published thumbnails, found ${imageCount}`);
-                }
+                if (imageCount !== 2) failures.push(`${label}: expected exactly 2 published thumbnails, found ${imageCount}`);
 
                 for (let index = 0; index < imageCount; index += 1) {
                   const image = images.nth(index);
+                  await image.scrollIntoViewIfNeeded();
+                  await page.waitForTimeout(250);
                   await image.waitFor({ state: 'visible', timeout: 10000 });
                   const handle = await image.elementHandle();
                   if (!handle) {
-                    failures.push(`memory-index/${device.label}: thumbnail ${index + 1} has no element handle`);
+                    failures.push(`${label}: thumbnail ${index + 1} has no element handle`);
                     continue;
                   }
                   await page.waitForFunction(
@@ -227,9 +228,12 @@ jobs:
                     width: element.naturalWidth,
                     height: element.naturalHeight,
                   }));
-                  if (!dimensions.width || !dimensions.height) {
-                    failures.push(`memory-index/${device.label}: thumbnail ${index + 1} did not decode`);
-                  }
+                  if (!dimensions.width || !dimensions.height) failures.push(`${label}: thumbnail ${index + 1} did not decode`);
+                }
+
+                const unpublishedMedia = archive.locator('[data-archive-media="unpublished"]');
+                if ((await unpublishedMedia.count()) !== 2) {
+                  failures.push(`${label}: expected exactly 2 unpublished visual states`);
                 }
 
                 const archiveText = await archive.innerText();
@@ -237,30 +241,16 @@ jobs:
                   'MÍDIA REINTEGRADA',
                   'PROVENIÊNCIA EM PESQUISA',
                   'MÍDIA NÃO REPUBLICADA',
-                  'ARQUIVO SEM MÍDIA PUBLICADA',
                 ]) {
-                  if (!archiveText.includes(requiredText)) {
-                    failures.push(`memory-index/${device.label}: missing state label "${requiredText}"`);
-                  }
+                  if (!archiveText.includes(requiredText)) failures.push(`${label}: missing state label "${requiredText}"`);
                 }
 
-                const noMediaCount = await archive.getByText('ARQUIVO SEM MÍDIA PUBLICADA', { exact: true }).count();
-                if (noMediaCount !== 2) {
-                  failures.push(`memory-index/${device.label}: expected two no-media visual cards, found ${noMediaCount}`);
-                }
-
-                await archive.screenshot({
-                  path: `legacy-screenshots/memory-archive-index-${device.label}.png`,
-                });
+                await archive.scrollIntoViewIfNeeded();
+                await page.waitForTimeout(250);
+                await archive.screenshot({ path: `legacy-screenshots/memory-archive-index-${device.label}.png` });
               }
 
-              if (errors.length) {
-                await fs.writeFile(
-                  `legacy-screenshots/memory-index-${device.label}-errors.txt`,
-                  errors.join('\n'),
-                );
-                failures.push(`memory-index/${device.label}: ${errors.length} browser error(s)`);
-              }
+              await collectErrors(page, label, errors);
               await page.close();
             }
           } finally {
@@ -273,7 +263,7 @@ jobs:
             process.exit(1);
           }
 
-          console.log('Legacy visual audit OK: 2 published assets + 2 intentionally unpublished pages + memory index states, desktop/mobile.');
+          console.log('Legacy visual audit OK: 2 published assets + 2 intentionally unpublished pages + decoded memory index states, desktop/mobile.');
           EOF
           node legacy-audit.mjs
 
