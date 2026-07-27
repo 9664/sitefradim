@@ -9,8 +9,9 @@
     "typecheck": "tsc --noEmit",
     "validate:legacy": "node scripts/validate-legacy-routes.mjs",
     "generate:cloudflare": "node scripts/generate-cloudflare-routing.mjs",
+    "test:cloudflare-worker": "node scripts/test-cloudflare-worker.mjs",
     "validate:cloudflare-output": "node scripts/validate-cloudflare-output.mjs",
-    "build:cloudflare": "npm run validate:legacy && npm run generate:cloudflare && npm run build && npm run validate:cloudflare-output"
+    "build:cloudflare": "npm run validate:legacy && npm run generate:cloudflare && npm run test:cloudflare-worker && npm run build && npm run validate:cloudflare-output"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
