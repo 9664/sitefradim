@@ -178,12 +178,13 @@ jobs:
                       };
                     });
                     const scrollable = Math.max(1, metrics.height - metrics.viewport);
-                    const ratios = [0, 0.25, 0.5, 0.75, 1];
+                    const ratios = [0.02, 0.25, 0.5, 0.75, 0.94];
                     for (let index = 0; index < ratios.length; index += 1) {
                       await page.evaluate(({ top, scrollable, ratio }) => {
                         window.scrollTo(0, top + scrollable * ratio);
+                        window.dispatchEvent(new Event('scroll'));
                       }, { top: metrics.top, scrollable, ratio: ratios[index] });
-                      await page.waitForTimeout(950);
+                      await page.waitForTimeout(1100);
                       await page.screenshot({
                         path: `screenshots/trajectory-${String(index + 1).padStart(2, '0')}-${device.label}.png`,
                         fullPage: false,
@@ -216,3 +217,116 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Universo full-screen, Universo da Home, 5 estágios da trajetória, Sobre, Spock, Lab e Memória ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+
+  performance-audit:
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Lighthouse
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund lighthouse
+          chrome="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "${chrome}"
+          echo "CHROME_PATH=${chrome}" >> "$GITHUB_ENV"
+
+      - name: Run Lighthouse baseline
+        run: |
+          set -euo pipefail
+          mkdir -p lighthouse
+
+          audit() {
+            name="$1"
+            url="$2"
+            device="$3"
+            extra=()
+            if [ "${device}" = "desktop" ]; then
+              extra+=(--preset=desktop)
+            fi
+            npx lighthouse "${url}" \
+              --quiet \
+              --output=json \
+              --output-path="lighthouse/${name}-${device}.json" \
+              --only-categories=performance,accessibility,best-practices \
+              --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+              "${extra[@]}"
+          }
+
+          for device in mobile desktop; do
+            audit home "${PAGE_URL}" "${device}"
+            audit universo "${PAGE_URL}universo/" "${device}"
+            audit memoria "${PAGE_URL}memoria/" "${device}"
+          done
+
+      - name: Build performance summary
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const names = { home: 'Home', universo: 'Universo', memoria: 'Memória' };
+          const files = fs.readdirSync('lighthouse').filter((file) => file.endsWith('.json')).sort();
+          const rows = [];
+
+          const pct = (value) => Math.round((value ?? 0) * 100);
+          const sec = (value) => `${((value ?? 0) / 1000).toFixed(2)}s`;
+          const ms = (value) => `${Math.round(value ?? 0)}ms`;
+          const cls = (value) => Number(value ?? 0).toFixed(3);
+          const mb = (value) => `${((value ?? 0) / 1024 / 1024).toFixed(2)}MB`;
+
+          for (const file of files) {
+            const report = JSON.parse(fs.readFileSync(path.join('lighthouse', file), 'utf8'));
+            const stem = file.replace('.json', '');
+            const device = stem.endsWith('-desktop') ? 'desktop' : 'mobile';
+            const pageKey = stem.replace(/-(desktop|mobile)$/, '');
+            const a = report.audits;
+            rows.push({
+              page: names[pageKey] ?? pageKey,
+              device: device === 'desktop' ? 'Desktop' : 'Mobile',
+              performance: pct(report.categories.performance?.score),
+              accessibility: pct(report.categories.accessibility?.score),
+              best: pct(report.categories['best-practices']?.score),
+              fcp: sec(a['first-contentful-paint']?.numericValue),
+              lcp: sec(a['largest-contentful-paint']?.numericValue),
+              tbt: ms(a['total-blocking-time']?.numericValue),
+              cls: cls(a['cumulative-layout-shift']?.numericValue),
+              bytes: mb(a['total-byte-weight']?.numericValue),
+            });
+          }
+
+          let md = '### Lighthouse baseline 📊\n\n';
+          md += '| Página | Dispositivo | Performance | Acessibilidade | Best Practices | FCP | LCP | TBT | CLS | Peso |\n';
+          md += '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n';
+          for (const row of rows) {
+            md += `| ${row.page} | ${row.device} | ${row.performance} | ${row.accessibility} | ${row.best} | ${row.fcp} | ${row.lcp} | ${row.tbt} | ${row.cls} | ${row.bytes} |\n`;
+          }
+          md += '\nBaseline informativo: ainda não bloqueia deploy. SEO foi omitido porque o staging é deliberadamente `noindex`.\n';
+          md += `\nRun ID: \`${process.env.GITHUB_RUN_ID}\`\nArtefato: \`fradim-lighthouse-baseline\`\nCommit: \`${process.env.GITHUB_SHA}\`\n`;
+          fs.writeFileSync('lighthouse/summary.md', md);
+          console.log(md);
+          NODE
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-lighthouse-baseline
+          path: lighthouse
+          retention-days: 5
+
+      - name: Publish Lighthouse baseline on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body-file lighthouse/summary.md
