@@ -31,6 +31,13 @@
       "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e mídia antiga rejeitada quando não há condição segura de republicação."
     },
     {
+      "source": "/crianca-decada-de-60/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL antiga preservada como registro de memória sem republicar a fotografia. As variantes original/colorizada foram tecnicamente revisadas, mas permanecem fora de public/ por falta de proveniência suficiente da fotografia histórica."
+    },
+    {
       "source": "/somos-simples-naufragos/",
       "action": "preserve",
       "status": 200,
@@ -87,10 +94,5 @@
       "reason": "Taxonomia antiga atualmente vazia e sem conteúdo próprio equivalente na nova arquitetura. Um redirect amplo criaria equivalência artificial; a rota deve ser encerrada."
     }
   ],
-  "pending": [
-    {
-      "source": "/crianca-decada-de-60/",
-      "reason": "Registro visual de pessoa identificável com proveniência e condições de publicação ainda não confirmadas. Não migrar automaticamente sem revisar o asset e seu contexto."
-    }
-  ]
+  "pending": []
 }
