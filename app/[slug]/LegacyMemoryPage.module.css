@@ -58,6 +58,63 @@
   line-height: 1.75;
 }
 
+.mediaFigure {
+  margin: 3rem 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #040506;
+  overflow: hidden;
+}
+
+.mediaFrame {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(127, 151, 173, 0.08), transparent 28rem),
+    #030405;
+}
+
+.mediaFrame img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 76svh;
+  object-fit: contain;
+}
+
+.mediaCaption {
+  padding: 1.35rem 1.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(130px, 0.28fr) minmax(0, 1fr);
+  gap: 0.65rem 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.mediaCaption span {
+  grid-row: 1 / span 2;
+  color: #81909d;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.mediaCaption strong {
+  color: #d8e0e7;
+  font-size: 0.86rem;
+  font-weight: 520;
+  line-height: 1.5;
+}
+
+.mediaCaption p {
+  margin: 0;
+  color: #8e9ca8;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
 .mediaPlaceholder {
   margin-top: 3rem;
   min-height: 280px;
@@ -77,7 +134,7 @@
 }
 
 .mediaPlaceholder strong {
-  max-width: 520px;
+  max-width: 600px;
   color: #aebac5;
   font-size: 0.75rem;
   font-weight: 500;
@@ -168,6 +225,26 @@
   .hero {
     min-height: auto;
     padding: 9rem 0 5rem;
+  }
+
+  .mediaFrame {
+    min-height: 220px;
+  }
+
+  .mediaFrame img {
+    max-height: 68svh;
+  }
+
+  .mediaCaption {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .mediaCaption span,
+  .mediaCaption strong,
+  .mediaCaption p {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   .mediaPlaceholder {
