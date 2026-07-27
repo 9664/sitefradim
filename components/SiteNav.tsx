@@ -10,8 +10,16 @@ const primaryLinks = [
   ["Ideias", "/ideias"],
 ] as const;
 
-export function SiteNav({ mode = "inner" }: { mode?: SiteNavMode }) {
+type SiteNavProps = {
+  mode?: SiteNavMode;
+  backHref?: string;
+  backLabel?: string;
+};
+
+export function SiteNav({ mode = "inner", backHref, backLabel }: SiteNavProps) {
   const inner = mode !== "home";
+  const resolvedBackHref = backHref ?? (mode === "universe" ? "/" : "/universo");
+  const resolvedBackLabel = backLabel ?? (mode === "universe" ? "Home" : "Universo");
 
   return (
     <nav className={`top-nav${inner ? " inner-nav" : ""}`} aria-label="Navegação principal">
@@ -26,8 +34,8 @@ export function SiteNav({ mode = "inner" }: { mode?: SiteNavMode }) {
           ))}
         </div>
       ) : (
-        <Link className="back-home" href={mode === "universe" ? "/" : "/universo"} prefetch={false}>
-          {mode === "universe" ? "← Home" : "← Universo"}
+        <Link className="back-home" href={resolvedBackHref} prefetch={false}>
+          ← {resolvedBackLabel}
         </Link>
       )}
     </nav>
