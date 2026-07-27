@@ -9,6 +9,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,4 +36,33 @@ jobs:
         run: npm run typecheck
 
       - name: Production build
-        run: npm run build
+        id: production_build
+        shell: bash
+        run: |
+          set +e
+          npm run build > build.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          tail -n 80 build.log > build-tail.log
+          exit 0
+
+      - name: Publish build diagnostic on PR
+        if: steps.production_build.outputs.exit_code != '0' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          {
+            echo "### Static export diagnostic"
+            echo
+            echo '```text'
+            cat build-tail.log
+            echo '```'
+          } > build-comment.md
+          gh pr comment "$PR_NUMBER" --body-file build-comment.md
+
+      - name: Fail if production build failed
+        if: steps.production_build.outputs.exit_code != '0'
+        run: |
+          cat build-tail.log
+          exit 1
