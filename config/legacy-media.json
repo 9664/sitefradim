@@ -33,7 +33,7 @@
       "expectedFormat": "jpeg",
       "expectedSha256": "731af4e50bd99ba541ece2a500491b38321f9031d0ec593dc1ef58cee118a2ec",
       "status": "hold-provenance",
-      "note": "Revisão visual confirma versão colorizada e assinatura Marcelo Fradim, sem marca de banco de imagem visível. Publicação fica suspensa até documentar melhor a proveniência da fotografia histórica original."
+      "note": "Revisão visual confirma versão colorizada e assinatura Marcelo Fradim, sem marca de banco de imagem visível. A data '1910' do WordPress antigo passou a ser tratada como provisória: a mesma cena foi localizada em publicação legendada como Avenida Rio Branco em 1915, e acervos institucionais registram imagens da via circa 1915. Publicação continua suspensa até identificar com segurança autoria, proveniência e data da fotografia original."
     },
     {
       "slug": "copacabana-rio-de-janeiro-anos-40",
