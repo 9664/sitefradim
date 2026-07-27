@@ -13,7 +13,7 @@ function statusLabel(slug: string, hasImage: boolean) {
 
 export function MemoryArchiveIndex() {
   return (
-    <section className={styles.archive} aria-labelledby="memory-archive-title">
+    <section className={styles.archive} aria-labelledby="memory-archive-title" data-memory-archive>
       <header className={styles.header}>
         <div>
           <p className="eyebrow">ARQUIVO EM PROCESSO</p>
@@ -25,36 +25,52 @@ export function MemoryArchiveIndex() {
       </header>
 
       <div className={styles.grid}>
-        {legacyMemoryEntries.map((entry) => (
-          <Link
-            className={styles.card}
-            href={`/${entry.slug}`}
-            prefetch={false}
-            key={entry.slug}
-          >
-            <div className={styles.visual}>
-              {entry.image ? (
-                <img src={`${basePath}${entry.image.src}`} alt="" loading="lazy" decoding="async" />
-              ) : (
-                <div className={styles.noImage} aria-hidden="true">
-                  <span>{entry.year}</span>
-                  <strong>ARQUIVO<br />SEM MÍDIA<br />PUBLICADA</strong>
-                </div>
-              )}
-              <span className={styles.status}>{statusLabel(entry.slug, Boolean(entry.image))}</span>
-            </div>
+        {legacyMemoryEntries.map((entry) => {
+          const mediaState = entry.image ? "published" : "unpublished";
 
-            <div className={styles.copy}>
-              <div className={styles.meta}>
-                <span>{entry.year}</span>
-                <span>{entry.location}</span>
+          return (
+            <Link
+              className={styles.card}
+              href={`/${entry.slug}`}
+              prefetch={false}
+              key={entry.slug}
+              data-archive-card={entry.slug}
+              data-media-state={mediaState}
+            >
+              <div className={styles.visual}>
+                {entry.image ? (
+                  <img
+                    src={`${basePath}${entry.image.src}`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    data-archive-media="published"
+                  />
+                ) : (
+                  <div
+                    className={styles.noImage}
+                    aria-hidden="true"
+                    data-archive-media="unpublished"
+                  >
+                    <span>{entry.year}</span>
+                    <strong>ARQUIVO<br />SEM MÍDIA<br />PUBLICADA</strong>
+                  </div>
+                )}
+                <span className={styles.status}>{statusLabel(entry.slug, Boolean(entry.image))}</span>
               </div>
-              <h3>{entry.title}</h3>
-              <p>{entry.summary}</p>
-              <small>ABRIR REGISTRO →</small>
-            </div>
-          </Link>
-        ))}
+
+              <div className={styles.copy}>
+                <div className={styles.meta}>
+                  <span>{entry.year}</span>
+                  <span>{entry.location}</span>
+                </div>
+                <h3>{entry.title}</h3>
+                <p>{entry.summary}</p>
+                <small>ABRIR REGISTRO →</small>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
