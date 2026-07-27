@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ImmersiveHero } from "@/components/ImmersiveHero";
 import { UniverseExplorer } from "@/components/UniverseExplorer";
+import { TrajectoryJourney } from "@/components/TrajectoryJourney";
 
 const territories = [
   ["Marcelo", "Trajetória, pensamento e autoridade.", "/sobre"],
@@ -57,6 +58,8 @@ export default function Home() {
       </section>
 
       <UniverseExplorer />
+
+      <TrajectoryJourney />
 
       <section className="territories" aria-labelledby="territories-title">
         <header className="section-heading">
