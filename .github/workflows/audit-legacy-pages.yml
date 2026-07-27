@@ -7,6 +7,9 @@ on:
     paths:
       - app/[slug]/page.tsx
       - app/[slug]/LegacyMemoryPage.module.css
+      - app/memoria/page.tsx
+      - components/MemoryArchiveIndex.tsx
+      - components/MemoryArchiveIndex.module.css
       - lib/legacyMemory.ts
       - public/memoria/arquivo/**
       - config/legacy-media.json
@@ -177,6 +180,84 @@ jobs:
                 await page.close();
               }
             }
+
+            for (const device of devices) {
+              const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+              const errors = [];
+              page.on('console', (message) => {
+                if (message.type() === 'error') errors.push(message.text());
+              });
+              page.on('pageerror', (error) => errors.push(error.message));
+
+              const response = await page.goto(`${base}memoria/`, {
+                waitUntil: 'networkidle',
+                timeout: 60000,
+              });
+              if (!response?.ok()) {
+                failures.push(`memory-index/${device.label}: HTTP ${response?.status() ?? 'no response'}`);
+              }
+
+              const archive = page.locator('section[aria-labelledby="memory-archive-title"]');
+              if ((await archive.count()) !== 1) {
+                failures.push(`memory-index/${device.label}: archive section missing`);
+              } else {
+                await archive.scrollIntoViewIfNeeded();
+                await page.waitForTimeout(900);
+
+                const images = archive.locator('img');
+                const imageCount = await images.count();
+                if (imageCount !== 2) {
+                  failures.push(`memory-index/${device.label}: expected exactly 2 published thumbnails, found ${imageCount}`);
+                }
+
+                for (let index = 0; index < imageCount; index += 1) {
+                  const image = images.nth(index);
+                  await image.waitFor({ state: 'visible', timeout: 10000 });
+                  await page.waitForFunction(
+                    (element) => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0,
+                    await image.elementHandle(),
+                    { timeout: 10000 },
+                  );
+                  const dimensions = await image.evaluate((element) => ({
+                    width: element.naturalWidth,
+                    height: element.naturalHeight,
+                  }));
+                  if (!dimensions.width || !dimensions.height) {
+                    failures.push(`memory-index/${device.label}: thumbnail ${index + 1} did not decode`);
+                  }
+                }
+
+                const archiveText = await archive.innerText();
+                for (const requiredText of [
+                  'MÍDIA REINTEGRADA',
+                  'PROVENIÊNCIA EM PESQUISA',
+                  'MÍDIA NÃO REPUBLICADA',
+                  'ARQUIVO SEM MÍDIA PUBLICADA',
+                ]) {
+                  if (!archiveText.includes(requiredText)) {
+                    failures.push(`memory-index/${device.label}: missing state label "${requiredText}"`);
+                  }
+                }
+
+                const noMediaCount = await archive.getByText('ARQUIVO', { exact: true }).count();
+                if (noMediaCount < 2) {
+                  failures.push(`memory-index/${device.label}: expected two no-media visual cards`);
+                }
+
+                await archive.screenshot({
+                  path: `legacy-screenshots/memory-archive-index-${device.label}.png`,
+                });
+              }
+
+              if (errors.length) {
+                await fs.writeFile(
+                  `legacy-screenshots/memory-index-${device.label}-errors.txt`,
+                  errors.join('\n'),
+                );
+                failures.push(`memory-index/${device.label}: ${errors.length} browser error(s)`);
+              }
+              await page.close();
+            }
           } finally {
             await browser.close();
           }
@@ -187,7 +268,7 @@ jobs:
             process.exit(1);
           }
 
-          console.log('Legacy visual audit OK: 2 published assets + 2 intentionally unpublished pages, desktop/mobile.');
+          console.log('Legacy visual audit OK: 2 published assets + 2 intentionally unpublished pages + memory index states, desktop/mobile.');
           EOF
           node legacy-audit.mjs
 
@@ -202,4 +283,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo de Memória concluída 🧪\n\nDesktop + mobile: Magazine 1957 e Estação 1925 com mídia reintegrada; Avenida Central e Copacabana sem asset publicado ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-curated-legacy-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo de Memória concluída 🧪\n\nDesktop + mobile: Magazine 1957 e Estação 1925 com mídia reintegrada; Avenida Central e Copacabana sem asset publicado; índice de Memória com 2 thumbnails decodificados + 2 estados sem mídia ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-curated-legacy-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"
