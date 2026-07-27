@@ -48,6 +48,8 @@ const stages = [
 
 const spacing = 8.5;
 
+type JourneyMode = "desktop" | "compact" | "reduced";
+
 function Artifact({ index, progress }: { index: number; progress: MutableRefObject<number> }) {
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
@@ -143,6 +145,25 @@ export function TrajectoryJourney() {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [journeyMode, setJourneyMode] = useState<JourneyMode>("desktop");
+
+  useEffect(() => {
+    const compact = window.matchMedia("(max-width: 900px)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const syncMode = () => {
+      setJourneyMode(reduced.matches ? "reduced" : compact.matches ? "compact" : "desktop");
+    };
+
+    syncMode();
+    compact.addEventListener("change", syncMode);
+    reduced.addEventListener("change", syncMode);
+
+    return () => {
+      compact.removeEventListener("change", syncMode);
+      reduced.removeEventListener("change", syncMode);
+    };
+  }, []);
 
   useEffect(() => {
     let raf = 0;
@@ -187,9 +208,10 @@ export function TrajectoryJourney() {
   };
 
   const active = stages[activeIndex];
+  const journeyHeight = journeyMode === "reduced" ? "auto" : journeyMode === "compact" ? "390vh" : "430vh";
 
   return (
-    <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} aria-labelledby="journey-title">
+    <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} style={{ height: journeyHeight }} aria-labelledby="journey-title">
       <div className={styles.sticky}>
         <div className={styles.canvas} aria-hidden="true">
           <Canvas dpr={[1, 1.45]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
