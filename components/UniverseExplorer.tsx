@@ -5,19 +5,9 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import type { Mesh } from "three";
+import styles from "./UniverseExplorer.module.css";
 
-type NodeId =
-  | "marcelo"
-  | "spock"
-  | "ia"
-  | "intelig"
-  | "gestor"
-  | "amo"
-  | "marketing"
-  | "memoria"
-  | "vibe"
-  | "lab"
-  | "ideias";
+type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "vibe" | "lab" | "ideias";
 
 type UniverseNode = {
   id: NodeId;
@@ -31,152 +21,28 @@ type UniverseNode = {
 };
 
 const nodes: UniverseNode[] = [
-  {
-    id: "marcelo",
-    label: "Marcelo",
-    kicker: "HUMANO",
-    description: "Contexto, experiência, intuição, repertório e visão construídos ao longo de décadas.",
-    href: "/sobre",
-    position: [-2.7, 0.35, 0],
-    size: 0.7,
-    tone: "human",
-  },
-  {
-    id: "spock",
-    label: "Spock",
-    kicker: "INTELIGÊNCIA",
-    description: "Análise, estrutura, pesquisa e amplificação: uma IA usada como parceira de pensamento e construção.",
-    href: "/spock",
-    position: [2.7, -0.25, 0],
-    size: 0.66,
-    tone: "ai",
-  },
-  {
-    id: "ia",
-    label: "IA",
-    kicker: "FRONTEIRA",
-    description: "Agentes, automação, context engineering e redesenho de processos a partir da inteligência artificial.",
-    href: "/inteligencia-artificial",
-    position: [0.3, 2.45, -0.55],
-    size: 0.42,
-    tone: "bridge",
-  },
-  {
-    id: "intelig",
-    label: "Intelig.Cloud",
-    kicker: "PROJETO",
-    description: "Soluções, agentes digitais, automações e produtos que transformam IA em capacidade operacional.",
-    href: "/projetos",
-    position: [2.45, 1.75, -1.25],
-    size: 0.36,
-    tone: "ai",
-  },
-  {
-    id: "gestor",
-    label: "Gestor 360",
-    kicker: "SISTEMA",
-    description: "Marketing, trade, campanhas, tarefas, BI e processos reunidos em uma visão operacional integrada.",
-    href: "/projetos",
-    position: [3.65, 0.65, 0.65],
-    size: 0.3,
-    tone: "ai",
-  },
-  {
-    id: "amo",
-    label: "Amo Franca",
-    kicker: "COMUNIDADE",
-    description: "Cultura, comunicação, memória coletiva e construção de comunidade conectadas por tecnologia.",
-    href: "/memoria",
-    position: [-3.6, 1.8, -0.65],
-    size: 0.38,
-    tone: "human",
-  },
-  {
-    id: "marketing",
-    label: "Marketing",
-    kicker: "EXPERIÊNCIA",
-    description: "Estratégia, varejo, comunicação, branding e comportamento como base para compreender problemas reais.",
-    href: "/trajetoria",
-    position: [-3.9, -1.2, 0.85],
-    size: 0.34,
-    tone: "human",
-  },
-  {
-    id: "memoria",
-    label: "Memória",
-    kicker: "CULTURA",
-    description: "Pesquisa iconográfica, fotografia histórica, preservação digital e reconstrução visual do passado.",
-    href: "/memoria",
-    position: [-1.65, -2.45, -0.8],
-    size: 0.32,
-    tone: "human",
-  },
-  {
-    id: "vibe",
-    label: "Vibe Coding",
-    kicker: "CONSTRUÇÃO",
-    description: "Desenvolvimento assistido por IA como nova forma de transformar intenção em software funcional.",
-    href: "/lab",
-    position: [1.75, -2.25, 0.65],
-    size: 0.31,
-    tone: "ai",
-  },
-  {
-    id: "lab",
-    label: "Lab",
-    kicker: "EXPERIMENTAÇÃO",
-    description: "Protótipos, agentes, interfaces, pesquisas e experiências públicas em evolução contínua.",
-    href: "/lab",
-    position: [4.15, -1.35, -1.05],
-    size: 0.29,
-    tone: "ai",
-  },
-  {
-    id: "ideias",
-    label: "Ideias",
-    kicker: "PENSAMENTO",
-    description: "Artigos, ensaios e diálogos onde hipóteses são confrontadas antes de virarem respostas prontas.",
-    href: "/ideias",
-    position: [-0.15, 3.65, 0.85],
-    size: 0.28,
-    tone: "bridge",
-  },
+  { id: "marcelo", label: "Marcelo", kicker: "HUMANO", description: "Contexto, experiência, intuição, repertório e visão construídos ao longo de décadas.", href: "/sobre", position: [-2.7, 0.35, 0], size: 0.7, tone: "human" },
+  { id: "spock", label: "Spock", kicker: "INTELIGÊNCIA", description: "Análise, estrutura, pesquisa e amplificação: uma IA usada como parceira de pensamento e construção.", href: "/spock", position: [2.7, -0.25, 0], size: 0.66, tone: "ai" },
+  { id: "ia", label: "IA", kicker: "FRONTEIRA", description: "Agentes, automação, context engineering e redesenho de processos a partir da inteligência artificial.", href: "/inteligencia-artificial", position: [0.3, 2.45, -0.55], size: 0.42, tone: "bridge" },
+  { id: "intelig", label: "Intelig.Cloud", kicker: "PROJETO", description: "Soluções, agentes digitais, automações e produtos que transformam IA em capacidade operacional.", href: "/projetos", position: [2.45, 1.75, -1.25], size: 0.36, tone: "ai" },
+  { id: "gestor", label: "Gestor 360", kicker: "SISTEMA", description: "Marketing, trade, campanhas, tarefas, BI e processos reunidos em uma visão operacional integrada.", href: "/projetos", position: [3.65, 0.65, 0.65], size: 0.3, tone: "ai" },
+  { id: "amo", label: "Amo Franca", kicker: "COMUNIDADE", description: "Cultura, comunicação, memória coletiva e construção de comunidade conectadas por tecnologia.", href: "/memoria", position: [-3.6, 1.8, -0.65], size: 0.38, tone: "human" },
+  { id: "marketing", label: "Marketing", kicker: "EXPERIÊNCIA", description: "Estratégia, varejo, comunicação, branding e comportamento como base para compreender problemas reais.", href: "/trajetoria", position: [-3.9, -1.2, 0.85], size: 0.34, tone: "human" },
+  { id: "memoria", label: "Memória", kicker: "CULTURA", description: "Pesquisa iconográfica, fotografia histórica, preservação digital e reconstrução visual do passado.", href: "/memoria", position: [-1.65, -2.45, -0.8], size: 0.32, tone: "human" },
+  { id: "vibe", label: "Vibe Coding", kicker: "CONSTRUÇÃO", description: "Desenvolvimento assistido por IA como nova forma de transformar intenção em software funcional.", href: "/lab", position: [1.75, -2.25, 0.65], size: 0.31, tone: "ai" },
+  { id: "lab", label: "Lab", kicker: "EXPERIMENTAÇÃO", description: "Protótipos, agentes, interfaces, pesquisas e experiências públicas em evolução contínua.", href: "/lab", position: [4.15, -1.35, -1.05], size: 0.29, tone: "ai" },
+  { id: "ideias", label: "Ideias", kicker: "PENSAMENTO", description: "Artigos, ensaios e diálogos onde hipóteses são confrontadas antes de virarem respostas prontas.", href: "/ideias", position: [-0.15, 3.65, 0.85], size: 0.28, tone: "bridge" },
 ];
 
 const edges: [NodeId, NodeId][] = [
-  ["marcelo", "spock"],
-  ["marcelo", "marketing"],
-  ["marcelo", "amo"],
-  ["marcelo", "memoria"],
-  ["marcelo", "ia"],
-  ["spock", "ia"],
-  ["spock", "intelig"],
-  ["spock", "gestor"],
-  ["spock", "vibe"],
-  ["spock", "lab"],
-  ["ia", "intelig"],
-  ["ia", "vibe"],
-  ["ia", "ideias"],
-  ["intelig", "gestor"],
-  ["intelig", "lab"],
-  ["marketing", "gestor"],
-  ["marketing", "amo"],
-  ["amo", "memoria"],
-  ["memoria", "ia"],
-  ["vibe", "lab"],
-  ["ideias", "marcelo"],
-  ["ideias", "spock"],
+  ["marcelo", "spock"], ["marcelo", "marketing"], ["marcelo", "amo"], ["marcelo", "memoria"], ["marcelo", "ia"],
+  ["spock", "ia"], ["spock", "intelig"], ["spock", "gestor"], ["spock", "vibe"], ["spock", "lab"],
+  ["ia", "intelig"], ["ia", "vibe"], ["ia", "ideias"], ["intelig", "gestor"], ["intelig", "lab"],
+  ["marketing", "gestor"], ["marketing", "amo"], ["amo", "memoria"], ["memoria", "ia"], ["vibe", "lab"],
+  ["ideias", "marcelo"], ["ideias", "spock"],
 ];
 
-function NodeOrb({
-  node,
-  selected,
-  onSelect,
-}: {
-  node: UniverseNode;
-  selected: boolean;
-  onSelect: (id: NodeId) => void;
-}) {
+function NodeOrb({ node, selected, onSelect }: { node: UniverseNode; selected: boolean; onSelect: (id: NodeId) => void }) {
   const mesh = useRef<Mesh>(null);
 
   useFrame((state) => {
@@ -205,7 +71,7 @@ function NodeOrb({
 
       <Html center distanceFactor={9.5} zIndexRange={[30, 0]}>
         <button
-          className={`universe-label ${selected ? "is-selected" : ""}`}
+          className={`${styles.label} ${selected ? styles.selected : ""}`}
           type="button"
           onClick={() => onSelect(node.id)}
           aria-pressed={selected}
@@ -239,10 +105,7 @@ function Graph({ selected, onSelect }: { selected: NodeId; onSelect: (id: NodeId
           />
         );
       })}
-
-      {nodes.map((node) => (
-        <NodeOrb key={node.id} node={node} selected={node.id === selected} onSelect={onSelect} />
-      ))}
+      {nodes.map((node) => <NodeOrb key={node.id} node={node} selected={node.id === selected} onSelect={onSelect} />)}
     </>
   );
 }
@@ -252,22 +115,18 @@ export function UniverseExplorer() {
   const active = nodes.find((node) => node.id === selected) ?? nodes[0];
 
   return (
-    <section className="universe-explorer" aria-labelledby="universe-title">
-      <header className="universe-heading">
+    <section className={styles.explorer} aria-labelledby="universe-title">
+      <header className={styles.heading}>
         <div>
           <p className="eyebrow">UNIVERSO FRADIM / V0.1</p>
           <h2 id="universe-title">Não leia apenas a trajetória. Navegue pelas conexões.</h2>
         </div>
-        <p className="universe-instruction">Arraste para orbitar · role para aproximar · toque para explorar</p>
+        <p className={styles.instruction}>Arraste para orbitar · role para aproximar · toque para explorar</p>
       </header>
 
-      <div className="universe-stage">
-        <div className="universe-canvas" aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
-          <Canvas
-            dpr={[1, 1.55]}
-            camera={{ position: [0, 0.2, 10.4], fov: 48 }}
-            gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
-          >
+      <div className={styles.stage}>
+        <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
+          <Canvas dpr={[1, 1.55]} camera={{ position: [0, 0.2, 10.4], fov: 48 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
             <ambientLight intensity={0.4} />
             <directionalLight position={[2, 6, 6]} intensity={2.6} />
             <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
@@ -289,19 +148,15 @@ export function UniverseExplorer() {
           </Canvas>
         </div>
 
-        <aside className="universe-panel" aria-live="polite">
-          <span className="universe-panel-kicker">{active.kicker}</span>
+        <aside className={styles.panel} aria-live="polite">
+          <span className={styles.panelKicker}>{active.kicker}</span>
           <h3>{active.label}</h3>
           <p>{active.description}</p>
           <Link href={active.href}>Entrar neste território →</Link>
-          <div className="universe-coordinate" aria-hidden="true">
-            {active.position.map((value) => value.toFixed(2)).join(" / ")}
-          </div>
+          <div className={styles.coordinate} aria-hidden="true">{active.position.map((value) => value.toFixed(2)).join(" / ")}</div>
         </aside>
 
-        <div className="universe-signature" aria-hidden="true">
-          <span>M</span><i>×</i><span>S</span>
-        </div>
+        <div className={styles.signature} aria-hidden="true"><span>M</span><i>×</i><span>S</span></div>
       </div>
     </section>
   );
