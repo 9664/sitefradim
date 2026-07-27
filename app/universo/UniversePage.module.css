@@ -37,6 +37,10 @@
   border: 0;
 }
 
+.page :global(#universo-fradim[data-variant="fullscreen"] > div > div:last-child) {
+  display: none;
+}
+
 .page :global(#universo-fradim > div::before) {
   background-size: 96px 96px;
 }
