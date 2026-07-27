@@ -20,10 +20,8 @@ export function ImmersiveHero() {
       return () => window.cancelAnimationFrame(frame);
     }
 
-    let timer = 0;
     const activate = () => {
       setRender3D(true);
-      window.clearTimeout(timer);
       window.removeEventListener("pointerdown", activate);
       window.removeEventListener("scroll", activate);
       window.removeEventListener("keydown", activate);
@@ -32,10 +30,8 @@ export function ImmersiveHero() {
     window.addEventListener("pointerdown", activate, { passive: true });
     window.addEventListener("scroll", activate, { passive: true });
     window.addEventListener("keydown", activate);
-    timer = window.setTimeout(activate, 12000);
 
     return () => {
-      window.clearTimeout(timer);
       window.removeEventListener("pointerdown", activate);
       window.removeEventListener("scroll", activate);
       window.removeEventListener("keydown", activate);
