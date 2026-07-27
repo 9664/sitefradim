@@ -213,9 +213,14 @@ jobs:
                 for (let index = 0; index < imageCount; index += 1) {
                   const image = images.nth(index);
                   await image.waitFor({ state: 'visible', timeout: 10000 });
+                  const handle = await image.elementHandle();
+                  if (!handle) {
+                    failures.push(`memory-index/${device.label}: thumbnail ${index + 1} has no element handle`);
+                    continue;
+                  }
                   await page.waitForFunction(
                     (element) => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0,
-                    await image.elementHandle(),
+                    handle,
                     { timeout: 10000 },
                   );
                   const dimensions = await image.evaluate((element) => ({
@@ -239,9 +244,9 @@ jobs:
                   }
                 }
 
-                const noMediaCount = await archive.getByText('ARQUIVO', { exact: true }).count();
-                if (noMediaCount < 2) {
-                  failures.push(`memory-index/${device.label}: expected two no-media visual cards`);
+                const noMediaCount = await archive.getByText('ARQUIVO SEM MÍDIA PUBLICADA', { exact: true }).count();
+                if (noMediaCount !== 2) {
+                  failures.push(`memory-index/${device.label}: expected two no-media visual cards, found ${noMediaCount}`);
                 }
 
                 await archive.screenshot({
