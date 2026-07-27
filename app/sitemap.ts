@@ -7,6 +7,7 @@ const isStaging = process.env.NEXT_PUBLIC_SITE_ENV === "staging";
 
 const routes = [
   "",
+  "/universo",
   "/sobre",
   "/spock",
   "/inteligencia-artificial",
@@ -31,6 +32,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `https://fradim.com.br${route}`,
     lastModified: now,
     changeFrequency: route === "" || route === "/ideias" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : route.startsWith("/projetos/") || route.startsWith("/ideias/") ? 0.75 : 0.8,
+    priority: route === "" ? 1 : route === "/universo" ? 0.9 : route.startsWith("/projetos/") || route.startsWith("/ideias/") ? 0.75 : 0.8,
   }));
 }
