@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "description": "Manifesto independente de provedor para decisões de migração do WordPress legado do Fradim.com.br.",
+  "resolved": [
+    {
+      "source": "/primeira-loja-do-magazine-luiza-em-1957/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL histórica recriada no mesmo slug como item curado do Arquivo de Memória."
+    },
+    {
+      "source": "/locomotiva-em-1925/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL histórica recriada no mesmo slug como item curado do Arquivo de Memória."
+    }
+  ],
+  "pending": [
+    {
+      "source": "/quemsou/",
+      "reason": "O slug sugere identidade pessoal, mas o conteúdo/indexação atual não é evidência suficiente para escolher com segurança entre /sobre, /memoria ou /restauracao-fotografica. Auditar conteúdo histórico e backlinks antes de definir resposta."
+    },
+    {
+      "source": "/campanhas/",
+      "reason": "Galeria antiga sem equivalente semântico exato. Avaliar backlinks e valor de arquivo antes de preservar ou redirecionar."
+    },
+    {
+      "source": "/tag/franca-sp/",
+      "reason": "Taxonomia do WordPress. Avaliar se existe tráfego/backlinks suficientes para justificar redirect para um futuro índice de Memória."
+    },
+    {
+      "source": "/fotos/",
+      "reason": "Rota atualmente comprometida e inadequada para transferência automática de sinais. Revisar conteúdo legítimo histórico antes de decidir entre remoção 410/404 ou preservação seletiva de itens individuais."
+    },
+    {
+      "source": "/somos-simples-naufragos/",
+      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
+    },
+    {
+      "source": "/nada-acontece-por-acaso/",
+      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
+    },
+    {
+      "source": "/porque-o-tempo-nao-para-nos-tornamos-velhos/",
+      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
+    },
+    {
+      "source": "/a-diferenca-entre-vida-simples-minimalismo-e-frugalidade/",
+      "reason": "Conteúdo antigo fora do eixo editorial principal atual. Avaliar arquivo ou remoção sem redirect artificial."
+    }
+  ]
+}
