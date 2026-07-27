@@ -5,6 +5,8 @@ import { SiteNav } from "@/components/SiteNav";
 import { getLegacyMemoryEntry, legacyMemoryEntries } from "@/lib/legacyMemory";
 import legacyStyles from "./LegacyMemoryPage.module.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const pages = {
   sobre: {
     eyebrow: "MARCELO",
@@ -90,6 +92,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: legacyEntry.title,
       description: legacyEntry.summary,
       url: `https://fradim.com.br/${legacyEntry.slug}`,
+      ...(legacyEntry.image
+        ? { images: [{ url: `https://fradim.com.br${legacyEntry.image.src}`, alt: legacyEntry.image.alt }] }
+        : {}),
     },
   };
 }
@@ -107,6 +112,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
       url: `https://fradim.com.br/${legacyEntry.slug}`,
       temporalCoverage: legacyEntry.year,
       spatialCoverage: legacyEntry.location,
+      ...(legacyEntry.image ? { image: `https://fradim.com.br${legacyEntry.image.src}` } : {}),
       about: [
         { "@type": "Thing", name: "Memória histórica" },
         { "@type": "Thing", name: "Restauração fotográfica" },
@@ -133,10 +139,27 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
           <h1>{legacyEntry.title}</h1>
           <p>{legacyEntry.summary}</p>
 
-          <div className={legacyStyles.mediaPlaceholder} role="note" aria-label="Imagem histórica em processo de curadoria">
-            <span>IMAGEM EM CURADORIA</span>
-            <strong>O registro visual será reintegrado após a revisão do acervo original. Esta página já preserva o endereço histórico sem depender de arquivos ou código do WordPress legado.</strong>
-          </div>
+          {legacyEntry.image ? (
+            <figure className={legacyStyles.mediaFigure}>
+              <div className={legacyStyles.mediaFrame}>
+                <img
+                  src={`${basePath}${legacyEntry.image.src}`}
+                  alt={legacyEntry.image.alt}
+                  decoding="async"
+                />
+              </div>
+              <figcaption className={legacyStyles.mediaCaption}>
+                <span>ARQUIVO REINTEGRADO</span>
+                <strong>{legacyEntry.image.caption}</strong>
+                <p>{legacyEntry.image.provenance}</p>
+              </figcaption>
+            </figure>
+          ) : (
+            <div className={legacyStyles.mediaPlaceholder} role="note" aria-label="Estado da imagem histórica">
+              <span>ASSET NÃO PUBLICADO</span>
+              <strong>{legacyEntry.mediaNote}</strong>
+            </div>
+          )}
         </header>
 
         <section className={legacyStyles.context} aria-labelledby="legacy-context-title">
@@ -160,14 +183,20 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         <section className={legacyStyles.source} aria-labelledby="legacy-source-title">
           <p className="eyebrow">FONTE DE CONTEXTO</p>
           <h2 id="legacy-source-title">A página nova precisa conseguir mostrar de onde vem a informação.</h2>
-          <p>A fonte abaixo sustenta o contexto histórico apresentado aqui. A proveniência específica do arquivo fotográfico será adicionada quando o asset visual for reincorporado ao novo acervo.</p>
+          <p>
+            A fonte abaixo sustenta o contexto histórico apresentado aqui. {legacyEntry.image
+              ? "A reintegração do arquivo visual não transforma essa referência contextual em atribuição automática da fotografia histórica original."
+              : "O asset visual permanece fora da publicação enquanto sua situação de proveniência e uso não estiver resolvida."}
+          </p>
           <a href={legacyEntry.sourceHref} target="_blank" rel="noreferrer">{legacyEntry.sourceLabel} ↗</a>
         </section>
 
         <section className={legacyStyles.next} aria-labelledby="legacy-next-title">
           <p className="eyebrow">ARQUIVO EM CONSTRUÇÃO</p>
-          <h2 id="legacy-next-title">Preservar a URL é só o primeiro passo.</h2>
-          <p>O próximo estágio é reintegrar a imagem aprovada, registrar sua origem e conectar este item a outros registros relacionados do acervo.</p>
+          <h2 id="legacy-next-title">
+            {legacyEntry.image ? "A imagem voltou. Agora o arquivo ganha relações." : "Preservar a URL também significa saber quando não republicar uma imagem."}
+          </h2>
+          <p>{legacyEntry.mediaNote}</p>
           <div className={legacyStyles.links}>
             <Link href="/memoria" prefetch={false}>Explorar Memória</Link>
             <Link href="/restauracao-fotografica" prefetch={false}>Restauração fotográfica</Link>
