@@ -20,6 +20,7 @@ const routes = [
   "/ideias",
   "/imprensa",
   "/memoria",
+  "/restauracao-fotografica",
   "/contato",
   ...ideas.map((idea) => `/ideias/${idea.slug}`),
 ];
@@ -32,6 +33,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `https://fradim.com.br${route}`,
     lastModified: now,
     changeFrequency: route === "" || route === "/ideias" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : route === "/universo" ? 0.9 : route.startsWith("/projetos/") || route.startsWith("/ideias/") ? 0.75 : 0.8,
+    priority:
+      route === ""
+        ? 1
+        : route === "/universo"
+          ? 0.9
+          : route === "/restauracao-fotografica"
+            ? 0.85
+            : route.startsWith("/projetos/") || route.startsWith("/ideias/")
+              ? 0.75
+              : 0.8,
   }));
 }
