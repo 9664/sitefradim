@@ -18,6 +18,7 @@ const routes = [
   "/projetos/intelig-cloud",
   "/projetos/amo-franca",
   "/projetos/gestor-360",
+  "/campanhas",
   "/lab",
   "/ideias",
   "/imprensa",
@@ -44,12 +45,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
           ? 0.9
           : route === "/restauracao-fotografica"
             ? 0.85
-            : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`)
-              ? 0.72
-              : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
-                ? 0.68
-                : route.startsWith("/projetos/") || route.startsWith("/ideias/")
-                  ? 0.75
-                  : 0.8,
+            : route === "/campanhas"
+              ? 0.7
+              : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`)
+                ? 0.72
+                : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
+                  ? 0.68
+                  : route.startsWith("/projetos/") || route.startsWith("/ideias/")
+                    ? 0.75
+                    : 0.8,
   }));
 }
