@@ -5,6 +5,11 @@ export type LegacyMemoryImage = {
   provenance: string;
 };
 
+export type LegacyMemorySource = {
+  label: string;
+  href: string;
+};
+
 export type LegacyMemoryEntry = {
   slug: string;
   title: string;
@@ -15,6 +20,7 @@ export type LegacyMemoryEntry = {
   intervention: string;
   sourceLabel: string;
   sourceHref: string;
+  researchSource?: LegacyMemorySource;
   image?: LegacyMemoryImage;
   mediaNote: string;
 };
@@ -86,6 +92,10 @@ export const legacyMemoryEntries: LegacyMemoryEntry[] = [
       "A versão colorizada do acervo legado foi localizada, validada tecnicamente e revisada visualmente. A assinatura de Marcelo Fradim está presente no arquivo, mas a fotografia histórica de origem ainda precisa de uma atribuição documental mais sólida antes da republicação.",
     sourceLabel: "Brasiliana Fotográfica — Avenida Central, atual Rio Branco",
     sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=avenida-central",
+    researchSource: {
+      label: "Motor1 — cena publicada como Avenida Rio Branco em 1915",
+      href: "https://motor1.uol.com.br/features/736303/historia-ranking-vendas-brasil-1912/",
+    },
     mediaNote:
       "Arquivo colorizado localizado e tecnicamente íntegro, mas mantido fora do novo site enquanto autoria, proveniência e data exata da fotografia original permanecem em pesquisa.",
   },
