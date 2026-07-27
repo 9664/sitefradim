@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { ideas } from "@/lib/ideas";
 
+const isStaging = process.env.NEXT_PUBLIC_SITE_ENV === "staging";
+
 const routes = [
   "",
   "/sobre",
@@ -20,6 +22,8 @@ const routes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (isStaging) return [];
+
   const now = new Date();
   return routes.map((route) => ({
     url: `https://fradim.com.br${route}`,
