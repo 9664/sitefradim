@@ -82,6 +82,7 @@ jobs:
             }
           }
           md += '\nOs arquivos permanecem apenas no artefato temporário de quarentena e não são publicados automaticamente.\n';
+          md += `\nRun ID: \`${process.env.GITHUB_RUN_ID}\` · Commit: \`${process.env.GITHUB_SHA}\`\n`;
           fs.writeFileSync('quarantine/summary.md', md);
           console.log(md);
           NODE
