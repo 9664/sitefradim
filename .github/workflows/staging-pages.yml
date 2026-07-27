@@ -136,13 +136,15 @@ jobs:
             ['lab', 'lab/'],
           ];
 
+          const devices = [
+            { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+            { label: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
           const browser = await chromium.launch({ headless: true });
           try {
             for (const [name, route] of targets) {
-              for (const device of [
-                { label: 'desktop', viewport: { width: 1440, height: 1000 } },
-                { label: 'mobile', viewport: { width: 390, height: 844 } },
-              ]) {
+              for (const device of devices) {
                 const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
                 const errors = [];
                 page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
@@ -150,6 +152,40 @@ jobs:
                 await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
                 await page.waitForTimeout(2500);
                 await page.screenshot({ path: `screenshots/${name}-${device.label}.png`, fullPage: true });
+
+                if (name === 'home') {
+                  const universe = page.locator('#universo-fradim');
+                  if (await universe.count()) {
+                    await universe.scrollIntoViewIfNeeded();
+                    await page.waitForTimeout(700);
+                    await universe.screenshot({ path: `screenshots/universe-${device.label}.png` });
+                  }
+
+                  const journey = page.locator('#trajetoria-em-movimento');
+                  if (await journey.count()) {
+                    const metrics = await journey.evaluate((element) => {
+                      const rect = element.getBoundingClientRect();
+                      return {
+                        top: window.scrollY + rect.top,
+                        height: rect.height,
+                        viewport: window.innerHeight,
+                      };
+                    });
+                    const scrollable = Math.max(1, metrics.height - metrics.viewport);
+                    const ratios = [0, 0.25, 0.5, 0.75, 1];
+                    for (let index = 0; index < ratios.length; index += 1) {
+                      await page.evaluate(({ top, scrollable, ratio }) => {
+                        window.scrollTo({ top: top + scrollable * ratio, behavior: 'instant' });
+                      }, { top: metrics.top, scrollable, ratio: ratios[index] });
+                      await page.waitForTimeout(850);
+                      await page.screenshot({
+                        path: `screenshots/trajectory-${String(index + 1).padStart(2, '0')}-${device.label}.png`,
+                        fullPage: false,
+                      });
+                    }
+                  }
+                }
+
                 if (errors.length) {
                   await fs.writeFile(`screenshots/${name}-${device.label}-errors.txt`, errors.join('\n'));
                 }
@@ -173,4 +209,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Sobre, Spock e Lab ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Universo, 5 estágios da trajetória, Sobre, Spock e Lab ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
