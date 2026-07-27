@@ -1,10 +1,9 @@
 "use client";
 
 import { Html, Line, OrbitControls, Sparkles } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Mesh } from "three";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./UniverseExplorer.module.css";
 
 type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "vibe" | "lab" | "ideias";
@@ -44,19 +43,11 @@ const edges: [NodeId, NodeId][] = [
 ];
 
 function NodeOrb({ node, selected, onSelect, compact }: { node: UniverseNode; selected: boolean; onSelect: (id: NodeId) => void; compact: boolean }) {
-  const mesh = useRef<Mesh>(null);
-
-  useFrame((state) => {
-    if (!mesh.current) return;
-    const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.25 + node.position[0]) * 0.035;
-    mesh.current.scale.setScalar(selected ? pulse * 1.15 : pulse);
-  });
-
   const emissive = node.tone === "human" ? "#9fb2c5" : node.tone === "ai" ? "#dce9f7" : "#b8c8d8";
 
   return (
     <group position={node.position}>
-      <mesh ref={mesh} onClick={() => onSelect(node.id)}>
+      <mesh scale={selected ? 1.15 : 1} onClick={() => onSelect(node.id)}>
         <sphereGeometry args={[node.size, 32, 32]} />
         <meshPhysicalMaterial
           color={selected ? "#f6fbff" : "#aebdcb"}
@@ -152,7 +143,8 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
         <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
           <Canvas
             key={`${variant}-${compact ? "compact" : "desktop"}`}
-            dpr={compact ? [1, 1.25] : [1, 1.55]}
+            frameloop="demand"
+            dpr={compact ? [1, 1.15] : [1, 1.35]}
             camera={{ position: [0, compact ? 0.45 : 0.2, cameraZ], fov: cameraFov }}
             gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
           >
@@ -161,7 +153,7 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
             <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
             <pointLight position={[5, 2, -2]} intensity={10} distance={10} />
             <Graph selected={selected} onSelect={setSelected} compact={compact} fullscreen={fullscreen} />
-            <Sparkles count={compact ? (fullscreen ? 58 : 72) : 110} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0.08} opacity={0.22} />
+            <Sparkles count={compact ? (fullscreen ? 48 : 60) : 82} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0} opacity={0.22} />
             <OrbitControls
               makeDefault
               target={target}
