@@ -24,20 +24,20 @@
     {
       "slug": "av-central-rio-de-janeiro-em-1910",
       "sourcePage": "https://fradim.com.br/av-central-rio-de-janeiro-em-1910/",
-      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-31b.jpg",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-31.jpg",
       "filename": "avenida-central-1910-colorizada.jpg",
       "expectedFormat": "jpeg",
       "status": "candidate",
-      "note": "Nome do arquivo legado registra a intervenção por Marcelo Fradim; proveniência do original histórico ainda deve ser documentada."
+      "note": "A variante 31b foi revisada e identificada como fotografia em preto e branco. A variante 31 é auditada como possível intervenção final; proveniência do original histórico continua pendente."
     },
     {
       "slug": "copacabana-rio-de-janeiro-anos-40",
       "sourcePage": "https://fradim.com.br/copacabana-rio-de-janeiro-anos-40/",
-      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-21b.jpg",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-21.jpg",
       "filename": "copacabana-anos-40-colorizada.jpg",
       "expectedFormat": "jpeg",
       "status": "candidate",
-      "note": "Nome do arquivo legado registra a intervenção por Marcelo Fradim; proveniência do original histórico ainda deve ser documentada."
+      "note": "A variante 21b foi revisada e contém fotografia original em preto e branco com marca Corbis/Getty Images; essa versão foi rejeitada para publicação. A variante 21 é auditada separadamente como possível intervenção final e não será publicada sem nova revisão visual."
     }
   ]
 }
