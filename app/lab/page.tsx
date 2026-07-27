@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContextLab } from "@/components/ContextLab";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./LabPage.module.css";
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 
 const experiments = [
   ["LIVE / 01", "Context Builder", "Experimento local para visualizar como objetivo, contexto, restrições, fontes e critérios de sucesso alteram a qualidade de uma instrução.", "#context-builder", "Experimentar"],
-  ["LIVE / 02", "Universo Fradim", "Knowledge graph tridimensional que transforma projetos, disciplinas e a relação Marcelo × Spock em uma rede navegável.", "/#universo-fradim", "Abrir experiência"],
+  ["LIVE / 02", "Universo Fradim", "Knowledge graph tridimensional que transforma projetos, disciplinas e a relação Marcelo × Spock em uma rede navegável.", "/universo", "Abrir experiência"],
   ["LIVE / 03", "Trajectory Journey", "Narrativa controlada por scroll que representa a evolução de imagem e marketing até sistemas e inteligência artificial.", "/#trajetoria-em-movimento", "Percorrer"],
   ["SYSTEM / 04", "Gestor 360", "Projeto real de integração entre marketing, trade, campanhas, tarefas, BI e processos operacionais.", "/projetos/gestor-360", "Ver projeto"],
   ["SYSTEM / 05", "Intelig.Cloud", "Agentes, automações e produtos digitais usados para transformar IA em capacidade operacional.", "/projetos/intelig-cloud", "Ver projeto"],
@@ -33,10 +34,7 @@ export default function LabPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="lab-title">
         <p className="eyebrow">LAB / BUILD TO UNDERSTAND</p>
@@ -57,7 +55,7 @@ export default function LabPage() {
         <h2 id="catalog-title">O laboratório está espalhado pelo site.</h2>
         <div className={styles.grid}>
           {experiments.map(([status, title, text, href, action]) => (
-            <Link href={href} key={title}>
+            <Link href={href} prefetch={false} key={title}>
               <small>{status}</small>
               <div><h3>{title}</h3><p>{text}</p></div>
               <span>{action} →</span>
@@ -70,7 +68,7 @@ export default function LabPage() {
         <p className="eyebrow">REGRA DO LAB</p>
         <h2 id="ethos-title">Protótipo não precisa ser perfeito.<span> Precisa produzir aprendizado.</span></h2>
         <p>Experimentos podem falhar. O compromisso é deixar claro o que é demonstração, o que é sistema em uso e o que ainda é hipótese — e registrar o que aprendemos em cada etapa.</p>
-        <Link href="/ideias">Ver pensamento em processo →</Link>
+        <Link href="/ideias" prefetch={false}>Ver pensamento em processo →</Link>
       </section>
     </main>
   );
