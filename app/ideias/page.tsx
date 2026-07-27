@@ -1,15 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LegacyIdeasArchive } from "@/components/LegacyIdeasArchive";
 import { SiteNav } from "@/components/SiteNav";
 import { ideas } from "@/lib/ideas";
+import { legacyIdeaEntries } from "@/lib/legacyIdeas";
 import styles from "./IdeasPage.module.css";
 
 export const metadata: Metadata = {
   title: "Ideias",
   description:
-    "Ensaios e pensamento autoral de Marcelo Fradim sobre inteligência artificial, context engineering, automação, processos, marketing e inovação.",
+    "Ensaios e pensamento autoral de Marcelo Fradim sobre inteligência artificial, context engineering, automação, processos, marketing e inovação, além de um arquivo condensado de textos anteriores.",
   alternates: { canonical: "/ideias" },
 };
+
+const currentItems = ideas.map((idea) => ({
+  name: idea.title,
+  url: `https://fradim.com.br/ideias/${idea.slug}`,
+}));
+
+const legacyItems = legacyIdeaEntries.map((idea) => ({
+  name: idea.title,
+  url: `https://fradim.com.br/${idea.slug}`,
+}));
 
 const schema = {
   "@context": "https://schema.org",
@@ -19,11 +31,11 @@ const schema = {
   author: { "@type": "Person", name: "Marcelo Fradim", url: "https://fradim.com.br" },
   mainEntity: {
     "@type": "ItemList",
-    itemListElement: ideas.map((idea, index) => ({
+    itemListElement: [...currentItems, ...legacyItems].map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      name: idea.title,
-      url: `https://fradim.com.br/ideias/${idea.slug}`,
+      name: item.name,
+      url: item.url,
     })),
   },
 };
@@ -56,6 +68,8 @@ export default function IdeasPage() {
           ))}
         </div>
       </section>
+
+      <LegacyIdeasArchive />
 
       <section className={styles.manifesto} aria-labelledby="writing-title">
         <p className="eyebrow">REGRA EDITORIAL</p>
