@@ -185,14 +185,22 @@
   align-self: start;
 }
 
+.sourceLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.8rem 1.6rem;
+  margin-top: 2rem;
+}
+
 .source a {
   display: inline-flex;
-  margin-top: 2rem;
   padding-bottom: 0.35rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.24);
   color: #d3dce4;
   font-size: 0.76rem;
   letter-spacing: 0.07em;
+  line-height: 1.45;
   text-transform: uppercase;
 }
 
@@ -264,6 +272,16 @@
   .intervention,
   .source {
     padding: 5.5rem 0;
+  }
+
+  .sourceLinks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .source a {
+    width: fit-content;
   }
 
   .next {
