@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LegacyIdeaPage } from "@/components/LegacyIdeaPage";
 import { SiteNav } from "@/components/SiteNav";
+import { getLegacyIdeaEntry, legacyIdeaEntries } from "@/lib/legacyIdeas";
 import { getLegacyMemoryEntry, legacyMemoryEntries } from "@/lib/legacyMemory";
 import legacyStyles from "./LegacyMemoryPage.module.css";
 
@@ -66,6 +68,7 @@ export function generateStaticParams() {
   return [
     ...Object.keys(pages).map((slug) => ({ slug })),
     ...legacyMemoryEntries.map((entry) => ({ slug: entry.slug })),
+    ...legacyIdeaEntries.map((entry) => ({ slug: entry.slug })),
   ];
 }
 
@@ -80,44 +83,61 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
-  const legacyEntry = getLegacyMemoryEntry(slug);
-  if (!legacyEntry) return {};
+  const legacyMemoryEntry = getLegacyMemoryEntry(slug);
+  if (legacyMemoryEntry) {
+    return {
+      title: `${legacyMemoryEntry.title} — Arquivo de Memória`,
+      description: legacyMemoryEntry.summary,
+      alternates: { canonical: `/${legacyMemoryEntry.slug}` },
+      openGraph: {
+        type: "article",
+        title: legacyMemoryEntry.title,
+        description: legacyMemoryEntry.summary,
+        url: `https://fradim.com.br/${legacyMemoryEntry.slug}`,
+        ...(legacyMemoryEntry.image
+          ? { images: [{ url: `https://fradim.com.br${legacyMemoryEntry.image.src}`, alt: legacyMemoryEntry.image.alt }] }
+          : {}),
+      },
+    };
+  }
 
-  return {
-    title: `${legacyEntry.title} — Arquivo de Memória`,
-    description: legacyEntry.summary,
-    alternates: { canonical: `/${legacyEntry.slug}` },
-    openGraph: {
-      type: "article",
-      title: legacyEntry.title,
-      description: legacyEntry.summary,
-      url: `https://fradim.com.br/${legacyEntry.slug}`,
-      ...(legacyEntry.image
-        ? { images: [{ url: `https://fradim.com.br${legacyEntry.image.src}`, alt: legacyEntry.image.alt }] }
-        : {}),
-    },
-  };
+  const legacyIdeaEntry = getLegacyIdeaEntry(slug);
+  if (legacyIdeaEntry) {
+    return {
+      title: `${legacyIdeaEntry.title} — Arquivo Autoral`,
+      description: legacyIdeaEntry.summary,
+      alternates: { canonical: `/${legacyIdeaEntry.slug}` },
+      openGraph: {
+        type: "article",
+        title: legacyIdeaEntry.title,
+        description: legacyIdeaEntry.summary,
+        url: `https://fradim.com.br/${legacyIdeaEntry.slug}`,
+      },
+    };
+  }
+
+  return {};
 }
 
 export default async function TerritoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const legacyEntry = getLegacyMemoryEntry(slug);
+  const legacyMemoryEntry = getLegacyMemoryEntry(slug);
 
-  if (legacyEntry) {
+  if (legacyMemoryEntry) {
     const citations = [
-      legacyEntry.sourceHref,
-      ...(legacyEntry.researchSource ? [legacyEntry.researchSource.href] : []),
+      legacyMemoryEntry.sourceHref,
+      ...(legacyMemoryEntry.researchSource ? [legacyMemoryEntry.researchSource.href] : []),
     ];
 
     const schema = {
       "@context": "https://schema.org",
       "@type": "Article",
-      headline: legacyEntry.title,
-      description: legacyEntry.summary,
-      url: `https://fradim.com.br/${legacyEntry.slug}`,
-      temporalCoverage: legacyEntry.year,
-      spatialCoverage: legacyEntry.location,
-      ...(legacyEntry.image ? { image: `https://fradim.com.br${legacyEntry.image.src}` } : {}),
+      headline: legacyMemoryEntry.title,
+      description: legacyMemoryEntry.summary,
+      url: `https://fradim.com.br/${legacyMemoryEntry.slug}`,
+      temporalCoverage: legacyMemoryEntry.year,
+      spatialCoverage: legacyMemoryEntry.location,
+      ...(legacyMemoryEntry.image ? { image: `https://fradim.com.br${legacyMemoryEntry.image.src}` } : {}),
       about: [
         { "@type": "Thing", name: "Memória histórica" },
         { "@type": "Thing", name: "Restauração fotográfica" },
@@ -138,31 +158,31 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         <header className={legacyStyles.hero}>
           <div className={legacyStyles.meta}>
             <span>ARQUIVO DE MEMÓRIA</span>
-            <span>{legacyEntry.year}</span>
-            <span>{legacyEntry.location}</span>
+            <span>{legacyMemoryEntry.year}</span>
+            <span>{legacyMemoryEntry.location}</span>
           </div>
-          <h1>{legacyEntry.title}</h1>
-          <p>{legacyEntry.summary}</p>
+          <h1>{legacyMemoryEntry.title}</h1>
+          <p>{legacyMemoryEntry.summary}</p>
 
-          {legacyEntry.image ? (
+          {legacyMemoryEntry.image ? (
             <figure className={legacyStyles.mediaFigure}>
               <div className={legacyStyles.mediaFrame}>
                 <img
-                  src={`${basePath}${legacyEntry.image.src}`}
-                  alt={legacyEntry.image.alt}
+                  src={`${basePath}${legacyMemoryEntry.image.src}`}
+                  alt={legacyMemoryEntry.image.alt}
                   decoding="async"
                 />
               </div>
               <figcaption className={legacyStyles.mediaCaption}>
                 <span>ARQUIVO REINTEGRADO</span>
-                <strong>{legacyEntry.image.caption}</strong>
-                <p>{legacyEntry.image.provenance}</p>
+                <strong>{legacyMemoryEntry.image.caption}</strong>
+                <p>{legacyMemoryEntry.image.provenance}</p>
               </figcaption>
             </figure>
           ) : (
             <div className={legacyStyles.mediaPlaceholder} role="note" aria-label="Estado da imagem histórica">
               <span>ASSET NÃO PUBLICADO</span>
-              <strong>{legacyEntry.mediaNote}</strong>
+              <strong>{legacyMemoryEntry.mediaNote}</strong>
             </div>
           )}
         </header>
@@ -173,7 +193,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
             <h2 id="legacy-context-title">O que sabemos sobre este registro.</h2>
           </div>
           <div className={legacyStyles.text}>
-            {legacyEntry.context.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {legacyMemoryEntry.context.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </div>
         </section>
 
@@ -182,22 +202,22 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
             <p className="eyebrow">INTERVENÇÃO VISUAL</p>
             <h2 id="legacy-intervention-title">Documento original e interpretação não são a mesma coisa.</h2>
           </div>
-          <p>{legacyEntry.intervention}</p>
+          <p>{legacyMemoryEntry.intervention}</p>
         </section>
 
         <section className={legacyStyles.source} aria-labelledby="legacy-source-title">
           <p className="eyebrow">FONTES E PISTAS DE PESQUISA</p>
           <h2 id="legacy-source-title">A página nova precisa conseguir mostrar de onde vem a informação.</h2>
           <p>
-            As referências abaixo sustentam o contexto e, quando indicado, pistas usadas durante a curadoria. {legacyEntry.image
+            As referências abaixo sustentam o contexto e, quando indicado, pistas usadas durante a curadoria. {legacyMemoryEntry.image
               ? "A reintegração do arquivo visual não transforma essas referências em atribuição automática da fotografia histórica original."
               : "O asset visual permanece fora da publicação enquanto sua situação de proveniência, data ou uso não estiver resolvida."}
           </p>
           <div className={legacyStyles.sourceLinks}>
-            <a href={legacyEntry.sourceHref} target="_blank" rel="noreferrer">{legacyEntry.sourceLabel} ↗</a>
-            {legacyEntry.researchSource ? (
-              <a href={legacyEntry.researchSource.href} target="_blank" rel="noreferrer">
-                {legacyEntry.researchSource.label} ↗
+            <a href={legacyMemoryEntry.sourceHref} target="_blank" rel="noreferrer">{legacyMemoryEntry.sourceLabel} ↗</a>
+            {legacyMemoryEntry.researchSource ? (
+              <a href={legacyMemoryEntry.researchSource.href} target="_blank" rel="noreferrer">
+                {legacyMemoryEntry.researchSource.label} ↗
               </a>
             ) : null}
           </div>
@@ -206,9 +226,9 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         <section className={legacyStyles.next} aria-labelledby="legacy-next-title">
           <p className="eyebrow">ARQUIVO EM CONSTRUÇÃO</p>
           <h2 id="legacy-next-title">
-            {legacyEntry.image ? "A imagem voltou. Agora o arquivo ganha relações." : "Preservar a URL também significa saber quando não republicar uma imagem."}
+            {legacyMemoryEntry.image ? "A imagem voltou. Agora o arquivo ganha relações." : "Preservar a URL também significa saber quando não republicar uma imagem."}
           </h2>
-          <p>{legacyEntry.mediaNote}</p>
+          <p>{legacyMemoryEntry.mediaNote}</p>
           <div className={legacyStyles.links}>
             <Link href="/memoria" prefetch={false}>Explorar Memória</Link>
             <Link href="/restauracao-fotografica" prefetch={false}>Restauração fotográfica</Link>
@@ -216,6 +236,11 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         </section>
       </main>
     );
+  }
+
+  const legacyIdeaEntry = getLegacyIdeaEntry(slug);
+  if (legacyIdeaEntry) {
+    return <LegacyIdeaPage entry={legacyIdeaEntry} />;
   }
 
   const page = pages[slug as Slug];
