@@ -3,7 +3,7 @@
 import { Html, Line, OrbitControls, Sparkles } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Mesh } from "three";
 import styles from "./UniverseExplorer.module.css";
 
@@ -42,7 +42,7 @@ const edges: [NodeId, NodeId][] = [
   ["ideias", "marcelo"], ["ideias", "spock"],
 ];
 
-function NodeOrb({ node, selected, onSelect }: { node: UniverseNode; selected: boolean; onSelect: (id: NodeId) => void }) {
+function NodeOrb({ node, selected, onSelect, compact }: { node: UniverseNode; selected: boolean; onSelect: (id: NodeId) => void; compact: boolean }) {
   const mesh = useRef<Mesh>(null);
 
   useFrame((state) => {
@@ -68,7 +68,7 @@ function NodeOrb({ node, selected, onSelect }: { node: UniverseNode; selected: b
           opacity={selected ? 0.94 : 0.72}
         />
       </mesh>
-      <Html center distanceFactor={9.5} zIndexRange={[30, 0]}>
+      <Html center distanceFactor={compact ? 11.5 : 9.5} zIndexRange={[30, 0]}>
         <button className={`${styles.label} ${selected ? styles.selected : ""}`} type="button" onClick={() => onSelect(node.id)} aria-pressed={selected}>
           <small>{node.kicker}</small>
           <strong>{node.label}</strong>
@@ -78,8 +78,17 @@ function NodeOrb({ node, selected, onSelect }: { node: UniverseNode; selected: b
   );
 }
 
-function Graph({ selected, onSelect }: { selected: NodeId; onSelect: (id: NodeId) => void }) {
-  const index = useMemo(() => new Map(nodes.map((node) => [node.id, node])), []);
+function Graph({ selected, onSelect, compact }: { selected: NodeId; onSelect: (id: NodeId) => void; compact: boolean }) {
+  const displayNodes = useMemo<UniverseNode[]>(() => {
+    if (!compact) return nodes;
+    return nodes.map((node) => ({
+      ...node,
+      position: [node.position[0] * 0.72, node.position[1] * 0.86, node.position[2] * 0.9],
+      size: Math.max(node.size * 0.92, 0.28),
+    }));
+  }, [compact]);
+
+  const index = useMemo(() => new Map(displayNodes.map((node) => [node.id, node])), [displayNodes]);
 
   return (
     <>
@@ -90,14 +99,23 @@ function Graph({ selected, onSelect }: { selected: NodeId; onSelect: (id: NodeId
         const active = from === selected || to === selected;
         return <Line key={`${from}-${to}`} points={[a.position, b.position]} color={active ? "#dbe8f5" : "#677889"} lineWidth={active ? 1.15 : 0.55} transparent opacity={active ? 0.58 : 0.18} />;
       })}
-      {nodes.map((node) => <NodeOrb key={node.id} node={node} selected={node.id === selected} onSelect={onSelect} />)}
+      {displayNodes.map((node) => <NodeOrb key={node.id} node={node} selected={node.id === selected} onSelect={onSelect} compact={compact} />)}
     </>
   );
 }
 
 export function UniverseExplorer() {
   const [selected, setSelected] = useState<NodeId>("marcelo");
+  const [compact, setCompact] = useState(false);
   const active = nodes.find((node) => node.id === selected) ?? nodes[0];
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 850px)");
+    const sync = () => setCompact(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   return (
     <section id="universo-fradim" className={styles.explorer} aria-labelledby="universe-title">
@@ -106,19 +124,35 @@ export function UniverseExplorer() {
           <p className="eyebrow">UNIVERSO FRADIM / V0.1</p>
           <h2 id="universe-title">Não leia apenas a trajetória. Navegue pelas conexões.</h2>
         </div>
-        <p className={styles.instruction}>Arraste para orbitar · role para aproximar · toque para explorar</p>
+        <p className={styles.instruction}>{compact ? "Toque em um nó · arraste para orbitar" : "Arraste para orbitar · role para aproximar · toque para explorar"}</p>
       </header>
 
       <div className={styles.stage}>
         <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
-          <Canvas dpr={[1, 1.55]} camera={{ position: [0, 0.2, 10.4], fov: 48 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
+          <Canvas
+            key={compact ? "compact" : "desktop"}
+            dpr={compact ? [1, 1.25] : [1, 1.55]}
+            camera={{ position: [0, compact ? 0.45 : 0.2, compact ? 11.8 : 10.4], fov: compact ? 52 : 48 }}
+            gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+          >
             <ambientLight intensity={0.4} />
             <directionalLight position={[2, 6, 6]} intensity={2.6} />
             <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
             <pointLight position={[5, 2, -2]} intensity={10} distance={10} />
-            <Graph selected={selected} onSelect={setSelected} />
-            <Sparkles count={110} scale={[12, 9, 6]} size={0.9} speed={0.08} opacity={0.22} />
-            <OrbitControls makeDefault enablePan={false} enableDamping dampingFactor={0.055} rotateSpeed={0.45} zoomSpeed={0.55} minDistance={7.6} maxDistance={12.5} minPolarAngle={Math.PI * 0.26} maxPolarAngle={Math.PI * 0.74} />
+            <Graph selected={selected} onSelect={setSelected} compact={compact} />
+            <Sparkles count={compact ? 72 : 110} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0.08} opacity={0.22} />
+            <OrbitControls
+              makeDefault
+              enablePan={false}
+              enableDamping
+              dampingFactor={0.055}
+              rotateSpeed={compact ? 0.35 : 0.45}
+              zoomSpeed={0.55}
+              minDistance={compact ? 9.5 : 7.6}
+              maxDistance={compact ? 14.5 : 12.5}
+              minPolarAngle={Math.PI * 0.26}
+              maxPolarAngle={Math.PI * 0.74}
+            />
           </Canvas>
         </div>
 
