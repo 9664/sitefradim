@@ -104,6 +104,11 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
   const legacyEntry = getLegacyMemoryEntry(slug);
 
   if (legacyEntry) {
+    const citations = [
+      legacyEntry.sourceHref,
+      ...(legacyEntry.researchSource ? [legacyEntry.researchSource.href] : []),
+    ];
+
     const schema = {
       "@context": "https://schema.org",
       "@type": "Article",
@@ -122,7 +127,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         name: "Marcelo Fradim",
         url: "https://fradim.com.br/sobre",
       },
-      citation: legacyEntry.sourceHref,
+      citation: citations,
     };
 
     return (
@@ -181,14 +186,21 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         </section>
 
         <section className={legacyStyles.source} aria-labelledby="legacy-source-title">
-          <p className="eyebrow">FONTE DE CONTEXTO</p>
+          <p className="eyebrow">FONTES E PISTAS DE PESQUISA</p>
           <h2 id="legacy-source-title">A página nova precisa conseguir mostrar de onde vem a informação.</h2>
           <p>
-            A fonte abaixo sustenta o contexto histórico apresentado aqui. {legacyEntry.image
-              ? "A reintegração do arquivo visual não transforma essa referência contextual em atribuição automática da fotografia histórica original."
-              : "O asset visual permanece fora da publicação enquanto sua situação de proveniência e uso não estiver resolvida."}
+            As referências abaixo sustentam o contexto e, quando indicado, pistas usadas durante a curadoria. {legacyEntry.image
+              ? "A reintegração do arquivo visual não transforma essas referências em atribuição automática da fotografia histórica original."
+              : "O asset visual permanece fora da publicação enquanto sua situação de proveniência, data ou uso não estiver resolvida."}
           </p>
-          <a href={legacyEntry.sourceHref} target="_blank" rel="noreferrer">{legacyEntry.sourceLabel} ↗</a>
+          <div className={legacyStyles.sourceLinks}>
+            <a href={legacyEntry.sourceHref} target="_blank" rel="noreferrer">{legacyEntry.sourceLabel} ↗</a>
+            {legacyEntry.researchSource ? (
+              <a href={legacyEntry.researchSource.href} target="_blank" rel="noreferrer">
+                {legacyEntry.researchSource.label} ↗
+              </a>
+            ) : null}
+          </div>
         </section>
 
         <section className={legacyStyles.next} aria-labelledby="legacy-next-title">
