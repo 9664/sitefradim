@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AIField } from "@/components/AIField";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./AIPage.module.css";
 
 export const metadata: Metadata = {
@@ -51,10 +52,7 @@ export default function AIPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="ai-title">
         <div className={styles.scene} aria-hidden="true"><AIField /></div>
@@ -93,7 +91,7 @@ export default function AIPage() {
         <h2 id="applications-title">A teoria precisa encontrar sistemas.</h2>
         <div className={styles.applicationGrid}>
           {applications.map(([category, title, text, href]) => (
-            <Link href={href} key={title}><small>{category}</small><div><h3>{title}</h3><p>{text}</p></div><span>Explorar →</span></Link>
+            <Link href={href} prefetch={false} key={title}><small>{category}</small><div><h3>{title}</h3><p>{text}</p></div><span>Explorar →</span></Link>
           ))}
         </div>
       </section>
@@ -112,7 +110,7 @@ export default function AIPage() {
         <p className="eyebrow">PRÓXIMA FRONTEIRA</p>
         <h2 id="ai-cta-title">O futuro não será decidido por quem tem acesso à IA.<span> Será decidido por quem aprender a reorganizar trabalho com ela.</span></h2>
         <p>É esse território que estou explorando hoje: agentes, context engineering, automação, desenvolvimento assistido por IA, produtos digitais e novas formas de colaboração humano-máquina.</p>
-        <div className={styles.ctaLinks}><Link href="/lab">Entrar no Lab</Link><Link href="/ideias">Ler ideias</Link><Link href="/sobre">Conhecer Marcelo</Link></div>
+        <div className={styles.ctaLinks}><Link href="/lab" prefetch={false}>Entrar no Lab</Link><Link href="/ideias" prefetch={false}>Ler ideias</Link><Link href="/sobre" prefetch={false}>Conhecer Marcelo</Link></div>
       </section>
     </main>
   );
