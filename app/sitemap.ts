@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { ideas } from "@/lib/ideas";
+import { legacyIdeaEntries } from "@/lib/legacyIdeas";
 import { legacyMemoryEntries } from "@/lib/legacyMemory";
 
 export const dynamic = "force-static";
@@ -24,6 +25,7 @@ const routes = [
   "/restauracao-fotografica",
   "/contato",
   ...legacyMemoryEntries.map((entry) => `/${entry.slug}`),
+  ...legacyIdeaEntries.map((entry) => `/${entry.slug}`),
   ...ideas.map((idea) => `/ideias/${idea.slug}`),
 ];
 
@@ -44,8 +46,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
             ? 0.85
             : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`)
               ? 0.72
-              : route.startsWith("/projetos/") || route.startsWith("/ideias/")
-                ? 0.75
-                : 0.8,
+              : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
+                ? 0.68
+                : route.startsWith("/projetos/") || route.startsWith("/ideias/")
+                  ? 0.75
+                  : 0.8,
   }));
 }
