@@ -150,6 +150,7 @@ export function TrajectoryJourney() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [renderTick, setRenderTick] = useState(0);
   const [journeyMode, setJourneyMode] = useState<JourneyMode>("desktop");
+  const [render3D, setRender3D] = useState(false);
 
   useEffect(() => {
     const compact = window.matchMedia("(max-width: 900px)");
@@ -170,6 +171,28 @@ export function TrajectoryJourney() {
   }, []);
 
   useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") {
+      setRender3D(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setRender3D(true);
+        observer.disconnect();
+      },
+      { rootMargin: "900px 0px" },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!render3D) return;
+
     let raf = 0;
 
     const update = () => {
@@ -201,7 +224,7 @@ export function TrajectoryJourney() {
       window.removeEventListener("resize", onScroll);
       if (raf) window.cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [render3D]);
 
   const jumpTo = (index: number) => {
     const section = sectionRef.current;
@@ -219,13 +242,15 @@ export function TrajectoryJourney() {
     <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} style={{ height: journeyHeight }} aria-labelledby="journey-title">
       <div className={styles.sticky}>
         <div className={styles.canvas} aria-hidden="true">
-          <Canvas frameloop="demand" dpr={[1, 1.25]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
-            <fog attach="fog" args={["#07090c", 8, 24]} />
-            <ambientLight intensity={0.42} />
-            <directionalLight position={[4, 6, 5]} intensity={2.8} />
-            <pointLight position={[-4, -2, 4]} intensity={12} distance={13} />
-            <JourneyWorld progress={progress} renderTick={renderTick} />
-          </Canvas>
+          {render3D ? (
+            <Canvas frameloop="demand" dpr={[1, 1.25]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
+              <fog attach="fog" args={["#07090c", 8, 24]} />
+              <ambientLight intensity={0.42} />
+              <directionalLight position={[4, 6, 5]} intensity={2.8} />
+              <pointLight position={[-4, -2, 4]} intensity={12} distance={13} />
+              <JourneyWorld progress={progress} renderTick={renderTick} />
+            </Canvas>
+          ) : null}
         </div>
 
         <header className={styles.heading}>
@@ -244,7 +269,7 @@ export function TrajectoryJourney() {
           <h3>{active.title}</h3>
           <strong>{active.short}</strong>
           <div>{active.body}</div>
-          <Link href={active.href}>Explorar esta etapa →</Link>
+          <Link href={active.href} prefetch={false}>Explorar esta etapa →</Link>
         </aside>
 
         <nav className={styles.steps} aria-label="Etapas da trajetória">
@@ -278,7 +303,7 @@ export function TrajectoryJourney() {
               <h3>{stage.title}</h3>
               <strong>{stage.short}</strong>
               <div>{stage.body}</div>
-              <Link href={stage.href}>Explorar esta etapa →</Link>
+              <Link href={stage.href} prefetch={false}>Explorar esta etapa →</Link>
             </article>
           ))}
         </div>
