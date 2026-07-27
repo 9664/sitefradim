@@ -13,13 +13,13 @@ permissions:
   issues: write
   pull-requests: write
 
-concurrency:
-  group: "pages-staging"
-  cancel-in-progress: true
-
 env:
   NEXT_PUBLIC_SITE_ENV: staging
   NEXT_PUBLIC_BASE_PATH: /sitefradim
+
+concurrency:
+  group: "pages-staging"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -61,6 +61,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       pages: write
       id-token: write
@@ -71,9 +73,96 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Smoke test public staging
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          for route in "" "sobre/" "spock/" "lab/" "projetos/" "ideias/"; do
+            url="${PAGE_URL}${route}"
+            echo "Checking ${url}"
+            body="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${url}")"
+            test -n "${body}"
+          done
+
+          home="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}")"
+          echo "${home}" | grep -qi "Marcelo Fradim"
+          echo "${home}" | grep -qi 'name="robots"'
+          echo "${home}" | grep -qi "noindex"
+
       - name: Publish staging URL on PR
         env:
           GH_TOKEN: ${{ github.token }}
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          gh pr comment 1 --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: home + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
+
+  visual-audit:
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+
+      - name: Capture desktop and mobile screenshots
+        run: |
+          cat > audit.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = process.env.PAGE_URL;
+          if (!base) throw new Error('PAGE_URL missing');
+          await fs.mkdir('screenshots', { recursive: true });
+
+          const targets = [
+            ['home', ''],
+            ['sobre', 'sobre/'],
+            ['spock', 'spock/'],
+            ['lab', 'lab/'],
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          try {
+            for (const [name, route] of targets) {
+              for (const device of [
+                { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+                { label: 'mobile', viewport: { width: 390, height: 844 } },
+              ]) {
+                const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+                const errors = [];
+                page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+                page.on('pageerror', err => errors.push(err.message));
+                await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
+                await page.waitForTimeout(2500);
+                await page.screenshot({ path: `screenshots/${name}-${device.label}.png`, fullPage: true });
+                if (errors.length) {
+                  await fs.writeFile(`screenshots/${name}-${device.label}-errors.txt`, errors.join('\n'));
+                }
+                await page.close();
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+          EOF
+          node audit.mjs
+
+      - name: Upload visual audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-staging-visual-audit
+          path: screenshots
+          retention-days: 3
