@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarceloCore } from "@/components/MarceloCore";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./MarceloPage.module.css";
 
 export const metadata: Metadata = {
@@ -99,10 +100,7 @@ export default function MarceloPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="marcelo-title">
         <div className={styles.scene} aria-hidden="true"><MarceloCore /></div>
@@ -166,7 +164,7 @@ export default function MarceloPage() {
         </header>
         <div className={styles.evidenceGrid}>
           {evidence.map(([category, title, description, href]) => (
-            <Link href={href} key={title}><small>{category}</small><h3>{title}</h3><span>{description} →</span></Link>
+            <Link href={href} prefetch={false} key={title}><small>{category}</small><h3>{title}</h3><span>{description} →</span></Link>
           ))}
         </div>
       </section>
@@ -176,9 +174,9 @@ export default function MarceloPage() {
         <h2 id="closing-title">A próxima fase não é sobre usar inteligência artificial.<span> É sobre descobrir o que podemos redesenhar a partir dela.</span></h2>
         <p>É nesse território que meus projetos atuais se encontram: IA aplicada, agentes, automação, sistemas, marketing, experiência e experimentação contínua.</p>
         <div className={styles.closingLinks}>
-          <Link href="/spock">Conhecer Spock</Link>
-          <Link href="/projetos">Explorar projetos</Link>
-          <Link href="/inteligencia-artificial">IA & inovação</Link>
+          <Link href="/spock" prefetch={false}>Conhecer Spock</Link>
+          <Link href="/projetos" prefetch={false}>Explorar projetos</Link>
+          <Link href="/inteligencia-artificial" prefetch={false}>IA & inovação</Link>
         </div>
       </section>
     </main>
