@@ -12,7 +12,8 @@
     "generate:cloudflare": "node scripts/generate-cloudflare-routing.mjs",
     "test:cloudflare-worker": "node scripts/test-cloudflare-worker.mjs",
     "validate:cloudflare-output": "node scripts/validate-cloudflare-output.mjs",
-    "build:cloudflare": "npm run validate:legacy && npm run validate:legacy-media && npm run generate:cloudflare && npm run test:cloudflare-worker && npm run build && npm run validate:cloudflare-output"
+    "validate:production-seo": "node scripts/production-seo-preflight.mjs",
+    "build:cloudflare": "npm run validate:legacy && npm run validate:legacy-media && npm run generate:cloudflare && npm run test:cloudflare-worker && npm run build && npm run validate:cloudflare-output && npm run validate:production-seo"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
