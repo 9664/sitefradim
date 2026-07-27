@@ -1,7 +1,7 @@
 "use client";
 
 import { Line, Sparkles } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
@@ -54,17 +54,17 @@ function Artifact({ index, progress }: { index: number; progress: MutableRefObje
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (!group.current || !mesh.current) return;
-    const stageProgress = progress.current * (stages.length - 1);
+    const p = progress.current;
+    const stageProgress = p * (stages.length - 1);
     const distance = Math.abs(stageProgress - index);
     const focus = Math.max(0, 1 - distance);
 
-    group.current.rotation.y += delta * (0.08 + index * 0.012);
-    group.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.22 + index) * 0.12;
-    const scale = 0.82 + focus * 0.42;
-    group.current.scale.setScalar(scale);
-    mesh.current.rotation.z += delta * (0.045 + focus * 0.09);
+    group.current.rotation.y = index * 0.18 + p * (0.5 + index * 0.05);
+    group.current.rotation.x = Math.sin(p * Math.PI * 1.8 + index) * 0.12;
+    group.current.scale.setScalar(0.82 + focus * 0.42);
+    mesh.current.rotation.z = index * 0.12 + p * (0.42 + focus * 0.35);
   });
 
   const x = index % 2 === 0 ? -1.25 : 1.25;
@@ -109,8 +109,13 @@ function Artifact({ index, progress }: { index: number; progress: MutableRefObje
   );
 }
 
-function JourneyWorld({ progress }: { progress: MutableRefObject<number> }) {
+function JourneyWorld({ progress, renderTick }: { progress: MutableRefObject<number>; renderTick: number }) {
   const rig = useRef<Group>(null);
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    invalidate();
+  }, [invalidate, renderTick]);
 
   useFrame((state) => {
     const p = progress.current;
@@ -118,9 +123,7 @@ function JourneyWorld({ progress }: { progress: MutableRefObject<number> }) {
     const targetX = Math.sin(p * Math.PI * 2.2) * 0.55;
     const targetY = Math.cos(p * Math.PI * 1.4) * 0.18;
 
-    state.camera.position.z += (targetZ - state.camera.position.z) * 0.055;
-    state.camera.position.x += (targetX - state.camera.position.x) * 0.04;
-    state.camera.position.y += (targetY - state.camera.position.y) * 0.04;
+    state.camera.position.set(targetX, targetY, targetZ);
     state.camera.lookAt(0, 0, targetZ - 5.8);
 
     if (rig.current) {
@@ -136,7 +139,7 @@ function JourneyWorld({ progress }: { progress: MutableRefObject<number> }) {
       {stages.map((_, index) => (
         <Artifact key={index} index={index} progress={progress} />
       ))}
-      <Sparkles count={140} scale={[11, 7, spacing * stages.length]} size={0.8} speed={0.06} opacity={0.2} />
+      <Sparkles count={100} scale={[11, 7, spacing * stages.length]} size={0.8} speed={0} opacity={0.2} />
     </group>
   );
 }
@@ -145,6 +148,7 @@ export function TrajectoryJourney() {
   const sectionRef = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [renderTick, setRenderTick] = useState(0);
   const [journeyMode, setJourneyMode] = useState<JourneyMode>("desktop");
 
   useEffect(() => {
@@ -181,6 +185,7 @@ export function TrajectoryJourney() {
 
       const nextIndex = Math.min(stages.length - 1, Math.max(0, Math.round(clamped * (stages.length - 1))));
       setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+      setRenderTick((current) => current + 1);
     };
 
     const onScroll = () => {
@@ -214,12 +219,12 @@ export function TrajectoryJourney() {
     <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} style={{ height: journeyHeight }} aria-labelledby="journey-title">
       <div className={styles.sticky}>
         <div className={styles.canvas} aria-hidden="true">
-          <Canvas dpr={[1, 1.45]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
+          <Canvas frameloop="demand" dpr={[1, 1.25]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
             <fog attach="fog" args={["#07090c", 8, 24]} />
             <ambientLight intensity={0.42} />
             <directionalLight position={[4, 6, 5]} intensity={2.8} />
             <pointLight position={[-4, -2, 4]} intensity={12} distance={13} />
-            <JourneyWorld progress={progress} />
+            <JourneyWorld progress={progress} renderTick={renderTick} />
           </Canvas>
         </div>
 
