@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./PressPage.module.css";
 
 export const metadata: Metadata = {
@@ -90,10 +91,7 @@ export default function PressPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="press-title">
         <p className="eyebrow">IMPRENSA / EVIDÊNCIA EXTERNA</p>
@@ -139,7 +137,7 @@ export default function PressPage() {
         <p className="eyebrow">REGRA DE CREDIBILIDADE</p>
         <h2 id="statement-title">Autoridade não será fabricada.<span> Será documentada.</span></h2>
         <p>O objetivo deste projeto é tornar mais fácil encontrar, verificar e conectar o que já foi construído — e criar novos trabalhos dignos de serem citados por fontes independentes.</p>
-        <Link href="/sobre">Voltar à trajetória →</Link>
+        <Link href="/sobre" prefetch={false}>Voltar à trajetória →</Link>
       </section>
     </main>
   );
