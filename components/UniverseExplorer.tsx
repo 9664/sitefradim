@@ -3,7 +3,7 @@
 import { Html, Line, OrbitControls, Sparkles } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./UniverseExplorer.module.css";
 
 type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "vibe" | "lab" | "ideias";
@@ -108,10 +108,12 @@ function Graph({ selected, onSelect, compact, fullscreen }: { selected: NodeId; 
 }
 
 export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVariant }) {
+  const sectionRef = useRef<HTMLElement>(null);
   const [selected, setSelected] = useState<NodeId>("marcelo");
   const [compact, setCompact] = useState(false);
-  const active = nodes.find((node) => node.id === selected) ?? nodes[0];
   const fullscreen = variant === "fullscreen";
+  const [render3D, setRender3D] = useState(fullscreen);
+  const active = nodes.find((node) => node.id === selected) ?? nodes[0];
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 850px)");
@@ -120,6 +122,31 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (fullscreen) {
+      setRender3D(true);
+      return;
+    }
+
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === "undefined") {
+      setRender3D(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setRender3D(true);
+        observer.disconnect();
+      },
+      { rootMargin: "800px 0px" },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [fullscreen]);
 
   const cameraZ = compact ? (fullscreen ? 13.9 : 11.8) : fullscreen ? 11.5 : 10.4;
   const cameraFov = compact ? (fullscreen ? 50 : 52) : 48;
@@ -130,7 +157,7 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
     : [0, 0, 0];
 
   return (
-    <section id="universo-fradim" className={styles.explorer} data-variant={variant} aria-labelledby="universe-title">
+    <section ref={sectionRef} id="universo-fradim" className={styles.explorer} data-variant={variant} aria-labelledby="universe-title">
       <header className={styles.heading}>
         <div>
           <p className="eyebrow">UNIVERSO FRADIM / V0.1</p>
@@ -141,40 +168,42 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
 
       <div className={styles.stage}>
         <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
-          <Canvas
-            key={`${variant}-${compact ? "compact" : "desktop"}`}
-            frameloop="demand"
-            dpr={compact ? [1, 1.15] : [1, 1.35]}
-            camera={{ position: [0, compact ? 0.45 : 0.2, cameraZ], fov: cameraFov }}
-            gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
-          >
-            <ambientLight intensity={0.4} />
-            <directionalLight position={[2, 6, 6]} intensity={2.6} />
-            <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
-            <pointLight position={[5, 2, -2]} intensity={10} distance={10} />
-            <Graph selected={selected} onSelect={setSelected} compact={compact} fullscreen={fullscreen} />
-            <Sparkles count={compact ? (fullscreen ? 48 : 60) : 82} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0} opacity={0.22} />
-            <OrbitControls
-              makeDefault
-              target={target}
-              enablePan={false}
-              enableDamping
-              dampingFactor={0.055}
-              rotateSpeed={compact ? 0.35 : 0.45}
-              zoomSpeed={0.55}
-              minDistance={compact ? (fullscreen ? 11.2 : 9.5) : fullscreen ? 9 : 7.6}
-              maxDistance={compact ? 16 : fullscreen ? 14 : 12.5}
-              minPolarAngle={Math.PI * 0.26}
-              maxPolarAngle={Math.PI * 0.74}
-            />
-          </Canvas>
+          {render3D ? (
+            <Canvas
+              key={`${variant}-${compact ? "compact" : "desktop"}`}
+              frameloop="demand"
+              dpr={compact ? [1, 1.15] : [1, 1.35]}
+              camera={{ position: [0, compact ? 0.45 : 0.2, cameraZ], fov: cameraFov }}
+              gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+            >
+              <ambientLight intensity={0.4} />
+              <directionalLight position={[2, 6, 6]} intensity={2.6} />
+              <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
+              <pointLight position={[5, 2, -2]} intensity={10} distance={10} />
+              <Graph selected={selected} onSelect={setSelected} compact={compact} fullscreen={fullscreen} />
+              <Sparkles count={compact ? (fullscreen ? 48 : 60) : 82} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0} opacity={0.22} />
+              <OrbitControls
+                makeDefault
+                target={target}
+                enablePan={false}
+                enableDamping
+                dampingFactor={0.055}
+                rotateSpeed={compact ? 0.35 : 0.45}
+                zoomSpeed={0.55}
+                minDistance={compact ? (fullscreen ? 11.2 : 9.5) : fullscreen ? 9 : 7.6}
+                maxDistance={compact ? 16 : fullscreen ? 14 : 12.5}
+                minPolarAngle={Math.PI * 0.26}
+                maxPolarAngle={Math.PI * 0.74}
+              />
+            </Canvas>
+          ) : null}
         </div>
 
         <aside className={styles.panel} aria-live="polite">
           <span className={styles.panelKicker}>{active.kicker}</span>
           <h3>{active.label}</h3>
           <p>{active.description}</p>
-          <Link href={active.href}>Entrar neste território →</Link>
+          <Link href={active.href} prefetch={false}>Entrar neste território →</Link>
           <div className={styles.coordinate} aria-hidden="true">{active.position.map((value) => value.toFixed(2)).join(" / ")}</div>
         </aside>
 
