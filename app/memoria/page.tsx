@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MemoryField } from "@/components/MemoryField";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./MemoryPage.module.css";
 
 export const metadata: Metadata = {
@@ -100,10 +101,7 @@ export default function MemoryPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/universo">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="memory-title">
         <div className={styles.scene} aria-hidden="true"><MemoryField /></div>
@@ -188,10 +186,10 @@ export default function MemoryPage() {
         <h2 id="memory-closing-title">IA pode reconstruir uma imagem.<span> A responsabilidade é reconstruir também o contexto.</span></h2>
         <p>É esse território que me interessa hoje: usar novas ferramentas para ampliar acesso, interpretação e encantamento sem apagar a diferença entre documento, restauração e hipótese visual.</p>
         <div className={styles.closingLinks}>
-          <Link href="/projetos/amo-franca">Amo Franca</Link>
-          <Link href="/inteligencia-artificial">IA & inovação</Link>
-          <Link href="/imprensa">Evidências externas</Link>
-          <Link href="/universo">Voltar ao Universo</Link>
+          <Link href="/projetos/amo-franca" prefetch={false}>Amo Franca</Link>
+          <Link href="/inteligencia-artificial" prefetch={false}>IA & inovação</Link>
+          <Link href="/imprensa" prefetch={false}>Evidências externas</Link>
+          <Link href="/universo" prefetch={false}>Voltar ao Universo</Link>
         </div>
       </section>
     </main>
