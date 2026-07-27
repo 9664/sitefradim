@@ -2,6 +2,8 @@ import Link from "next/link";
 import { legacyMemoryEntries } from "@/lib/legacyMemory";
 import styles from "./MemoryArchiveIndex.module.css";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 function statusLabel(slug: string, hasImage: boolean) {
   if (hasImage) return "MÍDIA REINTEGRADA";
   if (slug === "av-central-rio-de-janeiro-em-1910") return "PROVENIÊNCIA EM PESQUISA";
@@ -32,7 +34,7 @@ export function MemoryArchiveIndex() {
           >
             <div className={styles.visual}>
               {entry.image ? (
-                <img src={entry.image.src} alt="" loading="lazy" decoding="async" />
+                <img src={`${basePath}${entry.image.src}`} alt="" loading="lazy" decoding="async" />
               ) : (
                 <div className={styles.noImage} aria-hidden="true">
                   <span>{entry.year}</span>
