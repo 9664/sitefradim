@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SiteNav } from "./SiteNav";
 
 const UniverseScene = dynamic(
   () => import("./UniverseScene").then((module) => module.UniverseScene),
@@ -44,18 +45,7 @@ export function ImmersiveHero() {
         {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
       </div>
 
-      <nav className="top-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/" prefetch={false} aria-label="MF. Marcelo Fradim — início">
-          MF<span className="brand-dot">.</span>
-        </Link>
-        <div className="nav-links">
-          <Link href="/sobre" prefetch={false}>Marcelo</Link>
-          <Link href="/spock" prefetch={false}>Spock</Link>
-          <Link href="/lab" prefetch={false}>Lab</Link>
-          <Link href="/projetos" prefetch={false}>Work</Link>
-          <Link href="/ideias" prefetch={false}>Ideias</Link>
-        </div>
-      </nav>
+      <SiteNav mode="home" />
 
       <div className="hero-copy">
         <p className="eyebrow">MARCELO FRADIM × SPOCK</p>
