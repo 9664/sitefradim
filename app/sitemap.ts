@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { ideas } from "@/lib/ideas";
 
+export const dynamic = "force-static";
+
 const isStaging = process.env.NEXT_PUBLIC_SITE_ENV === "staging";
 
 const routes = [
