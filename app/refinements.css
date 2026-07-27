@@ -1,0 +1,66 @@
+/* Cross-page polish layered after the core styles. */
+
+@media (max-width: 850px) {
+  .top-nav {
+    padding: 1.05rem 1rem;
+    background: linear-gradient(180deg, rgba(7, 9, 12, 0.82), rgba(7, 9, 12, 0.42));
+  }
+
+  .brand {
+    font-size: 1.05rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-size: 0.64rem;
+    letter-spacing: 0.11em;
+  }
+
+  .nav-links a:nth-child(n + 4) {
+    display: none;
+  }
+
+  .eyebrow {
+    margin-bottom: 1rem;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    letter-spacing: 0.19em;
+  }
+
+  .hero-intro {
+    font-size: 1.04rem;
+    line-height: 1.7;
+  }
+
+  .primary-action,
+  .secondary-action {
+    min-height: 46px;
+    font-size: 0.72rem;
+  }
+
+  .territory-card p,
+  .manifesto > p:not(.eyebrow) {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .back-home {
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav-links {
+    gap: 0.72rem;
+  }
+
+  .nav-links a {
+    font-size: 0.6rem;
+  }
+}
