@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { ideas } from "@/lib/ideas";
 
 const routes = [
   "",
@@ -15,6 +16,7 @@ const routes = [
   "/imprensa",
   "/memoria",
   "/contato",
+  ...ideas.map((idea) => `/ideias/${idea.slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -22,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((route) => ({
     url: `https://fradim.com.br${route}`,
     lastModified: now,
-    changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : route.startsWith("/projetos/") ? 0.75 : 0.8,
+    changeFrequency: route === "" || route === "/ideias" ? "weekly" : "monthly",
+    priority: route === "" ? 1 : route.startsWith("/projetos/") || route.startsWith("/ideias/") ? 0.75 : 0.8,
   }));
 }
