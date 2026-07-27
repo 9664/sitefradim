@@ -41,6 +41,9 @@ jobs:
       - name: Verify generated routing is committed
         run: git diff --exit-code -- public/_redirects worker/generated-legacy-removals.mjs
 
+      - name: Test Cloudflare legacy worker
+        run: npm run test:cloudflare-worker
+
       - name: Typecheck
         run: npm run typecheck
 
