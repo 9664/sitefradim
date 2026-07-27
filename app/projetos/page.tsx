@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNav } from "@/components/SiteNav";
 import styles from "./ProjectsPage.module.css";
 
 export const metadata: Metadata = {
@@ -72,10 +73,7 @@ export default function ProjectsPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="projects-title">
         <p className="eyebrow">WORK / SISTEMAS + INICIATIVAS</p>
@@ -90,7 +88,7 @@ export default function ProjectsPage() {
         </header>
         <div className={styles.grid}>
           {projects.map((project) => (
-            <Link className={styles.card} href={project.href} key={project.title}>
+            <Link className={styles.card} href={project.href} prefetch={false} key={project.title}>
               <div className={styles.top}><span>{project.index}</span><span className={styles.status}>{project.status}</span></div>
               <div><h3>{project.title}</h3><p>{project.text}</p><div className={styles.tags}>{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div></div>
               <span className={styles.open}>Abrir projeto →</span>
@@ -113,7 +111,7 @@ export default function ProjectsPage() {
         <p className="eyebrow">BUILD → TEST → LEARN</p>
         <h2 id="projects-cta-title">Nem tudo precisa virar empresa.<span> Tudo precisa gerar aprendizado.</span></h2>
         <p>O Lab reúne os experimentos menores e interfaces que não precisam esperar um projeto completo para serem testados.</p>
-        <div className={styles.ctaLinks}><Link href="/lab">Entrar no Lab</Link><Link href="/inteligencia-artificial">Ver visão de IA</Link></div>
+        <div className={styles.ctaLinks}><Link href="/lab" prefetch={false}>Entrar no Lab</Link><Link href="/inteligencia-artificial" prefetch={false}>Ver visão de IA</Link></div>
       </section>
     </main>
   );
