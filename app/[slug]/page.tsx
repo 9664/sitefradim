@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav } from "@/components/SiteNav";
+import { getLegacyMemoryEntry, legacyMemoryEntries } from "@/lib/legacyMemory";
+import legacyStyles from "./LegacyMemoryPage.module.css";
 
 const pages = {
   sobre: {
@@ -58,22 +61,122 @@ const pages = {
 type Slug = keyof typeof pages;
 
 export function generateStaticParams() {
-  return Object.keys(pages).map((slug) => ({ slug }));
+  return [
+    ...Object.keys(pages).map((slug) => ({ slug })),
+    ...legacyMemoryEntries.map((entry) => ({ slug: entry.slug })),
+  ];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const page = pages[slug as Slug];
-  if (!page) return {};
+  if (page) {
+    return {
+      title: page.eyebrow === "MARCELO" ? "Sobre" : page.eyebrow,
+      description: page.intro,
+      alternates: { canonical: `/${slug}` },
+    };
+  }
+
+  const legacyEntry = getLegacyMemoryEntry(slug);
+  if (!legacyEntry) return {};
+
   return {
-    title: page.eyebrow === "MARCELO" ? "Sobre" : page.eyebrow,
-    description: page.intro,
-    alternates: { canonical: `/${slug}` },
+    title: `${legacyEntry.title} — Arquivo de Memória`,
+    description: legacyEntry.summary,
+    alternates: { canonical: `/${legacyEntry.slug}` },
+    openGraph: {
+      type: "article",
+      title: legacyEntry.title,
+      description: legacyEntry.summary,
+      url: `https://fradim.com.br/${legacyEntry.slug}`,
+    },
   };
 }
 
 export default async function TerritoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const legacyEntry = getLegacyMemoryEntry(slug);
+
+  if (legacyEntry) {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: legacyEntry.title,
+      description: legacyEntry.summary,
+      url: `https://fradim.com.br/${legacyEntry.slug}`,
+      temporalCoverage: legacyEntry.year,
+      spatialCoverage: legacyEntry.location,
+      about: [
+        { "@type": "Thing", name: "Memória histórica" },
+        { "@type": "Thing", name: "Restauração fotográfica" },
+      ],
+      author: {
+        "@type": "Person",
+        name: "Marcelo Fradim",
+        url: "https://fradim.com.br/sobre",
+      },
+      citation: legacyEntry.sourceHref,
+    };
+
+    return (
+      <main className={legacyStyles.page}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <SiteNav backHref="/memoria" backLabel="Memória" />
+
+        <header className={legacyStyles.hero}>
+          <div className={legacyStyles.meta}>
+            <span>ARQUIVO DE MEMÓRIA</span>
+            <span>{legacyEntry.year}</span>
+            <span>{legacyEntry.location}</span>
+          </div>
+          <h1>{legacyEntry.title}</h1>
+          <p>{legacyEntry.summary}</p>
+
+          <div className={legacyStyles.mediaPlaceholder} role="note" aria-label="Imagem histórica em processo de curadoria">
+            <span>IMAGEM EM CURADORIA</span>
+            <strong>O registro visual será reintegrado após a revisão do acervo original. Esta página já preserva o endereço histórico sem depender de arquivos ou código do WordPress legado.</strong>
+          </div>
+        </header>
+
+        <section className={legacyStyles.context} aria-labelledby="legacy-context-title">
+          <div>
+            <p className="eyebrow">CONTEXTO DOCUMENTADO</p>
+            <h2 id="legacy-context-title">O que sabemos sobre este registro.</h2>
+          </div>
+          <div className={legacyStyles.text}>
+            {legacyEntry.context.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
+        </section>
+
+        <section className={legacyStyles.intervention} aria-labelledby="legacy-intervention-title">
+          <div>
+            <p className="eyebrow">INTERVENÇÃO VISUAL</p>
+            <h2 id="legacy-intervention-title">Documento original e interpretação não são a mesma coisa.</h2>
+          </div>
+          <p>{legacyEntry.intervention}</p>
+        </section>
+
+        <section className={legacyStyles.source} aria-labelledby="legacy-source-title">
+          <p className="eyebrow">FONTE DE CONTEXTO</p>
+          <h2 id="legacy-source-title">A página nova precisa conseguir mostrar de onde vem a informação.</h2>
+          <p>A fonte abaixo sustenta o contexto histórico apresentado aqui. A proveniência específica do arquivo fotográfico será adicionada quando o asset visual for reincorporado ao novo acervo.</p>
+          <a href={legacyEntry.sourceHref} target="_blank" rel="noreferrer">{legacyEntry.sourceLabel} ↗</a>
+        </section>
+
+        <section className={legacyStyles.next} aria-labelledby="legacy-next-title">
+          <p className="eyebrow">ARQUIVO EM CONSTRUÇÃO</p>
+          <h2 id="legacy-next-title">Preservar a URL é só o primeiro passo.</h2>
+          <p>O próximo estágio é reintegrar a imagem aprovada, registrar sua origem e conectar este item a outros registros relacionados do acervo.</p>
+          <div className={legacyStyles.links}>
+            <Link href="/memoria" prefetch={false}>Explorar Memória</Link>
+            <Link href="/restauracao-fotografica" prefetch={false}>Restauração fotográfica</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   const page = pages[slug as Slug];
   if (!page) notFound();
 
