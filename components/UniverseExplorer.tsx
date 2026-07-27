@@ -100,7 +100,7 @@ export function UniverseExplorer() {
   const active = nodes.find((node) => node.id === selected) ?? nodes[0];
 
   return (
-    <section className={styles.explorer} aria-labelledby="universe-title">
+    <section id="universo-fradim" className={styles.explorer} aria-labelledby="universe-title">
       <header className={styles.heading}>
         <div>
           <p className="eyebrow">UNIVERSO FRADIM / V0.1</p>
