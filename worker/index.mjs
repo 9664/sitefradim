@@ -1,14 +1,14 @@
 import { legacyRemovals } from "./generated-legacy-removals.mjs";
 
-const removalMap = new Map(legacyRemovals.map((rule) => [rule.source, rule]));
-
-function normalizePathname(pathname) {
+export function normalizePathname(pathname) {
   if (pathname === "/") return pathname;
   return pathname.endsWith("/") ? pathname : `${pathname}/`;
 }
 
-export default {
-  async fetch(request, env) {
+export function createLegacyHandler(removals = legacyRemovals) {
+  const removalMap = new Map(removals.map((rule) => [rule.source, rule]));
+
+  return async function handleRequest(request, env) {
     const url = new URL(request.url);
     const pathname = normalizePathname(url.pathname);
     const rule = removalMap.get(pathname);
@@ -25,5 +25,11 @@ export default {
     }
 
     return env.ASSETS.fetch(request);
-  },
+  };
+}
+
+const handleRequest = createLegacyHandler();
+
+export default {
+  fetch: handleRequest,
 };
