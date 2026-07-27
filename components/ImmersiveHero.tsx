@@ -40,7 +40,7 @@ export function ImmersiveHero() {
           artificial aprendem a construir juntos.
         </p>
         <div className="hero-actions">
-          <Link className="primary-action" href="/sobre">Entrar no universo</Link>
+          <Link className="primary-action" href="/universo">Explorar o universo</Link>
           <Link className="secondary-action" href="/spock">Quem é Spock?</Link>
         </div>
       </div>
