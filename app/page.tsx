@@ -69,7 +69,7 @@ export default function Home() {
 
         <div className="territory-grid">
           {territories.map(([name, description, href], index) => (
-            <Link className="territory-card" href={href} key={name}>
+            <Link className="territory-card" href={href} prefetch={false} key={name}>
               <span className="territory-index">0{index + 1}</span>
               <h3>{name}</h3>
               <p>{description}</p>
@@ -97,7 +97,7 @@ export default function Home() {
         <p className="eyebrow">HUMANO + IA</p>
         <h2 id="manifesto-title">Não é sobre substituir o pensamento humano.</h2>
         <p>É sobre ampliar a capacidade de pensar, construir, testar e transformar.</p>
-        <Link className="text-link" href="/spock">Descobrir quem é Spock →</Link>
+        <Link className="text-link" href="/spock" prefetch={false}>Descobrir quem é Spock →</Link>
       </section>
     </main>
   );
