@@ -103,6 +103,8 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
+      issues: write
+      pull-requests: write
     env:
       PAGE_URL: ${{ needs.deploy.outputs.page_url }}
     steps:
@@ -166,3 +168,9 @@ jobs:
           name: fradim-staging-visual-audit
           path: screenshots
           retention-days: 3
+
+      - name: Publish visual audit run on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Sobre, Spock e Lab ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
