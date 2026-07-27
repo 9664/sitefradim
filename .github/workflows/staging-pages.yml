@@ -156,6 +156,12 @@ jobs:
                   document.documentElement.style.scrollBehavior = 'auto';
                   document.body.style.scrollBehavior = 'auto';
                 });
+
+                if (name === 'home' && device.label === 'mobile') {
+                  await page.locator('.hero').dispatchEvent('pointerdown');
+                  await page.locator('.hero-scene canvas').waitFor({ state: 'visible', timeout: 12000 });
+                }
+
                 await page.waitForTimeout(2500);
                 await page.screenshot({ path: `screenshots/${name}-${device.label}.png`, fullPage: true });
 
@@ -216,7 +222,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Universo full-screen, Universo da Home, 5 estágios da trajetória, Sobre, Spock, Lab e Memória ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home (incluindo ativação WebGL por gesto no mobile), Universo full-screen, Universo da Home, 5 estágios da trajetória, Sobre, Spock, Lab e Memória ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
 
   performance-audit:
     runs-on: ubuntu-latest
