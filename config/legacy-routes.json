@@ -59,26 +59,35 @@
       "reason": "Texto autoral antigo preservado no próprio slug como síntese editorial; definições e passagens de terceiros do post legado não são republicadas."
     },
     {
+      "source": "/campanhas/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "A galeria antiga continha acervo visual legítimo de campanhas e trabalhos de diferentes fases. O endereço é preservado como arquivo em curadoria, sem importar automaticamente os assets do WordPress."
+    },
+    {
       "source": "/quemsou/",
       "action": "redirect",
       "status": 301,
       "target": "/restauracao-fotografica/",
       "reason": "A página antiga 'Quem Sou' é, na prática, uma apresentação do trabalho de colorização/restauração de fotografias. A landing /restauracao-fotografica preserva a mesma intenção com conteúdo atual e semanticamente equivalente."
-    }
-  ],
-  "pending": [
-    {
-      "source": "/campanhas/",
-      "reason": "Galeria antiga sem equivalente semântico exato. Avaliar backlinks e valor de arquivo antes de preservar ou redirecionar."
-    },
-    {
-      "source": "/tag/franca-sp/",
-      "reason": "Taxonomia do WordPress. Avaliar se existe tráfego/backlinks suficientes para justificar redirect para um futuro índice de Memória."
     },
     {
       "source": "/fotos/",
-      "reason": "Rota atualmente comprometida e inadequada para transferência automática de sinais. Revisar conteúdo legítimo histórico antes de decidir entre remoção 410/404 ou preservação seletiva de itens individuais."
+      "action": "remove",
+      "status": 410,
+      "target": null,
+      "reason": "A rota pública está comprometida e não deve transferir sinais para páginas novas. Conteúdo legítimo será preservado seletivamente por item, não por esta listagem contaminada."
     },
+    {
+      "source": "/tag/franca-sp/",
+      "action": "remove",
+      "status": 410,
+      "target": null,
+      "reason": "Taxonomia antiga atualmente vazia e sem conteúdo próprio equivalente na nova arquitetura. Um redirect amplo criaria equivalência artificial; a rota deve ser encerrada."
+    }
+  ],
+  "pending": [
     {
       "source": "/crianca-decada-de-60/",
       "reason": "Registro visual de pessoa identificável com proveniência e condições de publicação ainda não confirmadas. Não migrar automaticamente sem revisar o asset e seu contexto."
