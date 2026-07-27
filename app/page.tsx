@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { ImmersiveHero } from "@/components/ImmersiveHero";
+import { UniverseExplorer } from "@/components/UniverseExplorer";
 
 const territories = [
-  ["Marcelo", "Trajetória, pensamento e autoridade."],
-  ["Spock", "A colaboração entre humano e inteligência artificial."],
-  ["Lab", "Agentes, protótipos, experimentos e pesquisa."],
-  ["Work", "Projetos reais, produtos e transformação de negócios."],
-  ["Ideias", "Ensaios, artigos, provocações e diálogos."],
-  ["Memória", "Cultura, fotografia histórica e preservação digital."],
+  ["Marcelo", "Trajetória, pensamento e autoridade.", "/sobre"],
+  ["Spock", "A colaboração entre humano e inteligência artificial.", "/spock"],
+  ["Lab", "Agentes, protótipos, experimentos e pesquisa.", "/lab"],
+  ["Work", "Projetos reais, produtos e transformação de negócios.", "/projetos"],
+  ["Ideias", "Ensaios, artigos, provocações e diálogos.", "/ideias"],
+  ["Memória", "Cultura, fotografia histórica e preservação digital.", "/memoria"],
 ] as const;
 
 const personSchema = {
@@ -55,19 +56,22 @@ export default function Home() {
         </h2>
       </section>
 
+      <UniverseExplorer />
+
       <section className="territories" aria-labelledby="territories-title">
         <header className="section-heading">
-          <p className="eyebrow">EXPLORE</p>
-          <h2 id="territories-title">Um universo, seis territórios.</h2>
+          <p className="eyebrow">EXPLORE SEM 3D</p>
+          <h2 id="territories-title">O mesmo universo, por caminhos diretos.</h2>
         </header>
 
         <div className="territory-grid">
-          {territories.map(([name, description], index) => (
-            <article className="territory-card" key={name}>
+          {territories.map(([name, description, href], index) => (
+            <Link className="territory-card" href={href} key={name}>
               <span className="territory-index">0{index + 1}</span>
               <h3>{name}</h3>
               <p>{description}</p>
-            </article>
+              <span className="territory-arrow" aria-hidden="true">↗</span>
+            </Link>
           ))}
         </div>
       </section>
