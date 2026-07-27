@@ -125,7 +125,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
 
   if (legacyMemoryEntry) {
     const citations = [
-      legacyMemoryEntry.sourceHref,
+      ...(legacyMemoryEntry.sourceHref ? [legacyMemoryEntry.sourceHref] : []),
       ...(legacyMemoryEntry.researchSource ? [legacyMemoryEntry.researchSource.href] : []),
     ];
 
@@ -147,7 +147,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
         name: "Marcelo Fradim",
         url: "https://fradim.com.br/sobre",
       },
-      citation: citations,
+      ...(citations.length ? { citation: citations } : {}),
     };
 
     return (
@@ -209,18 +209,24 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
           <p className="eyebrow">FONTES E PISTAS DE PESQUISA</p>
           <h2 id="legacy-source-title">A página nova precisa conseguir mostrar de onde vem a informação.</h2>
           <p>
-            As referências abaixo sustentam o contexto e, quando indicado, pistas usadas durante a curadoria. {legacyMemoryEntry.image
-              ? "A reintegração do arquivo visual não transforma essas referências em atribuição automática da fotografia histórica original."
-              : "O asset visual permanece fora da publicação enquanto sua situação de proveniência, data ou uso não estiver resolvida."}
+            {legacyMemoryEntry.sourceNote ?? (
+              <>As referências abaixo sustentam o contexto e, quando indicado, pistas usadas durante a curadoria. {legacyMemoryEntry.image
+                ? "A reintegração do arquivo visual não transforma essas referências em atribuição automática da fotografia histórica original."
+                : "O asset visual permanece fora da publicação enquanto sua situação de proveniência, data ou uso não estiver resolvida."}</>
+            )}
           </p>
-          <div className={legacyStyles.sourceLinks}>
-            <a href={legacyMemoryEntry.sourceHref} target="_blank" rel="noreferrer">{legacyMemoryEntry.sourceLabel} ↗</a>
-            {legacyMemoryEntry.researchSource ? (
-              <a href={legacyMemoryEntry.researchSource.href} target="_blank" rel="noreferrer">
-                {legacyMemoryEntry.researchSource.label} ↗
-              </a>
-            ) : null}
-          </div>
+          {legacyMemoryEntry.sourceHref || legacyMemoryEntry.researchSource ? (
+            <div className={legacyStyles.sourceLinks}>
+              {legacyMemoryEntry.sourceHref && legacyMemoryEntry.sourceLabel ? (
+                <a href={legacyMemoryEntry.sourceHref} target="_blank" rel="noreferrer">{legacyMemoryEntry.sourceLabel} ↗</a>
+              ) : null}
+              {legacyMemoryEntry.researchSource ? (
+                <a href={legacyMemoryEntry.researchSource.href} target="_blank" rel="noreferrer">
+                  {legacyMemoryEntry.researchSource.label} ↗
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </section>
 
         <section className={legacyStyles.next} aria-labelledby="legacy-next-title">
