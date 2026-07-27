@@ -18,8 +18,9 @@ export type LegacyMemoryEntry = {
   summary: string;
   context: string[];
   intervention: string;
-  sourceLabel: string;
-  sourceHref: string;
+  sourceLabel?: string;
+  sourceHref?: string;
+  sourceNote?: string;
   researchSource?: LegacyMemorySource;
   image?: LegacyMemoryImage;
   mediaNote: string;
@@ -111,11 +112,29 @@ export const legacyMemoryEntries: LegacyMemoryEntry[] = [
       "A página antiga do Fradim.com.br identificava o registro visual como Copacabana, Rio de Janeiro, nos anos 40. A referência externa desta nova página é usada para contextualizar o bairro e o período, não para afirmar que o item do acervo institucional é necessariamente a fotografia original colorizada por Marcelo.",
     ],
     intervention:
-      "A versão colorizada existente no acervo antigo foi localizada durante a migração, mas a fotografia de base mantém marca visível de Corbis/Getty Images. Por isso, o arquivo foi rejeitado para republicação no novo Fradim.com.br.",
+      "A versão colorizada existente no acervo antigo foi localizada durante a migração, mas a fotografia de base mantém marca visível de terceiro. Por isso, o arquivo foi rejeitado para republicação no novo Fradim.com.br.",
     sourceLabel: "Brasiliana Fotográfica — registros históricos de Copacabana",
     sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=copacabana",
     mediaNote:
       "Asset legado revisado e rejeitado para migração por conter marca de terceiro. A URL histórica permanece preservada por seu contexto editorial, sem republicar a imagem.",
+  },
+  {
+    slug: "crianca-decada-de-60",
+    title: "Criança — década de 1960",
+    year: "década de 1960",
+    location: "local não documentado",
+    summary:
+      "Registro preservado do antigo acervo de colorizações do Fradim.com.br. A URL permanece, mas a fotografia não é republicada enquanto a origem do retrato e suas condições de uso não estiverem documentadas.",
+    context: [
+      "A página antiga reunia duas variantes do mesmo retrato: uma fotografia em preto e branco e uma versão colorizada. As duas foram recuperadas em quarentena e validadas como JPEGs íntegros, com as mesmas dimensões.",
+      "A versão colorizada traz a assinatura de Marcelo Fradim como responsável pela restauração/colorização. A página antiga, porém, não documenta fotógrafo, local, data exata ou origem do retrato. Por se tratar de uma fotografia de uma criança, a nova curadoria opta por preservar o registro sem republicar a imagem até que a proveniência esteja melhor estabelecida.",
+    ],
+    intervention:
+      "Os metadados embutidos nas duas variantes registram edição em Adobe Photoshop em abril de 2020. Isso ajuda a documentar a intervenção digital, mas não resolve a autoria nem a proveniência da fotografia histórica original.",
+    sourceNote:
+      "Até o momento, a única evidência direta disponível é o próprio conjunto recuperado do WordPress legado. Sem uma fonte externa ou documentação de origem suficiente, o asset permanece fora da publicação.",
+    mediaNote:
+      "As duas variantes foram tecnicamente validadas e revisadas, mas permanecem em hold de proveniência. Nenhum dos JPEGs foi promovido para public/.",
   },
 ];
 
