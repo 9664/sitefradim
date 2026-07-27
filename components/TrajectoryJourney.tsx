@@ -181,7 +181,7 @@ export function TrajectoryJourney() {
     const section = sectionRef.current;
     if (!section) return;
     const top = window.scrollY + section.getBoundingClientRect().top;
-    const scrollable = section.offsetHeight - window.innerHeight;
+    const scrollable = Math.max(0, section.offsetHeight - window.innerHeight);
     const ratio = index / (stages.length - 1);
     window.scrollTo({ top: top + scrollable * ratio, behavior: "smooth" });
   };
@@ -237,6 +237,24 @@ export function TrajectoryJourney() {
         </nav>
 
         <p className={styles.scrollHint} aria-hidden="true">SCROLL ↓</p>
+      </div>
+
+      <div className={styles.reducedMotionFallback}>
+        <header>
+          <p className="eyebrow">TRAJETÓRIA</p>
+          <h2>Da matéria ao pixel. Do mercado à inteligência.</h2>
+        </header>
+        <div className={styles.fallbackGrid}>
+          {stages.map((stage) => (
+            <article key={stage.title}>
+              <p>{stage.kicker}</p>
+              <h3>{stage.title}</h3>
+              <strong>{stage.short}</strong>
+              <div>{stage.body}</div>
+              <Link href={stage.href}>Explorar esta etapa →</Link>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
