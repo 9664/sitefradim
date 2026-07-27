@@ -8,6 +8,7 @@ import type { Mesh } from "three";
 import styles from "./UniverseExplorer.module.css";
 
 type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "vibe" | "lab" | "ideias";
+type UniverseVariant = "section" | "fullscreen";
 
 type UniverseNode = {
   id: NodeId;
@@ -68,7 +69,7 @@ function NodeOrb({ node, selected, onSelect, compact }: { node: UniverseNode; se
           opacity={selected ? 0.94 : 0.72}
         />
       </mesh>
-      <Html center distanceFactor={compact ? 11.5 : 9.5} zIndexRange={[30, 0]}>
+      <Html center distanceFactor={compact ? 11.8 : 9.5} zIndexRange={[30, 0]}>
         <button className={`${styles.label} ${selected ? styles.selected : ""}`} type="button" onClick={() => onSelect(node.id)} aria-pressed={selected}>
           <small>{node.kicker}</small>
           <strong>{node.label}</strong>
@@ -78,15 +79,26 @@ function NodeOrb({ node, selected, onSelect, compact }: { node: UniverseNode; se
   );
 }
 
-function Graph({ selected, onSelect, compact }: { selected: NodeId; onSelect: (id: NodeId) => void; compact: boolean }) {
+function Graph({ selected, onSelect, compact, fullscreen }: { selected: NodeId; onSelect: (id: NodeId) => void; compact: boolean; fullscreen: boolean }) {
   const displayNodes = useMemo<UniverseNode[]>(() => {
-    if (!compact) return nodes;
+    const xScale = compact ? (fullscreen ? 0.55 : 0.72) : fullscreen ? 0.88 : 1;
+    const yScale = compact ? (fullscreen ? 0.58 : 0.86) : fullscreen ? 0.68 : 1;
+    const zScale = compact ? 0.88 : 1;
+    const offsetX = fullscreen && !compact ? 1.05 : 0;
+    const offsetY = fullscreen ? (compact ? -0.25 : -0.45) : 0;
+
+    if (!compact && !fullscreen) return nodes;
+
     return nodes.map((node) => ({
       ...node,
-      position: [node.position[0] * 0.72, node.position[1] * 0.86, node.position[2] * 0.9],
-      size: Math.max(node.size * 0.92, 0.28),
+      position: [
+        node.position[0] * xScale + offsetX,
+        node.position[1] * yScale + offsetY,
+        node.position[2] * zScale,
+      ] as [number, number, number],
+      size: compact ? Math.max(node.size * (fullscreen ? 0.84 : 0.92), 0.26) : node.size,
     }));
-  }, [compact]);
+  }, [compact, fullscreen]);
 
   const index = useMemo(() => new Map(displayNodes.map((node) => [node.id, node])), [displayNodes]);
 
@@ -104,10 +116,11 @@ function Graph({ selected, onSelect, compact }: { selected: NodeId; onSelect: (i
   );
 }
 
-export function UniverseExplorer() {
+export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVariant }) {
   const [selected, setSelected] = useState<NodeId>("marcelo");
   const [compact, setCompact] = useState(false);
   const active = nodes.find((node) => node.id === selected) ?? nodes[0];
+  const fullscreen = variant === "fullscreen";
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 850px)");
@@ -117,8 +130,16 @@ export function UniverseExplorer() {
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  const cameraZ = compact ? (fullscreen ? 13.9 : 11.8) : fullscreen ? 11.5 : 10.4;
+  const cameraFov = compact ? (fullscreen ? 50 : 52) : 48;
+  const target: [number, number, number] = fullscreen
+    ? compact
+      ? [0, 0.42, 0]
+      : [0.25, 0.55, 0]
+    : [0, 0, 0];
+
   return (
-    <section id="universo-fradim" className={styles.explorer} aria-labelledby="universe-title">
+    <section id="universo-fradim" className={styles.explorer} data-variant={variant} aria-labelledby="universe-title">
       <header className={styles.heading}>
         <div>
           <p className="eyebrow">UNIVERSO FRADIM / V0.1</p>
@@ -130,26 +151,27 @@ export function UniverseExplorer() {
       <div className={styles.stage}>
         <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
           <Canvas
-            key={compact ? "compact" : "desktop"}
+            key={`${variant}-${compact ? "compact" : "desktop"}`}
             dpr={compact ? [1, 1.25] : [1, 1.55]}
-            camera={{ position: [0, compact ? 0.45 : 0.2, compact ? 11.8 : 10.4], fov: compact ? 52 : 48 }}
+            camera={{ position: [0, compact ? 0.45 : 0.2, cameraZ], fov: cameraFov }}
             gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
           >
             <ambientLight intensity={0.4} />
             <directionalLight position={[2, 6, 6]} intensity={2.6} />
             <pointLight position={[-5, -2, 4]} intensity={14} distance={12} />
             <pointLight position={[5, 2, -2]} intensity={10} distance={10} />
-            <Graph selected={selected} onSelect={setSelected} compact={compact} />
-            <Sparkles count={compact ? 72 : 110} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0.08} opacity={0.22} />
+            <Graph selected={selected} onSelect={setSelected} compact={compact} fullscreen={fullscreen} />
+            <Sparkles count={compact ? (fullscreen ? 58 : 72) : 110} scale={compact ? [8, 7, 5] : [12, 9, 6]} size={0.9} speed={0.08} opacity={0.22} />
             <OrbitControls
               makeDefault
+              target={target}
               enablePan={false}
               enableDamping
               dampingFactor={0.055}
               rotateSpeed={compact ? 0.35 : 0.45}
               zoomSpeed={0.55}
-              minDistance={compact ? 9.5 : 7.6}
-              maxDistance={compact ? 14.5 : 12.5}
+              minDistance={compact ? (fullscreen ? 11.2 : 9.5) : fullscreen ? 9 : 7.6}
+              maxDistance={compact ? 16 : fullscreen ? 14 : 12.5}
               minPolarAngle={Math.PI * 0.26}
               maxPolarAngle={Math.PI * 0.74}
             />
