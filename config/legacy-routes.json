@@ -15,6 +15,20 @@
       "status": 200,
       "target": null,
       "reason": "URL histórica recriada no mesmo slug como item curado do Arquivo de Memória."
+    },
+    {
+      "source": "/av-central-rio-de-janeiro-em-1910/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e proveniência exata do asset mantida em curadoria."
+    },
+    {
+      "source": "/copacabana-rio-de-janeiro-anos-40/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e proveniência exata do asset mantida em curadoria."
     }
   ],
   "pending": [
@@ -33,6 +47,10 @@
     {
       "source": "/fotos/",
       "reason": "Rota atualmente comprometida e inadequada para transferência automática de sinais. Revisar conteúdo legítimo histórico antes de decidir entre remoção 410/404 ou preservação seletiva de itens individuais."
+    },
+    {
+      "source": "/crianca-decada-de-60/",
+      "reason": "Registro visual de pessoa identificável com proveniência e condições de publicação ainda não confirmadas. Não migrar automaticamente sem revisar o asset e seu contexto."
     },
     {
       "source": "/somos-simples-naufragos/",
