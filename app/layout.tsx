@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./inner-pages.css";
+import "./refinements.css";
 
 const isStaging = process.env.NEXT_PUBLIC_SITE_ENV === "staging";
 
