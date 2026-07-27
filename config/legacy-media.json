@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "description": "Inventário de candidatos de mídia do WordPress legado. Estes arquivos são auditados em quarentena e nunca publicados automaticamente.",
+  "maxBytes": 25000000,
+  "items": [
+    {
+      "slug": "primeira-loja-do-magazine-luiza-em-1957",
+      "sourcePage": "https://fradim.com.br/primeira-loja-do-magazine-luiza-em-1957/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/magazine-luiza-colorida-p.jpg",
+      "filename": "magazine-luiza-colorida-p.jpg",
+      "expectedFormat": "jpeg",
+      "status": "candidate",
+      "note": "Página antiga declara intervenção de colorização por Marcelo Fradim; há também crédito externo à imagem em matéria da InfoMoney."
+    },
+    {
+      "slug": "locomotiva-em-1925",
+      "sourcePage": "https://fradim.com.br/locomotiva-em-1925/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/Esta%C3%A7%C3%A3o-1925.jpg",
+      "filename": "estacao-1925.jpg",
+      "expectedFormat": "jpeg",
+      "status": "candidate",
+      "note": "Página antiga identifica o registro como Estação de Franca em 1925 e descreve restauração/colorização."
+    },
+    {
+      "slug": "av-central-rio-de-janeiro-em-1910",
+      "sourcePage": "https://fradim.com.br/av-central-rio-de-janeiro-em-1910/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-31b.jpg",
+      "filename": "avenida-central-1910-colorizada.jpg",
+      "expectedFormat": "jpeg",
+      "status": "candidate",
+      "note": "Nome do arquivo legado registra a intervenção por Marcelo Fradim; proveniência do original histórico ainda deve ser documentada."
+    },
+    {
+      "slug": "copacabana-rio-de-janeiro-anos-40",
+      "sourcePage": "https://fradim.com.br/copacabana-rio-de-janeiro-anos-40/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-21b.jpg",
+      "filename": "copacabana-anos-40-colorizada.jpg",
+      "expectedFormat": "jpeg",
+      "status": "candidate",
+      "note": "Nome do arquivo legado registra a intervenção por Marcelo Fradim; proveniência do original histórico ainda deve ser documentada."
+    }
+  ]
+}
