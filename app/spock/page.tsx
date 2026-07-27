@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNav } from "@/components/SiteNav";
 import { SpockCore } from "@/components/SpockCore";
 import styles from "./SpockPage.module.css";
 
@@ -55,10 +56,7 @@ export default function SpockPage() {
     <main className={styles.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className={styles.hero} aria-labelledby="spock-title">
         <div className={styles.scene} aria-hidden="true">
@@ -151,7 +149,7 @@ export default function SpockPage() {
         <p className="eyebrow">PRÓXIMO TERRITÓRIO</p>
         <h2 id="cta-title">Pensar junto só importa quando começamos a construir.</h2>
         <p>No Lab ficam os experimentos, protótipos e sistemas onde essa relação deixa de ser conceito e passa a ser prática.</p>
-        <Link href="/lab">Entrar no Lab →</Link>
+        <Link href="/lab" prefetch={false}>Entrar no Lab →</Link>
       </section>
     </main>
   );
