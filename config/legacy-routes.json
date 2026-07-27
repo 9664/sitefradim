@@ -31,6 +31,34 @@
       "reason": "URL pública antiga preservada no mesmo slug; contexto histórico sustentado por acervo institucional e mídia antiga rejeitada quando não há condição segura de republicação."
     },
     {
+      "source": "/somos-simples-naufragos/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Ensaio autoral antigo preservado no próprio slug como reconstrução editorial condensada, separado dos ensaios atuais."
+    },
+    {
+      "source": "/nada-acontece-por-acaso/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Ensaio autoral antigo preservado no próprio slug como reconstrução editorial condensada, separado dos ensaios atuais."
+    },
+    {
+      "source": "/porque-o-tempo-nao-para-nos-tornamos-velhos/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Ensaio autoral antigo preservado no próprio slug como reconstrução editorial condensada, sem reproduzir citações extensas usadas no WordPress legado."
+    },
+    {
+      "source": "/a-diferenca-entre-vida-simples-minimalismo-e-frugalidade/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Texto autoral antigo preservado no próprio slug como síntese editorial; definições e passagens de terceiros do post legado não são republicadas."
+    },
+    {
       "source": "/quemsou/",
       "action": "redirect",
       "status": 301,
@@ -54,22 +82,6 @@
     {
       "source": "/crianca-decada-de-60/",
       "reason": "Registro visual de pessoa identificável com proveniência e condições de publicação ainda não confirmadas. Não migrar automaticamente sem revisar o asset e seu contexto."
-    },
-    {
-      "source": "/somos-simples-naufragos/",
-      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
-    },
-    {
-      "source": "/nada-acontece-por-acaso/",
-      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
-    },
-    {
-      "source": "/porque-o-tempo-nao-para-nos-tornamos-velhos/",
-      "reason": "Ensaio pessoal antigo sem equivalência automática com a nova seção Ideias. Decisão editorial pendente."
-    },
-    {
-      "source": "/a-diferenca-entre-vida-simples-minimalismo-e-frugalidade/",
-      "reason": "Conteúdo antigo fora do eixo editorial principal atual. Avaliar arquivo ou remoção sem redirect artificial."
     }
   ]
 }
