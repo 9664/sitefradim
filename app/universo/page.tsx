@@ -20,7 +20,7 @@ export default function UniversePage() {
         <Link className="back-home" href="/">← Home</Link>
       </nav>
 
-      <UniverseExplorer />
+      <UniverseExplorer variant="fullscreen" />
 
       <div className={styles.legend} aria-hidden="true">
         <span>Drag / orbit</span>
