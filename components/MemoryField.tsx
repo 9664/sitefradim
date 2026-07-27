@@ -1,9 +1,8 @@
 "use client";
 
-import { Float, Line, Sparkles } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
-import type { Group, Mesh } from "three";
+import { Line, Sparkles } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { useMemo } from "react";
 
 const layers = [
   { position: [-1.4, 0.75, 0.2] as [number, number, number], rotation: [0.08, -0.28, -0.08] as [number, number, number], scale: [2.7, 1.75, 1] as [number, number, number], opacity: 0.16 },
@@ -12,17 +11,6 @@ const layers = [
 ] as const;
 
 function ArchiveLayers() {
-  const group = useRef<Group>(null);
-  const core = useRef<Mesh>(null);
-
-  useFrame((state, delta) => {
-    if (group.current) {
-      group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.16) * 0.075;
-      group.current.rotation.x = Math.cos(state.clock.elapsedTime * 0.13) * 0.025;
-    }
-    if (core.current) core.current.rotation.z += delta * 0.035;
-  });
-
   const path = useMemo(
     () => [
       [-2.8, 1.65, 0.35],
@@ -35,27 +23,25 @@ function ArchiveLayers() {
   );
 
   return (
-    <group ref={group}>
+    <group rotation={[0.018, -0.045, 0]}>
       <Line points={path} color="#94a9bc" lineWidth={0.75} transparent opacity={0.26} />
 
       {layers.map((layer, index) => (
-        <Float key={index} speed={0.65 + index * 0.1} rotationIntensity={0.08} floatIntensity={0.16}>
-          <mesh position={layer.position} rotation={layer.rotation} scale={layer.scale}>
-            <planeGeometry args={[1, 1, 18, 12]} />
-            <meshPhysicalMaterial
-              color={index === 2 ? "#dce7f0" : "#8799aa"}
-              wireframe={index !== 2}
-              transparent
-              opacity={layer.opacity}
-              roughness={0.38}
-              metalness={0.28}
-              side={2}
-            />
-          </mesh>
-        </Float>
+        <mesh key={index} position={layer.position} rotation={layer.rotation} scale={layer.scale}>
+          <planeGeometry args={[1, 1, 18, 12]} />
+          <meshPhysicalMaterial
+            color={index === 2 ? "#dce7f0" : "#8799aa"}
+            wireframe={index !== 2}
+            transparent
+            opacity={layer.opacity}
+            roughness={0.38}
+            metalness={0.28}
+            side={2}
+          />
+        </mesh>
       ))}
 
-      <mesh ref={core} position={[1.65, 0.65, -0.25]}>
+      <mesh position={[1.65, 0.65, -0.25]} rotation={[0.2, 0.35, 0.18]}>
         <icosahedronGeometry args={[0.64, 2]} />
         <meshPhysicalMaterial
           color="#dfe9f2"
@@ -78,12 +64,17 @@ function ArchiveLayers() {
 
 export function MemoryField() {
   return (
-    <Canvas dpr={[1, 1.45]} camera={{ position: [0, 0.1, 7.2], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
+    <Canvas
+      frameloop="demand"
+      dpr={[1, 1.25]}
+      camera={{ position: [0, 0.1, 7.2], fov: 44 }}
+      gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+    >
       <ambientLight intensity={0.38} />
       <directionalLight position={[4, 6, 5]} intensity={2.4} />
       <pointLight position={[-4, -2, 3]} intensity={9} distance={11} />
       <ArchiveLayers />
-      <Sparkles count={85} scale={[9, 6, 5]} size={0.8} speed={0.06} opacity={0.2} />
+      <Sparkles count={58} scale={[9, 6, 5]} size={0.8} speed={0} opacity={0.2} />
     </Canvas>
   );
 }
