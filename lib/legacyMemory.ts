@@ -73,21 +73,21 @@ export const legacyMemoryEntries: LegacyMemoryEntry[] = [
   },
   {
     slug: "av-central-rio-de-janeiro-em-1910",
-    title: "Av. Central, Rio de Janeiro, em 1910",
-    year: "c. 1910",
+    title: "Avenida Central / Rio Branco — c. 1910–1915",
+    year: "c. 1910–1915",
     location: "Centro, Rio de Janeiro, RJ",
     summary:
-      "Página preservada do antigo acervo de colorizações do Fradim.com.br, dedicada à Avenida Central — atual Avenida Rio Branco — no início do século XX.",
+      "Página preservada do antigo acervo de colorizações do Fradim.com.br, dedicada à antiga Avenida Central — atual Avenida Rio Branco — no início do século XX. A data exata do registro permanece em revisão.",
     context: [
-      "A Avenida Central foi uma das principais obras da reforma urbana do Rio de Janeiro no início do século XX e corresponde à atual Avenida Rio Branco. A Brasiliana Fotográfica reúne diversos registros da avenida produzidos naquele período, inclusive imagens datadas de cerca de 1910.",
-      "A página antiga do Fradim.com.br identificava a imagem publicada como Avenida Central, Rio de Janeiro, em 1910. A fonte externa indicada abaixo sustenta o contexto histórico da avenida e da época; ela não é apresentada como prova da proveniência exata da fotografia colorizada no site antigo.",
+      "A Avenida Central foi uma das principais obras da reforma urbana do Rio de Janeiro no início do século XX e, em 1912, passou a se chamar Avenida Rio Branco. Acervos institucionais preservam diversos registros da via produzidos entre a década de 1900 e meados da década de 1910.",
+      "O WordPress antigo titulava este registro como 1910. Durante a nova curadoria, a mesma cena foi localizada em uma publicação identificada como trânsito na Avenida Rio Branco em 1915. Como a fotografia histórica de origem ainda não foi identificada de forma inequívoca, esta página abandona a data rígida e trabalha provisoriamente com c. 1910–1915, preservando o slug antigo apenas por continuidade de URL.",
     ],
     intervention:
       "A versão colorizada do acervo legado foi localizada, validada tecnicamente e revisada visualmente. A assinatura de Marcelo Fradim está presente no arquivo, mas a fotografia histórica de origem ainda precisa de uma atribuição documental mais sólida antes da republicação.",
     sourceLabel: "Brasiliana Fotográfica — Avenida Central, atual Rio Branco",
-    sourceHref: "https://brasilianafotografica.bn.gov.br/?p=5880",
+    sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=avenida-central",
     mediaNote:
-      "Arquivo colorizado localizado e tecnicamente íntegro, mas mantido fora do novo site enquanto a proveniência da fotografia original permanece em pesquisa.",
+      "Arquivo colorizado localizado e tecnicamente íntegro, mas mantido fora do novo site enquanto autoria, proveniência e data exata da fotografia original permanecem em pesquisa.",
   },
   {
     slug: "copacabana-rio-de-janeiro-anos-40",
