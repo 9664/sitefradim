@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "generatedBy": "promote-legacy-media.yml",
+  "sanitization": "jpegtran -copy none -optimize (lossless DCT, metadata stripped)",
+  "items": [
+    {
+      "slug": "primeira-loja-do-magazine-luiza-em-1957",
+      "sourceSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "publishedSha256": "18c68870d69a34b90890e1dfc8a3bab1f64fe9de58b4a850da51729ac15bc05b",
+      "bytes": 409352,
+      "path": "public/memoria/arquivo/magazine-luiza-1957.jpg"
+    },
+    {
+      "slug": "locomotiva-em-1925",
+      "sourceSha256": "cf7c09b4f2fa0166eb748937d42948a76adeabbb97cf28fa705508f89d5b1d43",
+      "publishedSha256": "609102d1a162c10151d7402c2408e4506346a7f9a9e588885e5c17452248204e",
+      "bytes": 738763,
+      "path": "public/memoria/arquivo/estacao-mogiana-1925.jpg"
+    }
+  ]
+}
