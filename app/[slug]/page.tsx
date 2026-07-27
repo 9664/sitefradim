@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SiteNav } from "@/components/SiteNav";
 
 const pages = {
   sobre: {
@@ -79,10 +79,7 @@ export default async function TerritoryPage({ params }: { params: Promise<{ slug
 
   return (
     <main className="inner-page">
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav />
 
       <section className="inner-hero">
         <p className="eyebrow">{page.eyebrow}</p>
