@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "description": "Quarentena isolada para as duas variantes do asset da página legado /crianca-decada-de-60/. Nenhum arquivo desta configuração pode ser publicado automaticamente.",
+  "maxBytes": 25000000,
+  "items": [
+    {
+      "assetId": "crianca-decada-60-07b",
+      "slug": "crianca-decada-de-60",
+      "sourcePage": "https://fradim.com.br/crianca-decada-de-60/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-07b.jpg",
+      "filename": "crianca-decada-60-07b.jpg",
+      "expectedFormat": "jpeg",
+      "status": "pending-review",
+      "note": "Variante 07b localizada no HTML da página antiga. Revisar integridade, marcas visíveis e relação original/colorizada sem tentar identificar a pessoa retratada."
+    },
+    {
+      "assetId": "crianca-decada-60-07",
+      "slug": "crianca-decada-de-60",
+      "sourcePage": "https://fradim.com.br/crianca-decada-de-60/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-07.jpg",
+      "filename": "crianca-decada-60-07.jpg",
+      "expectedFormat": "jpeg",
+      "status": "pending-review",
+      "note": "Variante 07 localizada no HTML da página antiga. Revisar integridade, marcas visíveis e relação original/colorizada sem tentar identificar a pessoa retratada."
+    }
+  ]
+}
