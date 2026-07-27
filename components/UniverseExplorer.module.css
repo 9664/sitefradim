@@ -1,0 +1,224 @@
+.explorer {
+  width: min(1480px, calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 4rem 0 10rem;
+}
+
+.heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.5fr);
+  gap: 3rem;
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.heading h2 {
+  max-width: 930px;
+  margin: 0;
+  font-size: clamp(2.4rem, 5.2vw, 5.7rem);
+  font-weight: 450;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.instruction {
+  justify-self: end;
+  max-width: 270px;
+  margin: 0 0 0.5rem;
+  color: #748293;
+  font-size: 0.66rem;
+  line-height: 1.6;
+  letter-spacing: 0.15em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.stage {
+  position: relative;
+  min-height: min(82svh, 850px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(127, 155, 184, 0.11), transparent 25rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 55%);
+  isolation: isolate;
+}
+
+.stage::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.027) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.027) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 74%);
+}
+
+.canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.canvas:active { cursor: grabbing; }
+
+.panel {
+  position: absolute;
+  z-index: 4;
+  left: clamp(1rem, 3vw, 3rem);
+  bottom: clamp(1rem, 3vw, 3rem);
+  width: min(390px, calc(100% - 2rem));
+  padding: 1.3rem 1.35rem 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(7, 9, 12, 0.72);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(20px);
+}
+
+.panelKicker {
+  display: block;
+  margin-bottom: 1.6rem;
+  color: #788798;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.panel h3 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+}
+
+.panel p {
+  max-width: 34rem;
+  margin: 1rem 0 1.3rem;
+  color: #a9b5c2;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.panel a {
+  display: inline-block;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coordinate {
+  margin-top: 2rem;
+  color: #485563;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+}
+
+.signature {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1rem, 3vw, 2.5rem);
+  right: clamp(1rem, 3vw, 2.5rem);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: rgba(230, 239, 248, 0.48);
+  font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+  font-weight: 300;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+}
+
+.signature i {
+  color: #4a5866;
+  font-size: 0.65em;
+  font-style: normal;
+}
+
+.label {
+  min-width: max-content;
+  padding: 0.45rem 0.55rem;
+  border: 0;
+  color: #9baaba;
+  background: rgba(7, 9, 12, 0.58);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.label:hover,
+.selected {
+  color: #f5f9fd;
+  background: rgba(16, 21, 28, 0.9);
+  transform: translateY(-2px);
+}
+
+.label small,
+.label strong {
+  display: block;
+}
+
+.label small {
+  margin-bottom: 0.15rem;
+  color: #637283;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.label strong {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 850px) {
+  .explorer {
+    width: min(100% - 1.5rem, 1480px);
+    padding: 2rem 0 7rem;
+  }
+
+  .heading {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .instruction {
+    justify-self: start;
+    max-width: none;
+    text-align: left;
+  }
+
+  .stage {
+    min-height: 720px;
+  }
+
+  .panel {
+    right: 0.75rem;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    width: auto;
+  }
+
+  .signature { display: none; }
+
+  .label {
+    padding: 0.38rem 0.44rem;
+  }
+
+  .label small { display: none; }
+  .label strong { font-size: 0.64rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label { transition: none; }
+}
