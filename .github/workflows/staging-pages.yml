@@ -78,7 +78,7 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           set -euo pipefail
-          for route in "" "universo/" "sobre/" "spock/" "lab/" "projetos/" "ideias/"; do
+          for route in "" "universo/" "sobre/" "spock/" "lab/" "memoria/" "projetos/" "ideias/"; do
             url="${PAGE_URL}${route}"
             echo "Checking ${url}"
             body="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${url}")"
@@ -95,7 +95,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Universo + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Universo + Memória + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
 
   visual-audit:
     runs-on: ubuntu-latest
@@ -135,6 +135,7 @@ jobs:
             ['sobre', 'sobre/'],
             ['spock', 'spock/'],
             ['lab', 'lab/'],
+            ['memoria', 'memoria/'],
           ];
 
           const devices = [
@@ -214,4 +215,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Universo full-screen, Universo da Home, 5 estágios da trajetória, Sobre, Spock e Lab ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home, Universo full-screen, Universo da Home, 5 estágios da trajetória, Sobre, Spock, Lab e Memória ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
