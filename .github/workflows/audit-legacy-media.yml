@@ -1,0 +1,102 @@
+name: Audit legacy media
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - config/legacy-media.json
+      - scripts/audit-legacy-media.mjs
+      - .github/workflows/audit-legacy-media.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Download legacy candidates into quarantine
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p quarantine
+
+          node <<'NODE' > quarantine/downloads.tsv
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('config/legacy-media.json', 'utf8'));
+          for (const item of config.items) {
+            process.stdout.write(`${item.filename}\t${item.legacyUrl}\n`);
+          }
+          NODE
+
+          while IFS=$'\t' read -r filename url; do
+            echo "Fetching ${filename}"
+            curl \
+              --fail \
+              --location \
+              --silent \
+              --show-error \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 60 \
+              --max-filesize 25000000 \
+              --proto '=https' \
+              --tlsv1.2 \
+              --output "quarantine/${filename}" \
+              "${url}"
+          done < quarantine/downloads.tsv
+
+      - name: Validate JPEG structure and metadata
+        run: node scripts/audit-legacy-media.mjs config/legacy-media.json quarantine quarantine/media-audit.json
+
+      - name: Build audit summary
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync('quarantine/media-audit.json', 'utf8'));
+          let md = '### Legacy media quarantine audit\n\n';
+          md += `Validated: **${report.validated}/${report.count}**\n\n`;
+          md += '| Arquivo | Dimensões | Bytes | SHA-256 |\n';
+          md += '| --- | ---: | ---: | --- |\n';
+          for (const item of report.items) {
+            if (item.status === 'validated') {
+              md += `| ${item.filename} | ${item.width}×${item.height} | ${item.bytes} | \`${item.sha256}\` |\n`;
+            } else {
+              md += `| ${item.filename} | falhou | — | ${item.error ?? 'erro'} |\n`;
+            }
+          }
+          md += '\nOs arquivos permanecem apenas no artefato temporário de quarentena e não são publicados automaticamente.\n';
+          fs.writeFileSync('quarantine/summary.md', md);
+          console.log(md);
+          NODE
+
+      - name: Upload quarantine artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-legacy-media-quarantine
+          path: |
+            quarantine/*.jpg
+            quarantine/media-audit.json
+            quarantine/summary.md
+          retention-days: 1
+
+      - name: Publish audit summary on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body-file quarantine/summary.md
