@@ -189,7 +189,7 @@ export function TrajectoryJourney() {
   const active = stages[activeIndex];
 
   return (
-    <section ref={sectionRef} className={styles.journey} aria-labelledby="journey-title">
+    <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} aria-labelledby="journey-title">
       <div className={styles.sticky}>
         <div className={styles.canvas} aria-hidden="true">
           <Canvas dpr={[1, 1.45]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
