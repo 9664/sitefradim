@@ -100,6 +100,12 @@ jobs:
               published: false,
               expectedNote: 'ASSET NÃO PUBLICADO',
             },
+            {
+              name: 'legacy-crianca',
+              route: 'crianca-decada-de-60/',
+              published: false,
+              expectedNote: 'ASSET NÃO PUBLICADO',
+            },
           ];
 
           const devices = [
@@ -203,7 +209,7 @@ jobs:
                 const unpublishedCount = await unpublishedCards.count();
 
                 if (publishedCount !== 2) failures.push(`${label}: expected 2 published cards, found ${publishedCount}`);
-                if (unpublishedCount !== 2) failures.push(`${label}: expected 2 unpublished cards, found ${unpublishedCount}`);
+                if (unpublishedCount !== 3) failures.push(`${label}: expected 3 unpublished cards, found ${unpublishedCount}`);
 
                 const images = archive.locator('img[data-archive-media="published"]');
                 const imageCount = await images.count();
@@ -232,8 +238,8 @@ jobs:
                 }
 
                 const unpublishedMedia = archive.locator('[data-archive-media="unpublished"]');
-                if ((await unpublishedMedia.count()) !== 2) {
-                  failures.push(`${label}: expected exactly 2 unpublished visual states`);
+                if ((await unpublishedMedia.count()) !== 3) {
+                  failures.push(`${label}: expected exactly 3 unpublished visual states`);
                 }
 
                 const archiveText = await archive.innerText();
@@ -263,7 +269,7 @@ jobs:
             process.exit(1);
           }
 
-          console.log('Legacy visual audit OK: 2 published assets + 2 intentionally unpublished pages + decoded memory index states, desktop/mobile.');
+          console.log('Legacy visual audit OK: 2 published assets + 3 intentionally unpublished pages + decoded memory index states, desktop/mobile.');
           EOF
           node legacy-audit.mjs
 
@@ -278,4 +284,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo de Memória concluída 🧪\n\nDesktop + mobile: Magazine 1957 e Estação 1925 com mídia reintegrada; Avenida Central e Copacabana sem asset publicado; índice de Memória com 2 thumbnails decodificados + 2 estados sem mídia ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-curated-legacy-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo de Memória concluída 🧪\n\nDesktop + mobile: Magazine 1957 e Estação 1925 com mídia reintegrada; Avenida Central, Copacabana e Criança década de 60 sem asset publicado; índice de Memória com 2 thumbnails decodificados + 3 estados sem mídia ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-curated-legacy-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"
