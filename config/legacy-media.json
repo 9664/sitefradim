@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "description": "Inventário de candidatos de mídia do WordPress legado. Estes arquivos são auditados em quarentena e nunca publicados automaticamente.",
+  "version": 2,
+  "description": "Inventário de mídia do WordPress legado com estados explícitos de curadoria. Somente itens approved-for-promotion podem ser promovidos para public/ e sempre com verificação SHA-256.",
   "maxBytes": 25000000,
   "items": [
     {
@@ -9,8 +9,10 @@
       "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/magazine-luiza-colorida-p.jpg",
       "filename": "magazine-luiza-colorida-p.jpg",
       "expectedFormat": "jpeg",
-      "status": "candidate",
-      "note": "Página antiga declara intervenção de colorização por Marcelo Fradim; há também crédito externo à imagem em matéria da InfoMoney."
+      "expectedSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/magazine-luiza-1957.jpg",
+      "note": "Revisão visual confirma a fotografia colorizada com assinatura 'Colorização Marcelo Fradim'. Página antiga declara a intervenção e há crédito externo à imagem em matéria da InfoMoney."
     },
     {
       "slug": "locomotiva-em-1925",
@@ -18,8 +20,10 @@
       "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/Esta%C3%A7%C3%A3o-1925.jpg",
       "filename": "estacao-1925.jpg",
       "expectedFormat": "jpeg",
-      "status": "candidate",
-      "note": "Página antiga identifica o registro como Estação de Franca em 1925 e descreve restauração/colorização."
+      "expectedSha256": "cf7c09b4f2fa0166eb748937d42948a76adeabbb97cf28fa705508f89d5b1d43",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/estacao-mogiana-1925.jpg",
+      "note": "Revisão visual confirma o comparativo da fotografia original com a restauração/colorização assinada por Marcelo Fradim."
     },
     {
       "slug": "av-central-rio-de-janeiro-em-1910",
@@ -27,17 +31,20 @@
       "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-31.jpg",
       "filename": "avenida-central-1910-colorizada.jpg",
       "expectedFormat": "jpeg",
-      "status": "candidate",
-      "note": "A variante 31b foi revisada e identificada como fotografia em preto e branco. A variante 31 é auditada como possível intervenção final; proveniência do original histórico continua pendente."
+      "expectedSha256": "731af4e50bd99ba541ece2a500491b38321f9031d0ec593dc1ef58cee118a2ec",
+      "status": "hold-provenance",
+      "note": "Revisão visual confirma versão colorizada e assinatura Marcelo Fradim, sem marca de banco de imagem visível. Publicação fica suspensa até documentar melhor a proveniência da fotografia histórica original."
     },
     {
       "slug": "copacabana-rio-de-janeiro-anos-40",
       "sourcePage": "https://fradim.com.br/copacabana-rio-de-janeiro-anos-40/",
-      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-21.jpg",
+      "legacyUrl": null,
       "filename": "copacabana-anos-40-colorizada.jpg",
       "expectedFormat": "jpeg",
-      "status": "candidate",
-      "note": "A variante 21b foi revisada e contém fotografia original em preto e branco com marca Corbis/Getty Images; essa versão foi rejeitada para publicação. A variante 21 é auditada separadamente como possível intervenção final e não será publicada sem nova revisão visual."
+      "expectedSha256": "fb76e5651dd995eccecf723696c87d8db66a275f5ba1ea20b5c24797498f2bef",
+      "status": "rejected-third-party",
+      "audit": false,
+      "note": "Rejeitado para migração: tanto a fotografia em preto e branco quanto a versão colorizada mantêm marca visível © Corbis via Getty Images. O novo site continuará sem esse asset."
     }
   ]
 }
