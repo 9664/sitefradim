@@ -78,7 +78,7 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           set -euo pipefail
-          for route in "" "universo/" "sobre/" "spock/" "lab/" "memoria/" "projetos/" "ideias/"; do
+          for route in "" "universo/" "sobre/" "spock/" "lab/" "memoria/" "restauracao-fotografica/" "primeira-loja-do-magazine-luiza-em-1957/" "locomotiva-em-1925/" "projetos/" "ideias/"; do
             url="${PAGE_URL}${route}"
             echo "Checking ${url}"
             body="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${url}")"
@@ -95,7 +95,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Universo + Memória + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Universo + Memória + Restauração + arquivo legado + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
 
   visual-audit:
     runs-on: ubuntu-latest
