@@ -167,7 +167,7 @@ export function UniverseExplorer({ variant = "section" }: { variant?: UniverseVa
       </header>
 
       <div className={styles.stage}>
-        <div className={styles.canvas} aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
+        <div className={styles.canvas} role="group" aria-label="Mapa tridimensional interativo da trajetória de Marcelo Fradim e Spock">
           {render3D ? (
             <Canvas
               key={`${variant}-${compact ? "compact" : "desktop"}`}
