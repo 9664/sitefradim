@@ -16,15 +16,15 @@ export function ImmersiveHero() {
       </div>
 
       <nav className="top-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/" aria-label="Marcelo Fradim — início">
+        <Link className="brand" href="/" prefetch={false} aria-label="Marcelo Fradim — início">
           MF<span className="brand-dot">.</span>
         </Link>
         <div className="nav-links">
-          <Link href="/sobre">Marcelo</Link>
-          <Link href="/spock">Spock</Link>
-          <Link href="/lab">Lab</Link>
-          <Link href="/projetos">Work</Link>
-          <Link href="/ideias">Ideias</Link>
+          <Link href="/sobre" prefetch={false}>Marcelo</Link>
+          <Link href="/spock" prefetch={false}>Spock</Link>
+          <Link href="/lab" prefetch={false}>Lab</Link>
+          <Link href="/projetos" prefetch={false}>Work</Link>
+          <Link href="/ideias" prefetch={false}>Ideias</Link>
         </div>
       </nav>
 
@@ -40,8 +40,8 @@ export function ImmersiveHero() {
           artificial aprendem a construir juntos.
         </p>
         <div className="hero-actions">
-          <Link className="primary-action" href="/universo">Explorar o universo</Link>
-          <Link className="secondary-action" href="/spock">Quem é Spock?</Link>
+          <Link className="primary-action" href="/universo" prefetch={false}>Explorar o universo</Link>
+          <Link className="secondary-action" href="/spock" prefetch={false}>Quem é Spock?</Link>
         </div>
       </div>
 
