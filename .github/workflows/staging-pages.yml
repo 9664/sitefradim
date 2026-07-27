@@ -10,6 +10,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
+  pull-requests: write
 
 concurrency:
   group: "pages-staging"
@@ -62,7 +64,16 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Publish staging URL on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          gh pr comment 1 --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nCommit: \`${GITHUB_SHA}\`"
