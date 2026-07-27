@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SiteNav } from "@/components/SiteNav";
 
 const projects = {
   "intelig-cloud": {
@@ -64,10 +65,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <main className="inner-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <nav className="top-nav inner-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/">MF<span className="brand-dot">.</span></Link>
-        <Link className="back-home" href="/">← Universo</Link>
-      </nav>
+      <SiteNav backHref="/projetos" backLabel="Projetos" />
 
       <section className="inner-hero">
         <p className="eyebrow">{project.category}</p>
@@ -80,7 +78,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <strong>{project.connects.join(" · ")}</strong>
         </div>
 
-        <Link className="text-link" href="/projetos">Ver todos os projetos →</Link>
+        <Link className="text-link" href="/projetos" prefetch={false}>Ver todos os projetos →</Link>
       </section>
     </main>
   );
