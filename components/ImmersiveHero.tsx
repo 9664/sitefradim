@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const UniverseScene = dynamic(
   () => import("./UniverseScene").then((module) => module.UniverseScene),
@@ -9,14 +10,46 @@ const UniverseScene = dynamic(
 );
 
 export function ImmersiveHero() {
+  const [render3D, setRender3D] = useState(false);
+
+  useEffect(() => {
+    const compact = window.matchMedia("(max-width: 850px)");
+
+    if (!compact.matches) {
+      const frame = window.requestAnimationFrame(() => setRender3D(true));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    let timer = 0;
+    const activate = () => {
+      setRender3D(true);
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", activate);
+      window.removeEventListener("scroll", activate);
+      window.removeEventListener("keydown", activate);
+    };
+
+    window.addEventListener("pointerdown", activate, { passive: true });
+    window.addEventListener("scroll", activate, { passive: true });
+    window.addEventListener("keydown", activate);
+    timer = window.setTimeout(activate, 12000);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", activate);
+      window.removeEventListener("scroll", activate);
+      window.removeEventListener("keydown", activate);
+    };
+  }, []);
+
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-scene" aria-hidden="true">
-        <UniverseScene />
+        {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
       </div>
 
       <nav className="top-nav" aria-label="Navegação principal">
-        <Link className="brand" href="/" prefetch={false} aria-label="Marcelo Fradim — início">
+        <Link className="brand" href="/" prefetch={false} aria-label="MF. Marcelo Fradim — início">
           MF<span className="brand-dot">.</span>
         </Link>
         <div className="nav-links">
