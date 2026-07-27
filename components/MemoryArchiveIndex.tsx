@@ -6,7 +6,9 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function statusLabel(slug: string, hasImage: boolean) {
   if (hasImage) return "MÍDIA REINTEGRADA";
-  if (slug === "av-central-rio-de-janeiro-em-1910") return "PROVENIÊNCIA EM PESQUISA";
+  if (slug === "av-central-rio-de-janeiro-em-1910" || slug === "crianca-decada-de-60") {
+    return "PROVENIÊNCIA EM PESQUISA";
+  }
   if (slug === "copacabana-rio-de-janeiro-anos-40") return "MÍDIA NÃO REPUBLICADA";
   return "EM CURADORIA";
 }
