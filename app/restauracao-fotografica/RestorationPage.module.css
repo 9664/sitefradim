@@ -1,0 +1,249 @@
+.page {
+  min-height: 100svh;
+  color: #f4f7fb;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(118, 143, 168, 0.12), transparent 28rem),
+    #07090c;
+}
+
+.hero,
+.promise,
+.process,
+.boundaries,
+.cta {
+  width: min(1280px, calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+
+.hero {
+  min-height: 92svh;
+  display: grid;
+  align-content: center;
+  padding: 10rem 0 6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.hero h1,
+.promise h2,
+.process h2,
+.boundaries h2,
+.cta h2 {
+  margin: 0;
+  letter-spacing: -0.06em;
+  font-weight: 450;
+}
+
+.hero h1 {
+  max-width: 1050px;
+  font-size: clamp(3.3rem, 8vw, 8.4rem);
+  line-height: 0.89;
+}
+
+.hero h1 span,
+.cta h2 span {
+  display: block;
+  color: #8493a2;
+}
+
+.hero > p:last-child {
+  max-width: 720px;
+  margin: 2rem 0 0;
+  color: #a2afbb;
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  line-height: 1.72;
+}
+
+.promise {
+  padding: 8rem 0;
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: clamp(3rem, 8vw, 8rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.promise h2,
+.process h2,
+.boundaries h2,
+.cta h2 {
+  font-size: clamp(2.4rem, 5.2vw, 5.6rem);
+  line-height: 0.98;
+}
+
+.promiseText {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.promiseText p {
+  margin: 0;
+  color: #96a4b0;
+  font-size: 1.03rem;
+  line-height: 1.75;
+}
+
+.promiseText strong {
+  color: #e5ecf2;
+  font-weight: 550;
+}
+
+.process,
+.boundaries {
+  padding: 8rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 0.68fr;
+  gap: 4rem;
+  align-items: end;
+  margin-bottom: 4rem;
+}
+
+.header > p {
+  margin: 0;
+  color: #8f9ca8;
+  line-height: 1.72;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.grid article {
+  min-height: 290px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.grid small {
+  color: #788998;
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+}
+
+.grid h3 {
+  margin: auto 0 0.75rem;
+  font-size: clamp(1.55rem, 2.5vw, 2.7rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 520;
+}
+
+.grid p {
+  margin: 0;
+  color: #8f9ca9;
+  line-height: 1.65;
+}
+
+.boundaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 4rem;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.boundaryGrid article {
+  min-height: 260px;
+  padding: 1.6rem;
+  background: #090c10;
+}
+
+.boundaryGrid h3 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.6rem, 2.5vw, 2.7rem);
+  letter-spacing: -0.045em;
+  font-weight: 520;
+}
+
+.boundaryGrid p {
+  margin: 0;
+  color: #909daa;
+  line-height: 1.7;
+}
+
+.cta {
+  min-height: 76svh;
+  padding: 8rem 0;
+  display: grid;
+  align-content: center;
+}
+
+.cta h2 {
+  max-width: 1050px;
+}
+
+.cta > p:not(.eyebrow) {
+  max-width: 660px;
+  color: #96a3af;
+  font-size: 1.08rem;
+  line-height: 1.72;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.links a:first-child {
+  color: #07090c;
+  background: #eef4fa;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    min-height: auto;
+    padding: 9rem 0 5rem;
+  }
+
+  .promise,
+  .header {
+    grid-template-columns: 1fr;
+    gap: 1.7rem;
+  }
+
+  .promise,
+  .process,
+  .boundaries {
+    padding: 6rem 0;
+  }
+
+  .grid,
+  .boundaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .grid article,
+  .boundaryGrid article {
+    min-height: 220px;
+  }
+
+  .cta {
+    min-height: auto;
+    padding: 7rem 0;
+  }
+}
