@@ -1,0 +1,3 @@
+// GENERATED FILE — source: config/legacy-routes.json
+// Do not edit manually. Run: npm run generate:cloudflare
+export const legacyRemovals = [];
