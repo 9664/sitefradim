@@ -189,6 +189,7 @@ export default function MemoryPage() {
         <h2 id="memory-closing-title">IA pode reconstruir uma imagem.<span> A responsabilidade é reconstruir também o contexto.</span></h2>
         <p>É esse território que me interessa hoje: usar novas ferramentas para ampliar acesso, interpretação e encantamento sem apagar a diferença entre documento, restauração e hipótese visual.</p>
         <div className={styles.closingLinks}>
+          <Link href="/arquivo" prefetch={false}>Arquivo Fradim</Link>
           <Link href="/projetos/amo-franca" prefetch={false}>Amo Franca</Link>
           <Link href="/inteligencia-artificial" prefetch={false}>IA & inovação</Link>
           <Link href="/imprensa" prefetch={false}>Evidências externas</Link>
