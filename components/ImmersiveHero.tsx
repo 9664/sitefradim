@@ -1,8 +1,6 @@
 "use client";
 
-import portraitAsset from "@/assets/hero/marcelo-fradim-hero-transparent.webp";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import portraitStyles from "./ImmersiveHeroPortrait.module.css";
@@ -12,6 +10,9 @@ const UniverseScene = dynamic(
   () => import("./UniverseScene").then((module) => module.UniverseScene),
   { ssr: false, loading: () => <div className="scene-fallback" aria-hidden="true" /> },
 );
+
+const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-portrait.svg?v=hero-portrait-20260728`;
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
@@ -122,14 +123,21 @@ export function ImmersiveHero() {
 
       <div className={portraitStyles.portrait} data-hero-portrait aria-hidden="true">
         <div className={portraitStyles.aura} />
-        <Image
-          src={portraitAsset}
+        <img
+          src={portraitSrc}
           alt=""
-          fill
-          priority
-          unoptimized
-          sizes="(max-width: 560px) 100vw, (max-width: 850px) 88vw, (max-width: 1280px) 44vw, 760px"
+          width={420}
+          height={563}
+          decoding="async"
+          fetchPriority="high"
           className={portraitStyles.image}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            mixBlendMode: "screen",
+          }}
         />
       </div>
 
