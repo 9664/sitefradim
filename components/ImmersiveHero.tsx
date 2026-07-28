@@ -49,34 +49,68 @@ export function ImmersiveHero() {
     const hero = heroRef.current;
     if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const compact = window.matchMedia("(max-width: 850px)");
     let frame = 0;
 
     const applyPosition = (x: number, y: number) => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
-        hero.style.setProperty("--portrait-shift-x", `${x * -13}px`);
-        hero.style.setProperty("--portrait-shift-y", `${y * -8}px`);
-        hero.style.setProperty("--orbit-shift-x", `${x * 8}px`);
-        hero.style.setProperty("--orbit-shift-y", `${y * 5}px`);
+        const portraitX = compact.matches ? x * -8 : x * -13;
+        const portraitY = compact.matches ? y * -13 : y * -8;
+        const orbitX = compact.matches ? x * 5 : x * 8;
+        const orbitY = compact.matches ? y * 8 : y * 5;
+
+        hero.style.setProperty("--portrait-shift-x", `${portraitX}px`);
+        hero.style.setProperty("--portrait-shift-y", `${portraitY}px`);
+        hero.style.setProperty("--orbit-shift-x", `${orbitX}px`);
+        hero.style.setProperty("--orbit-shift-y", `${orbitY}px`);
       });
     };
 
-    const handlePointerMove = (event: PointerEvent) => {
+    const positionFromPointer = (event: PointerEvent) => {
       const rect = hero.getBoundingClientRect();
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      if (!inside) {
+        if (!compact.matches) applyPosition(0, 0);
+        return;
+      }
+
       const x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1));
       const y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1));
       applyPosition(x, y);
     };
 
+    const handleScroll = () => {
+      if (!compact.matches) return;
+
+      const rect = hero.getBoundingClientRect();
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+
+      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, window.innerHeight)));
+      applyPosition(0, progress * 0.85);
+    };
+
     const reset = () => applyPosition(0, 0);
 
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointermove", positionFromPointer, { passive: true });
+    hero.addEventListener("pointerdown", positionFromPointer, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
     window.addEventListener("blur", reset);
     document.documentElement.addEventListener("pointerleave", reset);
+    handleScroll();
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointermove", positionFromPointer);
+      hero.removeEventListener("pointerdown", positionFromPointer);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
       window.removeEventListener("blur", reset);
       document.documentElement.removeEventListener("pointerleave", reset);
     };
@@ -88,7 +122,7 @@ export function ImmersiveHero() {
         {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
       </div>
 
-      <div className={portraitStyles.portrait} aria-hidden="true">
+      <div className={portraitStyles.portrait} data-hero-portrait aria-hidden="true">
         <div className={portraitStyles.aura} />
         <Image
           src={portraitSrc}
@@ -96,12 +130,12 @@ export function ImmersiveHero() {
           fill
           priority
           unoptimized
-          sizes="(max-width: 850px) 0px, (max-width: 1280px) 44vw, 760px"
+          sizes="(max-width: 560px) 100vw, (max-width: 850px) 88vw, (max-width: 1280px) 44vw, 760px"
           className={portraitStyles.image}
         />
       </div>
 
-      <div className={portraitStyles.orbitForeground} aria-hidden="true">
+      <div className={portraitStyles.orbitForeground} data-hero-orbits aria-hidden="true">
         <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
           <path
             className={`${portraitStyles.orbitLine} ${portraitStyles.orbitLinePrimary}`}
