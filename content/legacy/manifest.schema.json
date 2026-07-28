@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fradim.com.br/schemas/legacy-manifest.schema.json",
+  "title": "Arquivo Fradim Legacy Content Manifest",
+  "type": "object",
+  "required": ["version", "items"],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "legacyUrl",
+        "title",
+        "contentType",
+        "decision",
+        "verificationStatus",
+        "provenance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "legacyUrl": {
+          "type": "string"
+        },
+        "canonicalUrl": {
+          "type": ["string", "null"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": ["string", "null"]
+        },
+        "contentType": {
+          "enum": [
+            "timeline-milestone",
+            "campaign",
+            "brand-identity",
+            "authored-text",
+            "photograph",
+            "memory-record",
+            "digital-project",
+            "press-reference",
+            "unknown"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "preserve",
+            "reinterpret",
+            "redirect",
+            "quarantine",
+            "eliminate"
+          ]
+        },
+        "verificationStatus": {
+          "enum": [
+            "confirmed",
+            "probable",
+            "approximate",
+            "unconfirmed"
+          ]
+        },
+        "publicationStatus": {
+          "enum": [
+            "inventory",
+            "review",
+            "approved",
+            "published",
+            "rejected"
+          ],
+          "default": "inventory"
+        },
+        "legacyPostId": {
+          "type": ["integer", "null"]
+        },
+        "originalDate": {
+          "type": ["string", "null"]
+        },
+        "redirectCode": {
+          "type": ["integer", "null"],
+          "enum": [301, 410, null]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "organizations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/asset"
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "editorialNotes": {
+          "type": ["string", "null"]
+        },
+        "securityNotes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legacyPath", "mediaType", "securityStatus"],
+      "properties": {
+        "legacyPath": {
+          "type": "string"
+        },
+        "cleanPath": {
+          "type": ["string", "null"]
+        },
+        "mediaType": {
+          "type": "string"
+        },
+        "checksum": {
+          "type": ["string", "null"]
+        },
+        "securityStatus": {
+          "enum": [
+            "pending",
+            "verified",
+            "reencoded",
+            "quarantined",
+            "rejected"
+          ]
+        },
+        "rightsStatus": {
+          "enum": [
+            "owned",
+            "licensed",
+            "public-domain",
+            "permission-pending",
+            "unknown"
+          ]
+        },
+        "caption": {
+          "type": ["string", "null"]
+        },
+        "alt": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "authorship", "certainty"],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "authorship": {
+          "type": "string"
+        },
+        "certainty": {
+          "enum": [
+            "confirmed",
+            "probable",
+            "approximate",
+            "unconfirmed"
+          ]
+        },
+        "originalFile": {
+          "type": ["string", "null"]
+        },
+        "digitizedAt": {
+          "type": ["string", "null"]
+        },
+        "interventions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rights": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}
