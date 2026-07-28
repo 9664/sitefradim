@@ -12,56 +12,12 @@ const UniverseScene = dynamic(
 );
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const portraitPayloadUrl = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp.b64?v=hero-final-20260728`;
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp?v=hero-final-20260728b`;
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
-  const [portraitSrc, setPortraitSrc] = useState<string | null>(null);
   const [portraitReady, setPortraitReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    let objectUrl: string | null = null;
-
-    const loadPortrait = async () => {
-      try {
-        const response = await fetch(portraitPayloadUrl, {
-          cache: "force-cache",
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error(`Falha ao carregar o retrato: ${response.status}`);
-        }
-
-        const encoded = (await response.text()).trim();
-        if (!encoded.startsWith("UklG")) {
-          throw new Error("O arquivo do retrato não contém um WebP válido.");
-        }
-
-        const binary = window.atob(encoded);
-        const bytes = new Uint8Array(binary.length);
-        for (let index = 0; index < binary.length; index += 1) {
-          bytes[index] = binary.charCodeAt(index);
-        }
-
-        objectUrl = URL.createObjectURL(new Blob([bytes], { type: "image/webp" }));
-        setPortraitSrc(objectUrl);
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error("Não foi possível montar o retrato do Hero.", error);
-        }
-      }
-    };
-
-    void loadPortrait();
-
-    return () => {
-      controller.abort();
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, []);
 
   useEffect(() => {
     const compact = window.matchMedia("(max-width: 850px)");
@@ -168,18 +124,16 @@ export function ImmersiveHero() {
 
       <div className={portraitStyles.portrait} data-hero-portrait aria-hidden="true">
         <div className={portraitStyles.aura} />
-        {portraitSrc ? (
-          <img
-            src={portraitSrc}
-            alt=""
-            width={1536}
-            height={1024}
-            decoding="async"
-            fetchPriority="high"
-            onLoad={() => setPortraitReady(true)}
-            className={`${portraitStyles.image} ${portraitReady ? portraitStyles.imageReady : ""}`}
-          />
-        ) : null}
+        <img
+          src={portraitSrc}
+          alt=""
+          width={1536}
+          height={1024}
+          decoding="async"
+          fetchPriority="high"
+          onLoad={() => setPortraitReady(true)}
+          className={`${portraitStyles.image} ${portraitReady ? portraitStyles.imageReady : ""}`}
+        />
       </div>
 
       <div className={portraitStyles.orbitForeground} data-hero-orbits aria-hidden="true">
