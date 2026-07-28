@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Gestor360Case } from "@/components/Gestor360Case";
 import { SiteNav } from "@/components/SiteNav";
 
 const projects = {
@@ -22,7 +23,7 @@ const projects = {
     name: "Gestor 360",
     category: "SISTEMAS + OPERAÇÃO",
     statement: "Quando marketing, trade e operação deixam de trabalhar como ilhas.",
-    intro: "Um sistema em evolução para conectar campanhas, tarefas, compras, trade, BI, cartazeamento e inteligência operacional em uma visão integrada.",
+    intro: "Estudo de caso de um sistema de orquestração para varejo alimentar que conecta calendário, campanhas, tarefas, compras, trade, BI, cartazeamento, evidências e inteligência operacional.",
     connects: ["Varejo", "Marketing", "Trade", "BI", "Processos", "IA"],
   },
 } as const;
@@ -41,6 +42,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: project.name,
     description: project.intro,
     alternates: { canonical: `/projetos/${slug}` },
+    openGraph: {
+      type: "article",
+      title: `${project.name} — Marcelo Fradim`,
+      description: project.intro,
+      url: `https://fradim.com.br/projetos/${slug}`,
+    },
   };
 }
 
@@ -60,7 +67,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       name: "Marcelo Fradim",
       url: "https://fradim.com.br",
     },
+    keywords: project.connects.join(", "),
   };
+
+  if (slug === "gestor-360") {
+    return <Gestor360Case schema={schema} />;
+  }
 
   return (
     <main className="inner-page">
