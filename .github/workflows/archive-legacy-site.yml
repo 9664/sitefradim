@@ -6,11 +6,17 @@ on:
       - main
     paths:
       - scripts/archive-legacy-site.py
+      - scripts/archive-legacy-site-v2.py
       - .github/workflows/archive-legacy-site.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: write
+
+concurrency:
+  group: fradim-legacy-preservation
+  cancel-in-progress: true
 
 jobs:
   archive:
@@ -32,37 +38,9 @@ jobs:
       - name: Capture legitimate legacy content
         run: |
           rm -rf legacy-vault legacy-vault-packages
-          python scripts/archive-legacy-site.py --base https://fradim.com.br --output legacy-vault | tee archive-counts.json
+          python scripts/archive-legacy-site-v2.py --base https://fradim.com.br --output legacy-vault | tee archive-counts.json
 
-      - name: Sanitize WordPress media index
-        shell: python
-        run: |
-          import json
-          from pathlib import Path
-
-          root = Path("legacy-vault")
-          index = root / "wordpress-rest" / "media-index.json"
-          quarantine = root / "manifests" / "quarantine.json"
-          if not index.exists():
-              raise SystemExit(0)
-
-          items = json.loads(index.read_text(encoding="utf-8"))
-          blocked_ids = set()
-          if quarantine.exists():
-              for row in json.loads(quarantine.read_text(encoding="utf-8")):
-                  if row.get("id"):
-                      blocked_ids.add(int(row["id"]))
-
-          safe = []
-          for item in items:
-              parent = int(item.get("post", 0) or 0)
-              if parent and parent in blocked_ids:
-                  continue
-              safe.append(item)
-          index.write_text(json.dumps(safe, ensure_ascii=False, indent=2), encoding="utf-8")
-          print(f"media metadata retained: {len(safe)} / {len(items)}")
-
-      - name: Rebuild checksums after sanitization
+      - name: Rebuild checksums
         shell: python
         run: |
           import csv, hashlib
@@ -116,9 +94,10 @@ jobs:
           print('### Cofre do legado — captura concluída')
           print()
           print(f"- páginas legítimas preservadas: **{c['legitimate_pages_archived']}**")
+          print(f"- registros de mídia WordPress preservados: **{c.get('wp_media_records_retained', 0)}**")
           print(f"- mídias preservadas: **{c['media_files_archived']}**")
           print(f"- URLs de mídia descobertas: **{c['media_urls_discovered']}**")
-          print(f"- registros isolados por suspeita de injeção: **{c['quarantined_records']}**")
+          print(f"- registros isolados da área comprometida: **{c['quarantined_records']}**")
           print(f"- falhas registradas para revisão: **{c['errors']}**")
           print(f"- arquivos no cofre: **{c['archive_files']}**")
           print(f"- bytes antes da compactação: **{c['archive_bytes_before_packaging']}**")
@@ -126,6 +105,6 @@ jobs:
           print(f"Run ID: `{os.environ['RUN_ID']}`")
           print('Artifact: `fradim-legacy-preservation-vault`')
           print()
-          print('O artifact é backup temporário de transferência. A cópia permanente deve ser mantida em armazenamento privado; nada deste cofre é publicado automaticamente.')
+          print('O artifact é um backup temporário de transferência. A cópia permanente deve ser mantida em armazenamento privado; nada deste cofre é publicado automaticamente.')
           PY
           gh pr comment "$PR_NUMBER" --body-file archive-comment.md
