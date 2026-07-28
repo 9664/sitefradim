@@ -58,9 +58,29 @@ export function ImmersiveHero() {
           fill
           priority
           unoptimized
-          sizes="(max-width: 850px) 0px, (max-width: 1280px) 34vw, 520px"
+          sizes="(max-width: 850px) 0px, (max-width: 1280px) 42vw, 690px"
           className={portraitStyles.image}
         />
+      </div>
+
+      <div className={portraitStyles.orbitForeground} aria-hidden="true">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+          <path
+            className={`${portraitStyles.orbitLine} ${portraitStyles.orbitLinePrimary}`}
+            d="M 1680 156 C 1438 72 1206 94 1021 216 C 836 338 753 566 438 706"
+          />
+          <path
+            className={`${portraitStyles.orbitLine} ${portraitStyles.orbitLineSecondary}`}
+            d="M 1570 932 C 1414 724 1241 582 1028 568 C 809 554 648 674 427 824"
+          />
+          <path
+            className={`${portraitStyles.orbitLine} ${portraitStyles.orbitLineTertiary}`}
+            d="M 1330 954 C 1082 704 820 642 482 714"
+          />
+          <circle className={`${portraitStyles.orbitPulse} ${portraitStyles.pulseOne}`} cx="1021" cy="216" r="4.2" />
+          <circle className={`${portraitStyles.orbitPulse} ${portraitStyles.pulseTwo}`} cx="1168" cy="584" r="4.8" />
+          <circle className={`${portraitStyles.orbitPulse} ${portraitStyles.pulseThree}`} cx="786" cy="708" r="3.6" />
+        </svg>
       </div>
 
       <SiteNav mode="home" />
