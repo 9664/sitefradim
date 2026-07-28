@@ -9,6 +9,7 @@ const primaryLinks = [
   ["Work", "/projetos"],
   ["Ideias", "/ideias"],
   ["Lab", "/lab"],
+  ["Contato", "/contato"],
 ] as const;
 
 type SiteNavProps = {
