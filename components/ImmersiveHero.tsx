@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SiteNav } from "./SiteNav";
@@ -43,6 +44,18 @@ export function ImmersiveHero() {
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-scene" aria-hidden="true">
         {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
+      </div>
+
+      <div className="hero-portrait" aria-hidden="true">
+        <div className="hero-portrait-aura" />
+        <Image
+          src="/hero/marcelo-fradim-hero-portrait.webp"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 850px) 0px, (max-width: 1280px) 30vw, 420px"
+          className="hero-portrait-image"
+        />
       </div>
 
       <SiteNav mode="home" />
