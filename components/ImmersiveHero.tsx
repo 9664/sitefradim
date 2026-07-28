@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import portraitStyles from "./ImmersiveHeroPortrait.module.css";
 import { SiteNav } from "./SiteNav";
 
@@ -13,10 +13,11 @@ const UniverseScene = dynamic(
 );
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-portrait.svg`;
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-transparent.webp`;
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const compact = window.matchMedia("(max-width: 850px)");
@@ -44,8 +45,45 @@ export function ImmersiveHero() {
     };
   }, []);
 
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+
+    const applyPosition = (x: number, y: number) => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        hero.style.setProperty("--portrait-shift-x", `${x * -13}px`);
+        hero.style.setProperty("--portrait-shift-y", `${y * -8}px`);
+        hero.style.setProperty("--orbit-shift-x", `${x * 8}px`);
+        hero.style.setProperty("--orbit-shift-y", `${y * 5}px`);
+      });
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = hero.getBoundingClientRect();
+      const x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1));
+      const y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1));
+      applyPosition(x, y);
+    };
+
+    const reset = () => applyPosition(0, 0);
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("blur", reset);
+    document.documentElement.addEventListener("pointerleave", reset);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("blur", reset);
+      document.documentElement.removeEventListener("pointerleave", reset);
+    };
+  }, []);
+
   return (
-    <section className="hero" aria-labelledby="hero-title">
+    <section ref={heroRef} className="hero" aria-labelledby="hero-title">
       <div className="hero-scene" aria-hidden="true">
         {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
       </div>
@@ -58,7 +96,7 @@ export function ImmersiveHero() {
           fill
           priority
           unoptimized
-          sizes="(max-width: 850px) 0px, (max-width: 1280px) 42vw, 690px"
+          sizes="(max-width: 850px) 0px, (max-width: 1280px) 44vw, 760px"
           className={portraitStyles.image}
         />
       </div>
