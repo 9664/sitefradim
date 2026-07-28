@@ -6,6 +6,7 @@ import { TrajectoryJourney } from "@/components/TrajectoryJourney";
 const territories = [
   ["Marcelo", "Trajetória, pensamento e autoridade.", "/sobre"],
   ["Spock", "A colaboração entre humano e inteligência artificial.", "/spock"],
+  ["Arquivo", "Cronologia, textos, imagens, campanhas e evidências preservadas.", "/arquivo"],
   ["Lab", "Agentes, protótipos, experimentos e pesquisa.", "/lab"],
   ["Work", "Projetos reais, produtos e transformação de negócios.", "/projetos"],
   ["Ideias", "Ensaios, artigos, provocações e diálogos.", "/ideias"],
