@@ -1,6 +1,11 @@
+import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+
+const EXPECTED_SHA256 = "3a2edd3656704eb598533c8d69b9b8bc8d6c654f9a7746e948c8a24942f19de5";
+const EXPECTED_WIDTH = 768;
+const EXPECTED_HEIGHT = 512;
 
 const out = path.join(process.cwd(), "out");
 const portraitPath = path.join(out, "hero", "marcelo-fradim-hero-final.webp");
@@ -12,6 +17,7 @@ const portraitStats = await stat(portraitPath);
 const riff = portrait.subarray(0, 4).toString("ascii");
 const webp = portrait.subarray(8, 12).toString("ascii");
 const chunk = portrait.subarray(12, 16).toString("ascii");
+const digest = createHash("sha256").update(portrait).digest("hex");
 
 const readUInt24LE = (buffer, offset) =>
   buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16);
@@ -23,12 +29,13 @@ if (
   riff !== "RIFF" ||
   webp !== "WEBP" ||
   chunk !== "VP8X" ||
-  width < 900 ||
-  height < 600 ||
-  portraitStats.size < 40_000
+  width !== EXPECTED_WIDTH ||
+  height !== EXPECTED_HEIGHT ||
+  portraitStats.size < 9_000 ||
+  digest !== EXPECTED_SHA256
 ) {
   throw new Error(
-    `Invalid published Hero portrait: ${portraitStats.size} bytes, ${width}x${height}, ${riff}/${webp}/${chunk}`,
+    `Invalid published Hero portrait: ${portraitStats.size} bytes, ${width}x${height}, ${riff}/${webp}/${chunk}, sha256=${digest}`,
   );
 }
 
@@ -48,5 +55,5 @@ for (const required of ["fradim@gmail.com", "+55 16 98180-4590", "CONTATO / PROJ
 }
 
 console.log(
-  `Static site validated: Hero portrait ${width}x${height}, ${portraitStats.size} bytes; contact route present.`,
+  `Static site validated: Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; contact route present.`,
 );
