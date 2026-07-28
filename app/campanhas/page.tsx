@@ -109,6 +109,7 @@ export default function CampaignArchivePage() {
           Enquanto a galeria histórica é revisada, os projetos atuais mostram como design, marketing, tecnologia, memória e inteligência artificial passaram a se conectar em sistemas maiores.
         </p>
         <div className={styles.links}>
+          <Link href="/arquivo" prefetch={false}>Arquivo Fradim</Link>
           <Link href="/projetos" prefetch={false}>Ver projetos atuais</Link>
           <Link href="/memoria" prefetch={false}>Explorar Memória</Link>
           <Link href="/sobre" prefetch={false}>Ver trajetória</Link>
