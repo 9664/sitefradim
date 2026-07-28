@@ -11,6 +11,7 @@ const territories = [
   ["Work", "Projetos reais, produtos e transformação de negócios.", "/projetos"],
   ["Ideias", "Ensaios, artigos, provocações e diálogos.", "/ideias"],
   ["Memória", "Cultura, fotografia histórica e preservação digital.", "/memoria"],
+  ["Contato", "Projetos, imprensa, parcerias e conversas profissionais.", "/contato"],
 ] as const;
 
 const personSchema = {
@@ -20,7 +21,12 @@ const personSchema = {
     "@type": "Person",
     name: "Marcelo Fradim",
     url: "https://fradim.com.br",
+    email: "mailto:fradim@gmail.com",
     jobTitle: "Especialista em Inteligência Artificial e Inovação",
+    homeLocation: {
+      "@type": "Place",
+      name: "Franca, São Paulo, Brasil",
+    },
     knowsAbout: [
       "Inteligência Artificial",
       "Inovação",
@@ -32,10 +38,14 @@ const personSchema = {
       "Vibe Coding",
       "Transformação Digital",
       "IA Generativa",
+      "Memória Digital",
+      "Restauração Fotográfica",
     ],
     sameAs: [
       "https://www.linkedin.com/in/marcelofradim/",
       "https://www.instagram.com/marcelofradim/",
+      "https://www.behance.net/fradim",
+      "https://corredorcultural.com.br/agentes/marcelo-fradim/",
     ],
   },
 };
@@ -71,7 +81,7 @@ export default function Home() {
         <div className="territory-grid">
           {territories.map(([name, description, href], index) => (
             <Link className="territory-card" href={href} prefetch={false} key={name}>
-              <span className="territory-index">0{index + 1}</span>
+              <span className="territory-index">{String(index + 1).padStart(2, "0")}</span>
               <h3>{name}</h3>
               <p>{description}</p>
               <span className="territory-arrow" aria-hidden="true">↗</span>
