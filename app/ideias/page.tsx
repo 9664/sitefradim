@@ -75,6 +75,7 @@ export default function IdeasPage() {
         <p className="eyebrow">REGRA EDITORIAL</p>
         <h2 id="writing-title">Uma ideia não precisa parecer definitiva.<span> Precisa ser clara o bastante para ser confrontada.</span></h2>
         <p>O objetivo aqui não é prever o futuro com confiança artificial. É registrar hipóteses, explicar raciocínios e voltar a eles quando a prática trouxer evidências melhores.</p>
+        <Link href="/arquivo" prefetch={false}>Ver estes textos na cronologia do Arquivo Fradim →</Link>
         <Link href="/lab" prefetch={false}>Ver onde as ideias viram experimentos →</Link>
       </section>
     </main>
