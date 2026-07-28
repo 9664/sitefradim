@@ -12,7 +12,7 @@ const UniverseScene = dynamic(
 );
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp?v=3a2edd3656704eb5`;
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp?v=9a9f8d58497d3720`;
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
@@ -127,8 +127,8 @@ export function ImmersiveHero() {
         <img
           src={portraitSrc}
           alt=""
-          width={768}
-          height={512}
+          width={256}
+          height={384}
           decoding="async"
           fetchPriority="high"
           onLoad={() => setPortraitReady(true)}
