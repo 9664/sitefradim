@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import portraitStyles from "./ImmersiveHeroPortrait.module.css";
 import { SiteNav } from "./SiteNav";
 
 const UniverseScene = dynamic(
@@ -46,15 +47,15 @@ export function ImmersiveHero() {
         {render3D ? <UniverseScene /> : <div className="scene-fallback" />}
       </div>
 
-      <div className="hero-portrait" aria-hidden="true">
-        <div className="hero-portrait-aura" />
+      <div className={portraitStyles.portrait} aria-hidden="true">
+        <div className={portraitStyles.aura} />
         <Image
           src="/hero/marcelo-fradim-hero-portrait.webp"
           alt=""
           fill
           priority
           sizes="(max-width: 850px) 0px, (max-width: 1280px) 30vw, 420px"
-          className="hero-portrait-image"
+          className={portraitStyles.image}
         />
       </div>
 
