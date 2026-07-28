@@ -8,6 +8,7 @@ on:
       - scripts/archive-legacy-site.py
       - scripts/archive-legacy-site-v2.py
       - scripts/archive-legacy-core.py
+      - scripts/archive-wordpress-originals.py
       - .github/workflows/archive-legacy-site.yml
   workflow_dispatch:
 
@@ -39,7 +40,7 @@ jobs:
       - name: Capture legitimate legacy content
         run: |
           rm -rf legacy-vault legacy-vault-packages
-          python scripts/archive-legacy-core.py --base https://fradim.com.br --output legacy-vault | tee archive-counts.json
+          python scripts/archive-wordpress-originals.py --base https://fradim.com.br --output legacy-vault | tee archive-counts.json
 
       - name: Rebuild checksums
         shell: python
@@ -97,8 +98,8 @@ jobs:
           print(f"- registros WordPress legítimos preservados: **{c.get('legitimate_wordpress_records', 0)}**")
           print(f"- páginas legítimas preservadas em HTML: **{c['legitimate_pages_archived']}**")
           print(f"- registros de mídia WordPress preservados: **{c.get('wp_media_records_retained', 0)}**")
-          print(f"- mídias preservadas: **{c['media_files_archived']}**")
-          print(f"- URLs de mídia descobertas: **{c['media_urls_discovered']}**")
+          print(f"- uploads originais candidatos: **{c.get('original_media_candidates', 0)}**")
+          print(f"- uploads originais preservados: **{c['media_files_archived']}**")
           print(f"- registros isolados da área comprometida: **{c['quarantined_records']}**")
           print(f"- falhas registradas para revisão: **{c['errors']}**")
           print(f"- arquivos no cofre: **{c['archive_files']}**")
