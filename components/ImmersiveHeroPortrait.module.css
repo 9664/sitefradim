@@ -1,60 +1,77 @@
 .portrait {
   position: absolute;
   z-index: 1;
-  top: clamp(4.7rem, 7.5vh, 6rem);
-  right: clamp(-4.8rem, -2.8vw, -2rem);
-  bottom: -1.5rem;
-  width: min(48vw, 49rem);
-  min-width: 34rem;
-  height: calc(100% - clamp(4.7rem, 7.5vh, 6rem));
+  top: clamp(4.5rem, 7vh, 5.75rem);
+  right: clamp(-18rem, -12vw, -9rem);
+  bottom: -2rem;
+  width: min(68vw, 72rem);
+  min-width: 46rem;
+  height: calc(100% - clamp(4.5rem, 7vh, 5.75rem));
   pointer-events: none;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   opacity: 1;
-  isolation: isolate;
   transform: translate3d(
     var(--portrait-shift-x, 0px),
     var(--portrait-shift-y, 0px),
     0
   );
-  transition: transform 130ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  transition: transform 150ms cubic-bezier(0.2, 0.75, 0.25, 1);
   will-change: transform;
 }
 
 .aura {
   position: absolute;
-  inset: -12% -13% -8% -17%;
+  inset: -9% -3% -7% 12%;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 54% 23%, rgba(122, 157, 214, 0.36), transparent 31%),
-    radial-gradient(circle at 53% 50%, rgba(27, 54, 99, 0.44), transparent 58%),
-    radial-gradient(circle at 63% 76%, rgba(5, 12, 25, 0.88), transparent 69%);
-  filter: blur(35px);
-  opacity: 0.92;
+    radial-gradient(circle at 54% 21%, rgba(118, 155, 216, 0.31), transparent 31%),
+    radial-gradient(circle at 54% 49%, rgba(28, 57, 104, 0.38), transparent 58%),
+    radial-gradient(circle at 58% 78%, rgba(5, 12, 25, 0.7), transparent 70%);
+  filter: blur(34px);
+  opacity: 0.86;
 }
 
 .image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  object-position: right bottom;
+  object-position: center bottom;
+  background: transparent;
+  border: 0;
+  opacity: 0;
+  transform: translate3d(12%, 0, 0) scale(1.08);
+  transform-origin: center bottom;
   filter:
-    contrast(1.07)
-    brightness(0.98)
-    saturate(0.84)
-    drop-shadow(0 0 32px rgba(75, 111, 174, 0.22));
-  opacity: 0.97;
+    contrast(1.06)
+    brightness(0.95)
+    saturate(0.86)
+    drop-shadow(0 0 30px rgba(69, 108, 176, 0.2));
   mix-blend-mode: normal;
   mask-image: linear-gradient(
     180deg,
     #000 0%,
     #000 88%,
-    rgba(0, 0, 0, 0.92) 94%,
+    rgba(0, 0, 0, 0.9) 94%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     180deg,
     #000 0%,
     #000 88%,
-    rgba(0, 0, 0, 0.92) 94%,
+    rgba(0, 0, 0, 0.9) 94%,
     transparent 100%
   );
+  transition: opacity 520ms ease;
+}
+
+.imageReady {
+  opacity: 0.96;
 }
 
 .orbitForeground {
@@ -122,6 +139,7 @@
     opacity: 0.42;
     transform: scale(0.72);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.18);
@@ -130,18 +148,21 @@
 
 @media (max-width: 1280px) {
   .portrait {
-    right: -4rem;
-    width: min(47vw, 43rem);
-    min-width: 30rem;
+    right: -14rem;
+    width: min(72vw, 64rem);
+    min-width: 42rem;
   }
 }
 
 @media (max-width: 1080px) {
   .portrait {
-    right: -3rem;
-    width: min(44vw, 36rem);
-    min-width: 26rem;
-    opacity: 0.92;
+    right: -12rem;
+    width: min(76vw, 56rem);
+    min-width: 38rem;
+  }
+
+  .imageReady {
+    opacity: 0.86;
   }
 
   .orbitForeground {
@@ -151,10 +172,13 @@
 
 @media (max-width: 900px) {
   .portrait {
-    right: -3.5rem;
-    width: min(42vw, 29rem);
-    min-width: 22rem;
-    opacity: 0.8;
+    right: -12.5rem;
+    width: min(82vw, 50rem);
+    min-width: 36rem;
+  }
+
+  .imageReady {
+    opacity: 0.72;
   }
 }
 
@@ -195,47 +219,31 @@
 
   .portrait {
     display: block;
-    top: 4.6rem;
-    right: -10rem;
+    top: 4rem;
+    right: -18rem;
     bottom: auto;
-    width: min(104vw, 35rem);
-    min-width: 30rem;
-    height: min(70svh, 40rem);
-    opacity: 0.48;
+    width: 58rem;
+    min-width: 58rem;
+    height: min(72svh, 42rem);
   }
 
   .aura {
-    inset: -10% -8% -5% -14%;
-    background:
-      radial-gradient(circle at 58% 24%, rgba(124, 160, 219, 0.31), transparent 29%),
-      radial-gradient(circle at 59% 51%, rgba(27, 53, 98, 0.4), transparent 58%),
-      radial-gradient(circle at 61% 75%, rgba(5, 12, 25, 0.72), transparent 68%);
-    filter: blur(28px);
-    opacity: 0.84;
+    inset: -8% 0 -4% 22%;
+    filter: blur(27px);
+    opacity: 0.72;
   }
 
   .image {
-    object-position: right top;
+    transform: translate3d(14%, 0, 0) scale(1.05);
     filter:
-      contrast(1.08)
-      brightness(0.86)
-      saturate(0.76)
-      drop-shadow(0 0 26px rgba(75, 111, 174, 0.2));
-    opacity: 0.9;
-    mask-image: linear-gradient(
-      180deg,
-      #000 0%,
-      #000 78%,
-      rgba(0, 0, 0, 0.82) 88%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      180deg,
-      #000 0%,
-      #000 78%,
-      rgba(0, 0, 0, 0.82) 88%,
-      transparent 100%
-    );
+      contrast(1.07)
+      brightness(0.82)
+      saturate(0.78)
+      drop-shadow(0 0 24px rgba(75, 111, 174, 0.18));
+  }
+
+  .imageReady {
+    opacity: 0.5;
   }
 
   .orbitForeground {
@@ -254,18 +262,17 @@
   .orbitLineTertiary {
     stroke: rgba(165, 188, 224, 0.15);
   }
-
-  .orbitPulse {
-    opacity: 0.68;
-  }
 }
 
 @media (max-width: 560px) {
   .portrait {
-    right: -11rem;
-    width: 34rem;
-    min-width: 34rem;
-    height: min(68svh, 36rem);
+    right: -20rem;
+    width: 56rem;
+    min-width: 56rem;
+    height: min(68svh, 38rem);
+  }
+
+  .imageReady {
     opacity: 0.44;
   }
 
@@ -280,8 +287,11 @@
   }
 
   .portrait {
-    top: 4.25rem;
-    height: 31rem;
+    top: 3.75rem;
+    height: 33rem;
+  }
+
+  .imageReady {
     opacity: 0.38;
   }
 }
@@ -293,7 +303,11 @@
     transition: none;
   }
 
-  .portrait {
+  .image {
+    transition: none;
+  }
+
+  .imageReady {
     opacity: 0.84;
   }
 
@@ -303,7 +317,7 @@
 }
 
 @media (max-width: 850px) and (prefers-reduced-motion: reduce) {
-  .portrait {
+  .imageReady {
     opacity: 0.42;
   }
 }
