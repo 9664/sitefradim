@@ -3,9 +3,10 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const EXPECTED_SHA256 = "3a2edd3656704eb598533c8d69b9b8bc8d6c654f9a7746e948c8a24942f19de5";
-const EXPECTED_WIDTH = 768;
-const EXPECTED_HEIGHT = 512;
+const EXPECTED_SHA256 = "9a9f8d58497d372021360ce6ece2d103abe6f0d2528c0da652b5c92c876b6a2a";
+const EXPECTED_WIDTH = 256;
+const EXPECTED_HEIGHT = 384;
+const EXPECTED_CACHE_KEY = "v=9a9f8d58497d3720";
 
 const out = path.join(process.cwd(), "out");
 const portraitPath = path.join(out, "hero", "marcelo-fradim-hero-final.webp");
@@ -42,6 +43,9 @@ if (
 const home = await readFile(homePath, "utf8");
 if (!home.includes("marcelo-fradim-hero-final.webp")) {
   throw new Error("Home does not reference the final Hero portrait.");
+}
+if (!home.includes(EXPECTED_CACHE_KEY)) {
+  throw new Error("Home does not reference the current Hero portrait cache key.");
 }
 if (home.includes("marcelo-fradim-hero-portrait.svg")) {
   throw new Error("Home still references the obsolete framed SVG portrait.");
