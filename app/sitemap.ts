@@ -14,6 +14,7 @@ const routes = [
   "/spock",
   "/inteligencia-artificial",
   "/trajetoria",
+  "/arquivo",
   "/projetos",
   "/projetos/intelig-cloud",
   "/projetos/amo-franca",
@@ -37,22 +38,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((route) => ({
     url: `https://fradim.com.br${route}`,
     lastModified: now,
-    changeFrequency: route === "" || route === "/ideias" ? "weekly" : "monthly",
+    changeFrequency: route === "" || route === "/ideias" || route === "/arquivo" ? "weekly" : "monthly",
     priority:
       route === ""
         ? 1
         : route === "/universo"
           ? 0.9
-          : route === "/restauracao-fotografica"
-            ? 0.85
-            : route === "/campanhas"
-              ? 0.7
-              : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`)
-                ? 0.72
-                : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
-                  ? 0.68
-                  : route.startsWith("/projetos/") || route.startsWith("/ideias/")
-                    ? 0.75
-                    : 0.8,
+          : route === "/arquivo"
+            ? 0.88
+            : route === "/restauracao-fotografica"
+              ? 0.85
+              : route === "/campanhas"
+                ? 0.7
+                : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`)
+                  ? 0.72
+                  : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
+                    ? 0.68
+                    : route.startsWith("/projetos/") || route.startsWith("/ideias/")
+                      ? 0.75
+                      : 0.8,
   }));
 }
