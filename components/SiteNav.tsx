@@ -5,9 +5,10 @@ type SiteNavMode = "home" | "inner" | "universe";
 const primaryLinks = [
   ["Marcelo", "/sobre"],
   ["Spock", "/spock"],
-  ["Lab", "/lab"],
+  ["Arquivo", "/arquivo"],
   ["Work", "/projetos"],
   ["Ideias", "/ideias"],
+  ["Lab", "/lab"],
 ] as const;
 
 type SiteNavProps = {
