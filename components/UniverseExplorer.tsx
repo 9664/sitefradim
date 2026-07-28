@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./UniverseExplorer.module.css";
 
-type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "vibe" | "lab" | "ideias";
+type NodeId = "marcelo" | "spock" | "ia" | "intelig" | "gestor" | "amo" | "marketing" | "memoria" | "arquivo" | "vibe" | "lab" | "ideias";
 type UniverseVariant = "section" | "fullscreen";
 
 type UniverseNode = {
@@ -29,17 +29,18 @@ const nodes: UniverseNode[] = [
   { id: "amo", label: "Amo Franca", kicker: "COMUNIDADE", description: "Cultura, comunicação, memória coletiva e construção de comunidade conectadas por tecnologia.", href: "/projetos/amo-franca", position: [-3.6, 1.8, -0.65], size: 0.38, tone: "human" },
   { id: "marketing", label: "Marketing", kicker: "EXPERIÊNCIA", description: "Estratégia, varejo, comunicação, branding e comportamento como base para compreender problemas reais.", href: "/trajetoria", position: [-3.9, -1.2, 0.85], size: 0.34, tone: "human" },
   { id: "memoria", label: "Memória", kicker: "CULTURA", description: "Pesquisa iconográfica, fotografia histórica, preservação digital e reconstrução visual do passado.", href: "/memoria", position: [-1.65, -2.45, -0.8], size: 0.32, tone: "human" },
+  { id: "arquivo", label: "Arquivo", kicker: "EVIDÊNCIA", description: "Cronologia curada de textos, imagens, campanhas, projetos e experimentos preservados como evidência de trajetória.", href: "/arquivo", position: [-1.3, 1.15, 1.15], size: 0.31, tone: "bridge" },
   { id: "vibe", label: "Vibe Coding", kicker: "CONSTRUÇÃO", description: "Desenvolvimento assistido por IA como nova forma de transformar intenção em software funcional.", href: "/lab", position: [1.75, -2.25, 0.65], size: 0.31, tone: "ai" },
   { id: "lab", label: "Lab", kicker: "EXPERIMENTAÇÃO", description: "Protótipos, agentes, interfaces, pesquisas e experiências públicas em evolução contínua.", href: "/lab", position: [4.15, -1.35, -1.05], size: 0.29, tone: "ai" },
   { id: "ideias", label: "Ideias", kicker: "PENSAMENTO", description: "Artigos, ensaios e diálogos onde hipóteses são confrontadas antes de virarem respostas prontas.", href: "/ideias", position: [-0.15, 3.65, 0.85], size: 0.28, tone: "bridge" },
 ];
 
 const edges: [NodeId, NodeId][] = [
-  ["marcelo", "spock"], ["marcelo", "marketing"], ["marcelo", "amo"], ["marcelo", "memoria"], ["marcelo", "ia"],
+  ["marcelo", "spock"], ["marcelo", "marketing"], ["marcelo", "amo"], ["marcelo", "memoria"], ["marcelo", "ia"], ["marcelo", "arquivo"],
   ["spock", "ia"], ["spock", "intelig"], ["spock", "gestor"], ["spock", "vibe"], ["spock", "lab"],
   ["ia", "intelig"], ["ia", "vibe"], ["ia", "ideias"], ["intelig", "gestor"], ["intelig", "lab"],
-  ["marketing", "gestor"], ["marketing", "amo"], ["amo", "memoria"], ["memoria", "ia"], ["vibe", "lab"],
-  ["ideias", "marcelo"], ["ideias", "spock"],
+  ["marketing", "gestor"], ["marketing", "amo"], ["amo", "memoria"], ["amo", "arquivo"], ["memoria", "ia"], ["memoria", "arquivo"], ["vibe", "lab"],
+  ["ideias", "marcelo"], ["ideias", "spock"], ["ideias", "arquivo"], ["arquivo", "lab"],
 ];
 
 function NodeOrb({ node, selected, onSelect, compact }: { node: UniverseNode; selected: boolean; onSelect: (id: NodeId) => void; compact: boolean }) {
