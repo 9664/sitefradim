@@ -3,14 +3,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
+const expectedParts = [
+  "461f3aca6c05b2e2738f40ee7cb415ad781ad616bd18e8182fa28bc929ba6cb0",
+  "ccb54505dd539b1f9fdf50997e9b5cb27f5bfdb9c049c4b4f0cf6de7117de3d7",
+  "0f53ac1e91fe39080ad17b213fe7db5796f4042c0fac6968de778faa6f82b8a0",
+  "eaecade2f1ce4dd245cda83a428366a441c55ec76fb6a83873df9b52067e5653",
+];
 const expectedBase64Hash = "deddc0c312a0ac32b97b8afc70334b7e6b951839a3c6e9d2d70fb05118b69850";
 const expectedImageHash = "9a9f8d58497d372021360ce6ece2d103abe6f0d2528c0da652b5c92c876b6a2a";
-const sourcePath = path.join(
-  process.cwd(),
-  "assets",
-  "hero",
-  "marcelo-fradim-hero-v4.part-01.b64",
-);
 const outputPath = path.join(
   process.cwd(),
   "public",
@@ -18,7 +18,28 @@ const outputPath = path.join(
   "marcelo-fradim-hero-final.webp",
 );
 
-const encoded = (await readFile(sourcePath, "utf8")).trim();
+const parts = await Promise.all(
+  expectedParts.map(async (expectedHash, index) => {
+    const partPath = path.join(
+      process.cwd(),
+      "assets",
+      "hero",
+      `marcelo-fradim-hero-v4.part-${String(index + 1).padStart(2, "0")}.b64`,
+    );
+    const value = (await readFile(partPath, "utf8")).trim();
+    const digest = createHash("sha256").update(value).digest("hex");
+
+    if (value.length !== 3942 || digest !== expectedHash) {
+      throw new Error(
+        `Hero portrait part ${index + 1} failed validation: length=${value.length}, sha256=${digest}`,
+      );
+    }
+
+    return value;
+  }),
+);
+
+const encoded = parts.join("");
 const encodedHash = createHash("sha256").update(encoded).digest("hex");
 
 if (encoded.length !== 15768 || encodedHash !== expectedBase64Hash) {
