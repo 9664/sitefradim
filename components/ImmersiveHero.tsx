@@ -50,7 +50,7 @@ export function ImmersiveHero() {
       <div className={portraitStyles.portrait} aria-hidden="true">
         <div className={portraitStyles.aura} />
         <Image
-          src="/hero/marcelo-fradim-hero-portrait.webp"
+          src="/hero/marcelo-fradim-hero-portrait.svg"
           alt=""
           fill
           priority
