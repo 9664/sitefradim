@@ -12,6 +12,9 @@ const UniverseScene = dynamic(
   { ssr: false, loading: () => <div className="scene-fallback" aria-hidden="true" /> },
 );
 
+const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-portrait.svg`;
+
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
 
@@ -50,11 +53,12 @@ export function ImmersiveHero() {
       <div className={portraitStyles.portrait} aria-hidden="true">
         <div className={portraitStyles.aura} />
         <Image
-          src="/hero/marcelo-fradim-hero-portrait.svg"
+          src={portraitSrc}
           alt=""
           fill
           priority
-          sizes="(max-width: 850px) 0px, (max-width: 1280px) 30vw, 420px"
+          unoptimized
+          sizes="(max-width: 850px) 0px, (max-width: 1280px) 34vw, 520px"
           className={portraitStyles.image}
         />
       </div>
