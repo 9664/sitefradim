@@ -61,8 +61,18 @@ jobs:
           npm run build > build.log 2>&1
           code=$?
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          tail -n 80 build.log > build-tail.log
+          tail -n 120 build.log > build-tail.log
           exit 0
+
+      - name: Upload build diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-build-diagnostic
+          path: |
+            build.log
+            build-tail.log
+          retention-days: 3
 
       - name: Validate Cloudflare production routing output
         if: steps.production_build.outputs.exit_code == '0'
