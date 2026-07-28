@@ -16,7 +16,6 @@ const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp?v=9a9
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
-  const [portraitReady, setPortraitReady] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -131,8 +130,7 @@ export function ImmersiveHero() {
           height={384}
           decoding="async"
           fetchPriority="high"
-          onLoad={() => setPortraitReady(true)}
-          className={`${portraitStyles.image} ${portraitReady ? portraitStyles.imageReady : ""}`}
+          className={`${portraitStyles.image} ${portraitStyles.imageReady}`}
         />
       </div>
 
