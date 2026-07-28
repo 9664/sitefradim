@@ -1,0 +1,131 @@
+name: Archive legacy Fradim site
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - scripts/archive-legacy-site.py
+      - .github/workflows/archive-legacy-site.yml
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install archive dependencies
+        run: python -m pip install --disable-pip-version-check requests beautifulsoup4 lxml
+
+      - name: Capture legitimate legacy content
+        run: |
+          rm -rf legacy-vault legacy-vault-packages
+          python scripts/archive-legacy-site.py --base https://fradim.com.br --output legacy-vault | tee archive-counts.json
+
+      - name: Sanitize WordPress media index
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          root = Path("legacy-vault")
+          index = root / "wordpress-rest" / "media-index.json"
+          quarantine = root / "manifests" / "quarantine.json"
+          if not index.exists():
+              raise SystemExit(0)
+
+          items = json.loads(index.read_text(encoding="utf-8"))
+          blocked_ids = set()
+          if quarantine.exists():
+              for row in json.loads(quarantine.read_text(encoding="utf-8")):
+                  if row.get("id"):
+                      blocked_ids.add(int(row["id"]))
+
+          safe = []
+          for item in items:
+              parent = int(item.get("post", 0) or 0)
+              if parent and parent in blocked_ids:
+                  continue
+              safe.append(item)
+          index.write_text(json.dumps(safe, ensure_ascii=False, indent=2), encoding="utf-8")
+          print(f"media metadata retained: {len(safe)} / {len(items)}")
+
+      - name: Rebuild checksums after sanitization
+        shell: python
+        run: |
+          import csv, hashlib
+          from pathlib import Path
+
+          root = Path("legacy-vault")
+          path = root / "manifests" / "checksums.csv"
+          rows = []
+          for file in sorted(p for p in root.rglob("*") if p.is_file() and p != path):
+              h = hashlib.sha256()
+              with file.open("rb") as fh:
+                  for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+                      h.update(chunk)
+              rows.append((str(file.relative_to(root)), h.hexdigest(), file.stat().st_size))
+          with path.open("w", encoding="utf-8", newline="") as fh:
+              writer = csv.writer(fh)
+              writer.writerow(["path", "sha256", "bytes"])
+              writer.writerows(rows)
+          print(f"checksummed files: {len(rows)}")
+
+      - name: Package preservation vault
+        run: |
+          mkdir -p legacy-vault-packages
+          tar -C legacy-vault -czf legacy-vault-packages/fradim-legacy-vault.tar.gz .
+          cp legacy-vault/REPORT.md legacy-vault-packages/REPORT.md
+          cp legacy-vault/inventory.json legacy-vault-packages/inventory.json
+          sha256sum legacy-vault-packages/fradim-legacy-vault.tar.gz > legacy-vault-packages/fradim-legacy-vault.tar.gz.sha256
+          du -h legacy-vault-packages/fradim-legacy-vault.tar.gz
+
+      - name: Upload private-backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-legacy-preservation-vault
+          path: legacy-vault-packages/
+          retention-days: 14
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Comment preservation result
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          python - <<'PY' > archive-comment.md
+          import json, os
+          from pathlib import Path
+          inv = json.loads(Path('legacy-vault/inventory.json').read_text(encoding='utf-8'))
+          c = inv['counts']
+          print('### Cofre do legado — captura concluída')
+          print()
+          print(f"- páginas legítimas preservadas: **{c['legitimate_pages_archived']}**")
+          print(f"- mídias preservadas: **{c['media_files_archived']}**")
+          print(f"- URLs de mídia descobertas: **{c['media_urls_discovered']}**")
+          print(f"- registros isolados por suspeita de injeção: **{c['quarantined_records']}**")
+          print(f"- falhas registradas para revisão: **{c['errors']}**")
+          print(f"- arquivos no cofre: **{c['archive_files']}**")
+          print(f"- bytes antes da compactação: **{c['archive_bytes_before_packaging']}**")
+          print()
+          print(f"Run ID: `{os.environ['RUN_ID']}`")
+          print('Artifact: `fradim-legacy-preservation-vault`')
+          print()
+          print('O artifact é backup temporário de transferência. A cópia permanente deve ser mantida em armazenamento privado; nada deste cofre é publicado automaticamente.')
+          PY
+          gh pr comment "$PR_NUMBER" --body-file archive-comment.md
