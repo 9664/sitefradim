@@ -15,8 +15,8 @@ const phases = [
   {
     index: "01",
     title: "Imagem e design",
-    context: "FORMAÇÃO DE REPERTÓRIO",
-    body: "A trajetória começa pela imagem: composição, fotografia, design, pós-produção e a necessidade de transformar uma ideia abstrata em algo que outra pessoa consiga perceber, entender e sentir.",
+    context: "FORMAÇÃO DE REPERTÓRIO · FOTOGRAFIA · RESTAURAÇÃO",
+    body: "A trajetória começa pela imagem: composição, fotografia, design, pós-produção e a necessidade de transformar uma ideia abstrata em algo que outra pessoa consiga perceber, entender e sentir. O trabalho de restauração e pesquisa visual alcançou acervos em Franca e Pedregulho, no interior paulista, além de Trairi, no Rio Grande do Norte, Piancó, na Paraíba, e Rio de Janeiro.",
   },
   {
     index: "02",
@@ -33,8 +33,8 @@ const phases = [
   {
     index: "04",
     title: "Comunidade e memória",
-    context: "AMO FRANCA · CULTURA · PESQUISA",
-    body: "O Amo Franca conecta tecnologia e comunicação a uma dimensão social: memória coletiva, iconografia, pesquisa histórica, cultura e construção de comunidade. A imagem volta, agora como ferramenta de pertencimento.",
+    context: "AMO FRANCA · DESDE 2014 · CULTURA · PESQUISA",
+    body: "O Amo Franca conecta tecnologia e comunicação a uma dimensão social: memória coletiva, iconografia, pesquisa histórica, cultura e construção de comunidade. A imagem volta, agora como ferramenta de pertencimento e como infraestrutura para preservar aquilo que uma cidade não pode esquecer.",
   },
   {
     index: "05",
@@ -72,9 +72,14 @@ const schema = {
     "@type": "Person",
     name: "Marcelo Fradim",
     url: "https://fradim.com.br",
+    email: "mailto:fradim@gmail.com",
     jobTitle: "Especialista em Inteligência Artificial e Inovação",
     description:
       "Profissional com trajetória na interseção entre inteligência artificial, marketing, tecnologia, negócios, design, cultura e desenvolvimento de projetos.",
+    homeLocation: {
+      "@type": "Place",
+      name: "Franca, São Paulo, Brasil",
+    },
     knowsAbout: [
       "Inteligência Artificial",
       "Inovação",
@@ -84,13 +89,19 @@ const schema = {
       "Automação",
       "Agentes de IA",
       "Engenharia de Prompts",
+      "Context Engineering",
       "Vibe Coding",
       "Transformação Digital",
       "Memória Digital",
+      "Restauração Fotográfica",
+      "Pesquisa Iconográfica",
+      "Cultura Digital",
     ],
     sameAs: [
       "https://www.linkedin.com/in/marcelofradim/",
       "https://www.instagram.com/marcelofradim/",
+      "https://www.behance.net/fradim",
+      "https://corredorcultural.com.br/agentes/marcelo-fradim/",
     ],
   },
 };
@@ -177,6 +188,7 @@ export default function MarceloPage() {
           <Link href="/spock" prefetch={false}>Conhecer Spock</Link>
           <Link href="/projetos" prefetch={false}>Explorar projetos</Link>
           <Link href="/inteligencia-artificial" prefetch={false}>IA & inovação</Link>
+          <Link href="/contato" prefetch={false}>Entrar em contato</Link>
         </div>
       </section>
     </main>
