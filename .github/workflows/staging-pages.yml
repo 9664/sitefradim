@@ -109,6 +109,9 @@ jobs:
           echo "${home}" | grep -qi "Marcelo Fradim"
           echo "${home}" | grep -qi 'name="robots"'
           echo "${home}" | grep -qi "noindex"
+          echo "${home}" | grep -qi "MEMÓRIA VIVA / A COR RETORNA"
+          echo "${home}" | grep -qi "estacao-mogiana-1925.jpg"
+          echo "${home}" | grep -qi "magazine-luiza-1957.jpg"
 
           campanhas="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}campanhas/")"
           echo "${campanhas}" | grep -qi "ARQUIVO VISUAL"
@@ -126,7 +129,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Universo + Memória + Restauração + 5 registros de Memória + Campanhas + 4 registros do Arquivo Autoral + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Memória Viva + Universo + Memória + Restauração + 5 registros de Memória + Campanhas + 4 registros do Arquivo Autoral + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
 
   visual-audit:
     runs-on: ubuntu-latest
@@ -268,6 +271,44 @@ jobs:
                       });
                     }
                   }
+
+                  const memory = page.locator('#memoria-viva');
+                  if ((await memory.count()) !== 1) {
+                    failures.push(`home/${device.label}: memory revival section missing`);
+                  } else {
+                    const cards = memory.locator('[data-memory-index]');
+                    if ((await cards.count()) !== 3) {
+                      failures.push(`home/${device.label}: expected 3 memory revival stages`);
+                    }
+
+                    for (let index = 0; index < 3; index += 1) {
+                      const card = cards.nth(index);
+                      await card.scrollIntoViewIfNeeded();
+                      await page.waitForTimeout(1400);
+
+                      const stage = await memory.getAttribute('data-stage');
+                      if (stage !== String(index)) {
+                        failures.push(`home/${device.label}: memory stage ${index} did not activate; received ${stage}`);
+                      }
+
+                      if (index < 2) {
+                        const image = card.locator('img');
+                        const imageState = await image.evaluate((element) => ({
+                          complete: element.complete,
+                          width: element.naturalWidth,
+                          height: element.naturalHeight,
+                        }));
+                        if (!imageState.complete || imageState.width < 300 || imageState.height < 180) {
+                          failures.push(`home/${device.label}: memory image ${index} invalid ${JSON.stringify(imageState)}`);
+                        }
+                      }
+
+                      await page.screenshot({
+                        path: `screenshots/memory-revival-${String(index + 1).padStart(2, '0')}-${device.label}.png`,
+                        fullPage: false,
+                      });
+                    }
+                  }
                 }
 
                 if (errors.length) {
@@ -290,6 +331,7 @@ jobs:
           node audit.mjs
 
       - name: Upload visual audit
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: fradim-staging-visual-audit
@@ -300,7 +342,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home + Universo + trajetória + Sobre + Spock + Lab + Memória + Campanhas + Arquivo Autoral + registro Criança década de 60 ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home + Memória Viva em 3 estágios + Universo + trajetória + Sobre + Spock + Lab + Memória + Campanhas + Arquivo Autoral + registro Criança década de 60 ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
 
   performance-audit:
     runs-on: ubuntu-latest
