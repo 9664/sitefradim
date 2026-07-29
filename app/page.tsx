@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ImmersiveHero } from "@/components/ImmersiveHero";
+import { MemoryRevival } from "@/components/MemoryRevival";
 import { UniverseExplorer } from "@/components/UniverseExplorer";
 import { TrajectoryJourney } from "@/components/TrajectoryJourney";
 
@@ -61,10 +62,10 @@ export default function Home() {
       <ImmersiveHero />
 
       <section className="thesis" aria-labelledby="thesis-title">
-        <p className="eyebrow">UMA TESE</p>
+        <p className="eyebrow">UMA CONVICÇÃO</p>
         <h2 id="thesis-title">
-          A próxima vantagem competitiva não será simplesmente usar IA.
-          <span> Será aprender a redesenhar processos a partir dela.</span>
+          O futuro não começa quando apagamos o que veio antes.
+          <span> Ele começa quando memória, experiência e imaginação voltam a produzir possibilidades.</span>
         </h2>
       </section>
 
@@ -72,10 +73,12 @@ export default function Home() {
 
       <TrajectoryJourney />
 
+      <MemoryRevival />
+
       <section className="territories" aria-labelledby="territories-title">
         <header className="section-heading">
-          <p className="eyebrow">EXPLORE SEM 3D</p>
-          <h2 id="territories-title">O mesmo universo, por caminhos diretos.</h2>
+          <p className="eyebrow">CONTINUE EXPLORANDO</p>
+          <h2 id="territories-title">Cada território aprofunda uma camada dessa história.</h2>
         </header>
 
         <div className="territory-grid">
@@ -107,7 +110,7 @@ export default function Home() {
       <section className="manifesto" aria-labelledby="manifesto-title">
         <p className="eyebrow">HUMANO + IA</p>
         <h2 id="manifesto-title">Não é sobre substituir o pensamento humano.</h2>
-        <p>É sobre ampliar a capacidade de pensar, construir, testar e transformar.</p>
+        <p>É sobre ampliar a capacidade de lembrar, pensar, construir, testar e transformar.</p>
         <Link className="text-link" href="/spock" prefetch={false}>Descobrir quem é Spock →</Link>
       </section>
     </main>
