@@ -3,13 +3,13 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const EXPECTED_SHA256 = "9a9f8d58497d372021360ce6ece2d103abe6f0d2528c0da652b5c92c876b6a2a";
-const EXPECTED_WIDTH = 256;
-const EXPECTED_HEIGHT = 384;
-const EXPECTED_CACHE_KEY = "v=9a9f8d58497d3720";
+const EXPECTED_SHA256 = "2268700d931788ec6c748f3408b4077d7e865847b4272189725703cd81eb8aca";
+const EXPECTED_WIDTH = 868;
+const EXPECTED_HEIGHT = 900;
+const EXPECTED_CACHE_KEY = "v=2268700d931788ec";
 
 const out = path.join(process.cwd(), "out");
-const portraitPath = path.join(out, "hero", "marcelo-fradim-hero-final.webp");
+const portraitPath = path.join(out, "hero", "marcelo-fradim-hero-2026.webp");
 const homePath = path.join(out, "index.html");
 const contactPath = path.join(out, "contato", "index.html");
 
@@ -32,7 +32,7 @@ if (
   chunk !== "VP8X" ||
   width !== EXPECTED_WIDTH ||
   height !== EXPECTED_HEIGHT ||
-  portraitStats.size < 9_000 ||
+  portraitStats.size < 100_000 ||
   digest !== EXPECTED_SHA256
 ) {
   throw new Error(
@@ -41,17 +41,22 @@ if (
 }
 
 const home = await readFile(homePath, "utf8");
-if (!home.includes("marcelo-fradim-hero-final.webp")) {
-  throw new Error("Home does not reference the final Hero portrait.");
+if (!home.includes("marcelo-fradim-hero-2026.webp")) {
+  throw new Error("Home does not reference the approved 2026 Hero portrait.");
 }
 if (!home.includes(EXPECTED_CACHE_KEY)) {
   throw new Error("Home does not reference the current Hero portrait cache key.");
 }
-if (home.includes("marcelo-fradim-hero-portrait.svg")) {
-  throw new Error("Home still references the obsolete framed SVG portrait.");
+for (const obsolete of ["marcelo-fradim-hero-final.webp", "marcelo-fradim-hero-portrait.svg"]) {
+  if (home.includes(obsolete)) {
+    throw new Error(`Home still references an obsolete Hero portrait: ${obsolete}`);
+  }
 }
 
 for (const required of [
+  "UNIVERSO FRADIM / ATLAS VIVO",
+  "Cada ideia é um território.",
+  "NÚCLEO VIVO",
   "id=\"memoria-viva\"",
   "MEMÓRIA VIVA / A COR RETORNA",
   "A cidade chega pelos trilhos.",
@@ -61,7 +66,7 @@ for (const required of [
   "A cidade deixa de ser cenário e vira pertencimento.",
 ]) {
   if (!home.includes(required)) {
-    throw new Error(`Home is missing the Memory Revival requirement: ${required}`);
+    throw new Error(`Home is missing a required immersive experience marker: ${required}`);
   }
 }
 
@@ -73,5 +78,5 @@ for (const required of ["fradim@gmail.com", "+55 16 98180-4590", "CONTATO / PROJ
 }
 
 console.log(
-  `Static site validated: Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; Memory Revival and contact route present.`,
+  `Static site validated: approved Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; Atlas Vivo, Memory Revival and contact route present.`,
 );
