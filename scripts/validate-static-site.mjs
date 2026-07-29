@@ -3,10 +3,10 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
-const EXPECTED_SHA256 = "2268700d931788ec6c748f3408b4077d7e865847b4272189725703cd81eb8aca";
-const EXPECTED_WIDTH = 868;
-const EXPECTED_HEIGHT = 900;
-const EXPECTED_CACHE_KEY = "v=2268700d931788ec";
+const EXPECTED_SHA256 = "797a87bbc0e7d8668d20939b01ee6fac49a02c331aae9eaede51b34b4627af82";
+const EXPECTED_WIDTH = 420;
+const EXPECTED_HEIGHT = 435;
+const EXPECTED_CACHE_KEY = "v=797a87bbc0e7d866";
 
 const out = path.join(process.cwd(), "out");
 const portraitPath = path.join(out, "hero", "marcelo-fradim-hero-2026.webp");
@@ -32,7 +32,7 @@ if (
   chunk !== "VP8X" ||
   width !== EXPECTED_WIDTH ||
   height !== EXPECTED_HEIGHT ||
-  portraitStats.size < 100_000 ||
+  portraitStats.size < 12_000 ||
   digest !== EXPECTED_SHA256
 ) {
   throw new Error(
