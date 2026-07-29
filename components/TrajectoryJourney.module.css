@@ -1,11 +1,16 @@
 .journey {
+  --journey-accent: #a8bed1;
+  --journey-glow: rgba(82, 118, 151, 0.16);
+  --journey-wash: rgba(7, 9, 12, 0.91);
   position: relative;
   height: 520vh;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background:
-    radial-gradient(circle at 20% 20%, rgba(95, 125, 155, 0.08), transparent 28rem),
+    radial-gradient(circle at 20% 20%, var(--journey-glow), transparent 28rem),
+    radial-gradient(circle at 78% 68%, color-mix(in srgb, var(--journey-accent) 12%, transparent), transparent 34rem),
     #07090c;
+  transition: background 900ms ease;
 }
 
 .sticky {
@@ -14,6 +19,19 @@
   height: 100svh;
   overflow: hidden;
   isolation: isolate;
+}
+
+.sticky::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 68% 52%, color-mix(in srgb, var(--journey-accent) 13%, transparent), transparent 22rem),
+    linear-gradient(180deg, transparent 48%, color-mix(in srgb, var(--journey-accent) 5%, transparent));
+  opacity: 0.82;
+  transition: background 900ms ease;
 }
 
 .canvas {
@@ -28,8 +46,9 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(7, 9, 12, 0.92) 0%, rgba(7, 9, 12, 0.55) 28%, transparent 48%),
+    linear-gradient(90deg, var(--journey-wash) 0%, rgba(7, 9, 12, 0.55) 28%, transparent 48%),
     linear-gradient(180deg, rgba(7, 9, 12, 0.55), transparent 25%, transparent 72%, rgba(7, 9, 12, 0.78));
+  transition: background 900ms ease;
 }
 
 .heading {
@@ -37,12 +56,17 @@
   z-index: 2;
   top: clamp(5rem, 10vh, 8rem);
   left: clamp(1.25rem, 4vw, 4.5rem);
-  width: min(560px, 52vw);
+  width: min(690px, 58vw);
+}
+
+.heading :global(.eyebrow) {
+  color: var(--journey-accent);
+  transition: color 600ms ease;
 }
 
 .heading h2 {
   margin: 0;
-  font-size: clamp(2rem, 4.6vw, 5.5rem);
+  font-size: clamp(2rem, 4.35vw, 5.2rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
   font-weight: 450;
@@ -57,14 +81,15 @@
   grid-template-columns: auto 4rem auto;
   align-items: center;
   gap: 0.75rem;
-  color: #8f9dab;
+  color: var(--journey-accent);
   font-size: 0.65rem;
   letter-spacing: 0.2em;
+  transition: color 600ms ease;
 }
 
 .counter i {
   height: 1px;
-  background: rgba(255, 255, 255, 0.16);
+  background: color-mix(in srgb, var(--journey-accent) 52%, transparent);
 }
 
 .story {
@@ -74,20 +99,23 @@
   bottom: clamp(3rem, 8vh, 6rem);
   width: min(540px, 46vw);
   padding-top: 1.2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid color-mix(in srgb, var(--journey-accent) 52%, transparent);
   backdrop-filter: blur(6px);
+  transition: border-color 600ms ease;
 }
 
 .story > p {
   margin: 0 0 0.75rem;
-  color: #748394;
+  color: var(--journey-accent);
   font-size: 0.63rem;
   font-weight: 700;
   letter-spacing: 0.2em;
+  transition: color 600ms ease;
 }
 
 .story h3 {
   margin: 0;
+  color: #f3f2ef;
   font-size: clamp(2rem, 4vw, 4.6rem);
   line-height: 0.92;
   letter-spacing: -0.055em;
@@ -97,15 +125,16 @@
 .story strong {
   display: block;
   margin-top: 0.85rem;
-  color: #d1d9e1;
+  color: color-mix(in srgb, var(--journey-accent) 48%, #f4f6f8);
   font-size: clamp(1rem, 1.35vw, 1.18rem);
   font-weight: 500;
+  transition: color 600ms ease;
 }
 
 .story > div {
   max-width: 510px;
   margin-top: 1rem;
-  color: #9aa7b4;
+  color: #a7afb7;
   font-size: 0.96rem;
   line-height: 1.65;
 }
@@ -114,11 +143,12 @@
   display: inline-block;
   margin-top: 1.3rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-  color: #e4ebf2;
+  border-bottom: 1px solid var(--journey-accent);
+  color: var(--journey-accent);
   font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  transition: color 600ms ease, border-color 600ms ease;
 }
 
 .steps {
@@ -178,11 +208,11 @@
 .steps button:hover,
 .steps button:focus-visible,
 .activeStep {
-  color: #eef4fa !important;
+  color: var(--journey-accent) !important;
 }
 
 .activeStep i {
-  background: rgba(220, 233, 246, 0.64) !important;
+  background: var(--journey-accent) !important;
   transform: scaleX(1.04);
 }
 
@@ -192,9 +222,10 @@
   right: clamp(1.25rem, 4vw, 4.5rem);
   bottom: 1.5rem;
   margin: 0;
-  color: #4f5b67;
+  color: color-mix(in srgb, var(--journey-accent) 62%, #4f5b67);
   font-size: 0.54rem;
   letter-spacing: 0.18em;
+  transition: color 600ms ease;
 }
 
 .reducedMotionFallback {
@@ -207,7 +238,7 @@
 }
 
 .reducedMotionFallback > header h2 {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0;
   font-size: clamp(2.5rem, 6vw, 6rem);
   line-height: 0.98;
@@ -229,11 +260,13 @@
   padding: 1.5rem;
   border-right: 1px solid rgba(255, 255, 255, 0.12);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 3px 0 var(--journey-card-accent, #9fb2c4);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--journey-card-accent) 7%, transparent), transparent 56%);
 }
 
 .fallbackGrid article > p {
   margin: 0;
-  color: #718091;
+  color: var(--journey-card-accent, #718091);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -249,14 +282,14 @@
 
 .fallbackGrid strong {
   display: block;
-  color: #d3dce4;
+  color: color-mix(in srgb, var(--journey-card-accent) 48%, #f4f6f8);
   font-weight: 500;
 }
 
 .fallbackGrid article > div {
   max-width: 520px;
   margin-top: 1rem;
-  color: #98a5b2;
+  color: #a2a9b0;
   line-height: 1.65;
 }
 
@@ -264,7 +297,8 @@
   display: inline-block;
   margin-top: 1.5rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--journey-card-accent, rgba(255, 255, 255, 0.2));
+  color: var(--journey-card-accent, #e4ebf2);
   font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -277,7 +311,7 @@
 
   .canvas::after {
     background:
-      linear-gradient(180deg, rgba(7, 9, 12, 0.76) 0%, rgba(7, 9, 12, 0.18) 35%, rgba(7, 9, 12, 0.38) 62%, rgba(7, 9, 12, 0.94) 100%);
+      linear-gradient(180deg, var(--journey-wash) 0%, rgba(7, 9, 12, 0.18) 35%, rgba(7, 9, 12, 0.38) 62%, rgba(7, 9, 12, 0.94) 100%);
   }
 
   .heading {
@@ -286,8 +320,8 @@
   }
 
   .heading h2 {
-    max-width: 680px;
-    font-size: clamp(2.2rem, 8.5vw, 4.2rem);
+    max-width: 760px;
+    font-size: clamp(2.1rem, 8vw, 4rem);
   }
 
   .counter,
@@ -323,6 +357,7 @@
   .journey {
     height: auto;
     padding: 8rem 0;
+    transition: none;
   }
 
   .sticky {
