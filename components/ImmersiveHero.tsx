@@ -12,7 +12,7 @@ const UniverseScene = dynamic(
 );
 
 const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-final.webp?v=9a9f8d58497d3720`;
+const portraitSrc = `${publicBasePath}/hero/marcelo-fradim-hero-2026.webp?v=2268700d931788ec`;
 
 export function ImmersiveHero() {
   const [render3D, setRender3D] = useState(false);
@@ -54,8 +54,8 @@ export function ImmersiveHero() {
     const applyPosition = (x: number, y: number) => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
-        const portraitX = compact.matches ? x * -8 : x * -13;
-        const portraitY = compact.matches ? y * -13 : y * -8;
+        const portraitX = compact.matches ? x * -7 : x * -12;
+        const portraitY = compact.matches ? y * -11 : y * -7;
         const orbitX = compact.matches ? x * 5 : x * 8;
         const orbitY = compact.matches ? y * 8 : y * 5;
 
@@ -91,7 +91,7 @@ export function ImmersiveHero() {
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
 
       const progress = Math.max(0, Math.min(1, -rect.top / Math.max(rect.height, window.innerHeight)));
-      applyPosition(0, progress * 0.85);
+      applyPosition(0, progress * 0.8);
     };
 
     const reset = () => applyPosition(0, 0);
@@ -126,11 +126,11 @@ export function ImmersiveHero() {
         <img
           src={portraitSrc}
           alt=""
-          width={256}
-          height={384}
+          width={868}
+          height={900}
           decoding="async"
           fetchPriority="high"
-          className={`${portraitStyles.image} ${portraitStyles.imageReady}`}
+          className={portraitStyles.image}
         />
       </div>
 
