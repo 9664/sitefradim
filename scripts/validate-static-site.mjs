@@ -51,6 +51,20 @@ if (home.includes("marcelo-fradim-hero-portrait.svg")) {
   throw new Error("Home still references the obsolete framed SVG portrait.");
 }
 
+for (const required of [
+  "id=\"memoria-viva\"",
+  "MEMÓRIA VIVA / A COR RETORNA",
+  "A cidade chega pelos trilhos.",
+  "Uma pequena fachada, uma história enorme.",
+  "estacao-mogiana-1925.jpg",
+  "magazine-luiza-1957.jpg",
+  "A cidade deixa de ser cenário e vira pertencimento.",
+]) {
+  if (!home.includes(required)) {
+    throw new Error(`Home is missing the Memory Revival requirement: ${required}`);
+  }
+}
+
 const contact = await readFile(contactPath, "utf8");
 for (const required of ["fradim@gmail.com", "+55 16 98180-4590", "CONTATO / PROJETOS + CONVERSAS REAIS"]) {
   if (!contact.includes(required)) {
@@ -59,5 +73,5 @@ for (const required of ["fradim@gmail.com", "+55 16 98180-4590", "CONTATO / PROJ
 }
 
 console.log(
-  `Static site validated: Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; contact route present.`,
+  `Static site validated: Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; Memory Revival and contact route present.`,
 );
