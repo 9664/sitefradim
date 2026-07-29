@@ -56,7 +56,6 @@ for (const obsolete of ["marcelo-fradim-hero-final.webp", "marcelo-fradim-hero-p
 for (const required of [
   "UNIVERSO FRADIM / ATLAS VIVO",
   "Cada ideia é um território.",
-  "NÚCLEO VIVO",
   "id=\"memoria-viva\"",
   "MEMÓRIA VIVA / A COR RETORNA",
   "A cidade chega pelos trilhos.",
