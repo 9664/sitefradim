@@ -4,7 +4,7 @@ import { Line, Sparkles } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { MutableRefObject } from "react";
+import type { CSSProperties, MutableRefObject } from "react";
 import type { Group, Mesh } from "three";
 import styles from "./TrajectoryJourney.module.css";
 
@@ -15,6 +15,16 @@ const stages = [
     short: "Criatividade como linguagem.",
     body: "Antes dos agentes e dos modelos de linguagem, vieram imagem, composição, fotografia, design e a necessidade de transformar ideias em algo visível.",
     href: "/trajetoria",
+    accent: "#a8bed1",
+    glow: "rgba(82, 118, 151, 0.16)",
+    wash: "rgba(7, 9, 12, 0.91)",
+    color: "#9fb2c4",
+    emissive: "#58728b",
+    halo: "#9fb9d1",
+    line: "#8da5bb",
+    sparkle: "#c1d1de",
+    light: "#d9e9f7",
+    point: "#7ba2c4",
   },
   {
     kicker: "02 / MERCADO",
@@ -22,6 +32,16 @@ const stages = [
     short: "Criatividade encontra resultado.",
     body: "Indústria, varejo, comunicação, marcas e comportamento acrescentaram uma nova regra: uma boa ideia também precisa funcionar no mundo real.",
     href: "/trajetoria",
+    accent: "#b9bdbe",
+    glow: "rgba(128, 116, 101, 0.16)",
+    wash: "rgba(9, 10, 12, 0.9)",
+    color: "#b0b6b7",
+    emissive: "#6d6963",
+    halo: "#b7b1a9",
+    line: "#9d9992",
+    sparkle: "#ddd5cb",
+    light: "#efe7db",
+    point: "#a48d72",
   },
   {
     kicker: "03 / COMUNIDADE",
@@ -29,6 +49,16 @@ const stages = [
     short: "Tecnologia cria pertencimento.",
     body: "Memória, cultura, pesquisa iconográfica e comunicação digital mostraram que tecnologia também pode conectar pessoas a um lugar e à própria história.",
     href: "/projetos/amo-franca",
+    accent: "#dfa26d",
+    glow: "rgba(179, 91, 42, 0.22)",
+    wash: "rgba(13, 10, 9, 0.86)",
+    color: "#d1a071",
+    emissive: "#8e4e2f",
+    halo: "#d5a172",
+    line: "#b58c70",
+    sparkle: "#efc294",
+    light: "#ffd3a6",
+    point: "#d16f3f",
   },
   {
     kicker: "04 / SISTEMAS",
@@ -36,6 +66,16 @@ const stages = [
     short: "Ideias tornam-se infraestrutura.",
     body: "Automação, software, processos e sistemas transformaram a tecnologia de ferramenta criativa em camada operacional para empresas e projetos.",
     href: "/projetos",
+    accent: "#e18a63",
+    glow: "rgba(183, 71, 43, 0.21)",
+    wash: "rgba(14, 9, 8, 0.84)",
+    color: "#d98b67",
+    emissive: "#913c2d",
+    halo: "#dc936f",
+    line: "#b97762",
+    sparkle: "#f0b094",
+    light: "#ffd0bc",
+    point: "#d35b41",
   },
   {
     kicker: "05 / AGORA",
@@ -43,6 +83,16 @@ const stages = [
     short: "Humano e IA aprendem a construir juntos.",
     body: "A inteligência artificial conecta repertório, estratégia, código e experimentação. Spock não substitui o pensamento humano: amplia o espaço onde ele pode operar.",
     href: "/spock",
+    accent: "#f0c18b",
+    glow: "rgba(219, 120, 55, 0.24)",
+    wash: "rgba(13, 9, 7, 0.8)",
+    color: "#f3d0a7",
+    emissive: "#b76638",
+    halo: "#f0bc82",
+    line: "#c9956a",
+    sparkle: "#ffd8ad",
+    light: "#ffe0bd",
+    point: "#e58b4c",
   },
 ] as const;
 
@@ -53,6 +103,7 @@ type JourneyMode = "desktop" | "compact" | "reduced";
 function Artifact({ index, progress }: { index: number; progress: MutableRefObject<number> }) {
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
+  const stage = stages[index];
 
   useFrame(() => {
     if (!group.current || !mesh.current) return;
@@ -91,31 +142,40 @@ function Artifact({ index, progress }: { index: number; progress: MutableRefObje
       <mesh ref={mesh}>
         {geometry}
         <meshPhysicalMaterial
-          color={index === stages.length - 1 ? "#ecf5ff" : "#9fb2c4"}
-          emissive={index === stages.length - 1 ? "#a8c7e4" : "#58728b"}
-          emissiveIntensity={index === stages.length - 1 ? 0.7 : 0.28}
+          color={stage.color}
+          emissive={stage.emissive}
+          emissiveIntensity={index === stages.length - 1 ? 0.74 : index >= 2 ? 0.46 : 0.28}
           metalness={0.68}
           roughness={0.24}
           transparent
-          opacity={0.78}
+          opacity={0.8}
         />
       </mesh>
 
       <mesh scale={1.65}>
         <sphereGeometry args={[1.05, 24, 24]} />
-        <meshBasicMaterial color="#9fb9d1" wireframe transparent opacity={0.08} />
+        <meshBasicMaterial color={stage.halo} wireframe transparent opacity={0.1} />
       </mesh>
     </group>
   );
 }
 
-function JourneyWorld({ progress, renderTick }: { progress: MutableRefObject<number>; renderTick: number }) {
+function JourneyWorld({
+  progress,
+  renderTick,
+  activeIndex,
+}: {
+  progress: MutableRefObject<number>;
+  renderTick: number;
+  activeIndex: number;
+}) {
   const rig = useRef<Group>(null);
   const invalidate = useThree((state) => state.invalidate);
+  const active = stages[activeIndex];
 
   useEffect(() => {
     invalidate();
-  }, [invalidate, renderTick]);
+  }, [activeIndex, invalidate, renderTick]);
 
   useFrame((state) => {
     const p = progress.current;
@@ -131,15 +191,26 @@ function JourneyWorld({ progress, renderTick }: { progress: MutableRefObject<num
     }
   });
 
-  const path = stages.map((_, index) => [index % 2 === 0 ? -1.25 : 1.25, index === 2 ? 0.45 : index % 2 === 0 ? 0.25 : -0.25, -index * spacing] as [number, number, number]);
+  const path = stages.map((_, index) => [
+    index % 2 === 0 ? -1.25 : 1.25,
+    index === 2 ? 0.45 : index % 2 === 0 ? 0.25 : -0.25,
+    -index * spacing,
+  ] as [number, number, number]);
 
   return (
     <group ref={rig}>
-      <Line points={path} color="#8da5bb" transparent opacity={0.24} lineWidth={0.65} />
+      <Line points={path} color={active.line} transparent opacity={0.3} lineWidth={0.75} />
       {stages.map((_, index) => (
         <Artifact key={index} index={index} progress={progress} />
       ))}
-      <Sparkles count={100} scale={[11, 7, spacing * stages.length]} size={0.8} speed={0} opacity={0.2} />
+      <Sparkles
+        count={100}
+        scale={[11, 7, spacing * stages.length]}
+        size={0.8}
+        speed={0}
+        opacity={0.23}
+        color={active.sparkle}
+      />
     </group>
   );
 }
@@ -237,25 +308,43 @@ export function TrajectoryJourney() {
 
   const active = stages[activeIndex];
   const journeyHeight = journeyMode === "reduced" ? "auto" : journeyMode === "compact" ? "390vh" : "430vh";
+  const journeyStyle = {
+    height: journeyHeight,
+    "--journey-accent": active.accent,
+    "--journey-glow": active.glow,
+    "--journey-wash": active.wash,
+  } as CSSProperties;
 
   return (
-    <section id="trajetoria-em-movimento" ref={sectionRef} className={styles.journey} style={{ height: journeyHeight }} aria-labelledby="journey-title">
+    <section
+      id="trajetoria-em-movimento"
+      ref={sectionRef}
+      className={styles.journey}
+      style={journeyStyle}
+      data-stage={activeIndex}
+      aria-labelledby="journey-title"
+    >
       <div className={styles.sticky}>
         <div className={styles.canvas} aria-hidden="true">
           {render3D ? (
-            <Canvas frameloop="demand" dpr={[1, 1.25]} camera={{ position: [0, 0, 5.8], fov: 44 }} gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}>
+            <Canvas
+              frameloop="demand"
+              dpr={[1, 1.25]}
+              camera={{ position: [0, 0, 5.8], fov: 44 }}
+              gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+            >
               <fog attach="fog" args={["#07090c", 8, 24]} />
               <ambientLight intensity={0.42} />
-              <directionalLight position={[4, 6, 5]} intensity={2.8} />
-              <pointLight position={[-4, -2, 4]} intensity={12} distance={13} />
-              <JourneyWorld progress={progress} renderTick={renderTick} />
+              <directionalLight color={active.light} position={[4, 6, 5]} intensity={2.8} />
+              <pointLight color={active.point} position={[-4, -2, 4]} intensity={12} distance={13} />
+              <JourneyWorld progress={progress} renderTick={renderTick} activeIndex={activeIndex} />
             </Canvas>
           ) : null}
         </div>
 
         <header className={styles.heading}>
-          <p className="eyebrow">TRAJETÓRIA / EM MOVIMENTO</p>
-          <h2 id="journey-title">Da matéria ao pixel. Do mercado à inteligência.</h2>
+          <p className="eyebrow">TRAJETÓRIA / A TEMPERATURA MUDA</p>
+          <h2 id="journey-title">Da matéria ao pixel. Do mercado à memória. Da memória à inteligência.</h2>
         </header>
 
         <div className={styles.counter} aria-hidden="true">
@@ -288,17 +377,17 @@ export function TrajectoryJourney() {
           ))}
         </nav>
 
-        <p className={styles.scrollHint} aria-hidden="true">SCROLL ↓</p>
+        <p className={styles.scrollHint} aria-hidden="true">SCROLL · A COR SE APROXIMA ↓</p>
       </div>
 
       <div className={styles.reducedMotionFallback}>
         <header>
           <p className="eyebrow">TRAJETÓRIA</p>
-          <h2>Da matéria ao pixel. Do mercado à inteligência.</h2>
+          <h2>Da matéria ao pixel. Do mercado à memória. Da memória à inteligência.</h2>
         </header>
         <div className={styles.fallbackGrid}>
           {stages.map((stage) => (
-            <article key={stage.title}>
+            <article key={stage.title} style={{ "--journey-card-accent": stage.accent } as CSSProperties}>
               <p>{stage.kicker}</p>
               <h3>{stage.title}</h3>
               <strong>{stage.short}</strong>
