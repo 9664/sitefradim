@@ -8,8 +8,12 @@ on:
       - "app/padre-alonso-1926/**"
       - "app/estacao-em-1930/**"
       - "app/vista-aerea-de-franca-em-1950/**"
+      - "app/rua-do-comercio-em-1908/**"
+      - "app/emporio-cruzeiro-do-sul-em-1952/**"
+      - "app/taxis-na-praca-barao-decada-de-1950/**"
       - "components/RecoveredMemory*"
       - "lib/recoveredMemoryBatch2.ts"
+      - "lib/recoveredMemoryBatch3.ts"
       - "assets/memory/**"
       - "scripts/materialize-recovered-memory.mjs"
       - ".github/workflows/audit-recovered-memory.yml"
@@ -69,6 +73,9 @@ jobs:
             { slug: 'padre-alonso-1926', title: 'Padre Alonso Ferreira de Carvalho' },
             { slug: 'estacao-em-1930', title: 'Estação Mogiana em 1930' },
             { slug: 'vista-aerea-de-franca-em-1950', title: 'Vista aérea de Franca em 1950' },
+            { slug: 'rua-do-comercio-em-1908', title: 'Rua do Comércio em 1908' },
+            { slug: 'emporio-cruzeiro-do-sul-em-1952', title: 'Empório Cruzeiro do Sul em 1952' },
+            { slug: 'taxis-na-praca-barao-decada-de-1950', title: 'Táxis na Praça Barão' },
           ];
           const viewports = [
             { name: 'desktop', width: 1440, height: 1100 },
@@ -85,7 +92,10 @@ jobs:
 
               await page.goto(`${base}/memoria/`, { waitUntil: 'networkidle' });
               const cards = page.locator('[data-recovered-memory-index] [data-archive-card]');
-              if (await cards.count() !== 3) throw new Error(`Memory index: expected 3 recovered cards, found ${await cards.count()}`);
+              if (await cards.count() !== 6) throw new Error(`Memory index: expected 6 recovered cards, found ${await cards.count()}`);
+              if (await page.locator('[data-recovered-batch="3"]').count() !== 3) {
+                throw new Error('Memory index: batch 3 does not contain exactly 3 cards');
+              }
               await page.screenshot({ path: `artifacts/recovered-memory/index-${viewport.name}.png`, fullPage: true });
 
               for (const route of routes) {
