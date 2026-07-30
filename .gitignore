@@ -11,3 +11,9 @@ pnpm-debug.log*
 .DS_Store
 .vercel
 *.tsbuildinfo
+
+# WordPress recovery material must never enter the public application repository.
+*.WordPress.*.xml
+recovery/
+quarantine/wordpress/
+wxr-clean*/
