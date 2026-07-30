@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "description": "Manifesto independente de provedor para decisões de migração do WordPress legado do Fradim.com.br.",
   "resolved": [
     {
@@ -8,6 +8,13 @@
       "status": 200,
       "target": null,
       "reason": "URL histórica recriada no mesmo slug com texto, data, anexo e mídia recuperados do acervo privado."
+    },
+    {
+      "source": "/rua-do-comercio-em-1908/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Registro da antiga Rua do Comércio recriado com as variantes em preto e branco e colorizada preservadas no backup privado."
     },
     {
       "source": "/inauguracao-da-praca-em-1909/",
@@ -57,6 +64,20 @@
       "status": 200,
       "target": null,
       "reason": "Marco inicial da colorização de Marcelo Fradim preservado com o comparativo original/intervenção."
+    },
+    {
+      "source": "/taxis-na-praca-barao-decada-de-1950/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Comparativo da frota de táxis preservado como registro da mobilidade urbana de Franca nos anos 1950."
+    },
+    {
+      "source": "/emporio-cruzeiro-do-sul-em-1952/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Registro do comércio na Rua General Osório reintegrado com o mestre recuperado e a cadeia dos anexos 784 e 792."
     },
     {
       "source": "/av-central-rio-de-janeiro-em-1910/",
