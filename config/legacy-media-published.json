@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "generatedBy": "manual-curation-from-private-uploads",
   "sanitization": "validated source masters were decoded and re-encoded as WebP without inherited metadata; source and published SHA-256 hashes are pinned",
   "items": [
@@ -9,6 +9,13 @@
       "publishedSha256": "666a9f98e826a98b4812574cdabc3d581ad84f452a9652de39ac82391ceb8d9d",
       "bytes": 7238,
       "path": "public/memoria/arquivo/largo-conceicao-1900.webp"
+    },
+    {
+      "slug": "rua-do-comercio-em-1908",
+      "sourceSha256": "df7247f062259fd31241dd590e1b0777c176e543c24b83cffb5638aeae0aa201",
+      "publishedSha256": "2f6c84bd381bb805362e86a11bafaf301c6752fd5d49e4446b3e5e5f3c65a22b",
+      "bytes": 19910,
+      "path": "public/memoria/arquivo/rua-comercio-1908.webp"
     },
     {
       "slug": "inauguracao-da-praca-em-1909",
@@ -51,6 +58,20 @@
       "publishedSha256": "7fa9ccb6d356a41bed91d315b034a8543e6386e427f592e3427b649a40a419b7",
       "bytes": 8192,
       "path": "public/memoria/arquivo/vista-aerea-franca-1950.webp"
+    },
+    {
+      "slug": "taxis-na-praca-barao-decada-de-1950",
+      "sourceSha256": "db87d443fc4089706cc3c0bb7ba09c931166b8c7922bf4fd6e7a71b96fb8e8cd",
+      "publishedSha256": "21e31a8305b7255f1dd3a6425a313b3f47ea8f2e5772bda36508a6d13fe4908e",
+      "bytes": 40510,
+      "path": "public/memoria/arquivo/taxis-franca-1950.webp"
+    },
+    {
+      "slug": "emporio-cruzeiro-do-sul-em-1952",
+      "sourceSha256": "79f90089fb047b36af3dff3ffc64ec6ea3823530684e408c865f77566410216d",
+      "publishedSha256": "8be4fa558159e6849a8ca218042aea9fd0eb40a3ff2fc9f3a44a00fbcdc3fbba",
+      "bytes": 43704,
+      "path": "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp"
     },
     {
       "slug": "primeira-loja-do-magazine-luiza-em-1957",
