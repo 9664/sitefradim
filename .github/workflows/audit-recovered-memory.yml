@@ -51,8 +51,9 @@ jobs:
 
       - name: Audit desktop and mobile
         run: |
-          mkdir -p artifacts/recovered-memory
-          npx serve out -l 4173 > /tmp/recovered-memory-serve.log 2>&1 &
+          mkdir -p artifacts/recovered-memory served/sitefradim
+          cp -R out/. served/sitefradim/
+          npx serve served -l 4173 > /tmp/recovered-memory-serve.log 2>&1 &
           for attempt in {1..30}; do
             curl -fsS http://127.0.0.1:4173/sitefradim/memoria/ >/dev/null && break
             sleep 1
