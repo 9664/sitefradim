@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Manifesto independente de provedor para decisões de migração do WordPress legado do Fradim.com.br.",
   "resolved": [
     {
@@ -7,21 +7,28 @@
       "action": "preserve",
       "status": 200,
       "target": null,
-      "reason": "URL histórica recriada no mesmo slug com texto sanitizado, data original recuperada e comparativo visual reintegrado ao Arquivo de Memória."
+      "reason": "URL histórica recriada no mesmo slug com texto, data, anexo e mídia recuperados do acervo privado."
     },
     {
       "source": "/inauguracao-da-praca-em-1909/",
       "action": "preserve",
       "status": 200,
       "target": null,
-      "reason": "URL histórica recriada no mesmo slug com texto sanitizado, data original recuperada e fotografia restaurada/colorizada reintegrada ao Arquivo de Memória."
+      "reason": "URL histórica recriada no mesmo slug como registro curado da Praça Nossa Senhora da Conceição."
     },
     {
       "source": "/estacao-mogiana-em-1909/",
       "action": "preserve",
       "status": 200,
       "target": null,
-      "reason": "URL histórica recriada no mesmo slug. A divergência 1908/1909 encontrada entre post e anexo permanece explicitamente documentada."
+      "reason": "URL histórica recriada no mesmo slug; divergência 1908/1909 preservada na curadoria."
+    },
+    {
+      "source": "/padre-alonso-1926/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Retrato e restauração reintegrados com distinção explícita entre memória oral do post legado e evidência documental."
     },
     {
       "source": "/primeira-loja-do-magazine-luiza-em-1957/",
@@ -36,6 +43,20 @@
       "status": 200,
       "target": null,
       "reason": "URL histórica recriada no mesmo slug como item curado do Arquivo de Memória."
+    },
+    {
+      "source": "/estacao-em-1930/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Registro da locomotiva 404 na plataforma da Mogiana reintegrado com texto e mídia verificados."
+    },
+    {
+      "source": "/vista-aerea-de-franca-em-1950/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "Marco inicial da colorização de Marcelo Fradim preservado com o comparativo original/intervenção."
     },
     {
       "source": "/av-central-rio-de-janeiro-em-1910/",
