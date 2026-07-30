@@ -1,7 +1,7 @@
 {
-  "version": 2,
+  "version": 3,
   "generatedBy": "manual-curation-from-private-uploads",
-  "sanitization": "decoded from validated JPEG master and re-encoded as WebP with no inherited metadata; SHA-256 pinned for source and published derivative",
+  "sanitization": "validated source masters were decoded and re-encoded as WebP without inherited metadata; source and published SHA-256 hashes are pinned",
   "items": [
     {
       "slug": "largo-do-rosario-em-1900",
@@ -25,11 +25,11 @@
       "path": "public/memoria/arquivo/estacao-mogiana-1909.webp"
     },
     {
-      "slug": "primeira-loja-do-magazine-luiza-em-1957",
-      "sourceSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
-      "publishedSha256": "18c68870d69a34b90890e1dfc8a3bab1f64fe9de58b4a850da51729ac15bc05b",
-      "bytes": 409352,
-      "path": "public/memoria/arquivo/magazine-luiza-1957.jpg"
+      "slug": "padre-alonso-1926",
+      "sourceSha256": "f14f046f90319e2522d4df85fb731b851b7610ea48c5a9e6db22a6b2250addfb",
+      "publishedSha256": "b831b94a70a18447dd5f7e174807a8473193064692ecc10f5ab1ddcda30517cd",
+      "bytes": 4656,
+      "path": "public/memoria/arquivo/padre-alonso-1926.webp"
     },
     {
       "slug": "locomotiva-em-1925",
@@ -37,6 +37,27 @@
       "publishedSha256": "609102d1a162c10151d7402c2408e4506346a7f9a9e588885e5c17452248204e",
       "bytes": 738763,
       "path": "public/memoria/arquivo/estacao-mogiana-1925.jpg"
+    },
+    {
+      "slug": "estacao-em-1930",
+      "sourceSha256": "7345ddf6d87cdbba5192b7e7d8a8ab6ae3d056aa4dd7182ade22fb7d4683d1cc",
+      "publishedSha256": "0804339f2b342067ab834f766c27f3868045063e3857bad85f32def4f4519cf9",
+      "bytes": 5242,
+      "path": "public/memoria/arquivo/estacao-mogiana-1930.webp"
+    },
+    {
+      "slug": "vista-aerea-de-franca-em-1950",
+      "sourceSha256": "2846a904c55f96dc97a360bf978be11a1ee086c4037c16bbe34db1fcb31359f0",
+      "publishedSha256": "7fa9ccb6d356a41bed91d315b034a8543e6386e427f592e3427b649a40a419b7",
+      "bytes": 8192,
+      "path": "public/memoria/arquivo/vista-aerea-franca-1950.webp"
+    },
+    {
+      "slug": "primeira-loja-do-magazine-luiza-em-1957",
+      "sourceSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "publishedSha256": "18c68870d69a34b90890e1dfc8a3bab1f64fe9de58b4a850da51729ac15bc05b",
+      "bytes": 409352,
+      "path": "public/memoria/arquivo/magazine-luiza-1957.jpg"
     }
   ]
 }
