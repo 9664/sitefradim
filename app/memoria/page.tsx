@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MemoryArchiveIndex } from "@/components/MemoryArchiveIndex";
+import { RecoveredMemoryIndex } from "@/components/RecoveredMemoryIndex";
 import { MemoryField } from "@/components/MemoryField";
 import { SiteNav } from "@/components/SiteNav";
 import styles from "./MemoryPage.module.css";
@@ -162,6 +163,7 @@ export default function MemoryPage() {
       </section>
 
       <MemoryArchiveIndex />
+      <RecoveredMemoryIndex />
 
       <section className={styles.evidence} aria-labelledby="memory-evidence-title">
         <header className={styles.evidenceHeader}>
