@@ -1,0 +1,177 @@
+name: Audit legacy author archive
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - app/[slug]/page.tsx
+      - app/ideias/page.tsx
+      - components/LegacyIdeaPage.tsx
+      - components/LegacyIdeaPage.module.css
+      - components/LegacyIdeasArchive.tsx
+      - components/LegacyIdeasArchive.module.css
+      - lib/legacyIdeas.ts
+      - .github/workflows/audit-legacy-ideas.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  visual-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build static site for audit
+        env:
+          NEXT_PUBLIC_SITE_ENV: staging
+          NEXT_PUBLIC_BASE_PATH: ""
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-audit --no-fund --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start local static server
+        run: |
+          python3 -m http.server 4174 --directory out > /tmp/legacy-ideas-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4174/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/legacy-ideas-server.log
+          exit 1
+
+      - name: Capture and assert author archive
+        run: |
+          mkdir -p legacy-idea-screenshots
+          cat > legacy-ideas-audit.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = 'http://127.0.0.1:4174/';
+          const entries = [
+            ['somos-simples-naufragos', 'Somos simples náufragos'],
+            ['nada-acontece-por-acaso', 'Nada acontece por acaso'],
+            ['porque-o-tempo-nao-para-nos-tornamos-velhos', 'Porque o tempo não para, nos tornamos velhos?'],
+            ['a-diferenca-entre-vida-simples-minimalismo-e-frugalidade', 'A diferença entre vida simples, minimalismo e frugalidade'],
+          ];
+          const devices = [
+            { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+            { label: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+
+          async function watch(page, label) {
+            const errors = [];
+            page.on('console', (message) => {
+              if (message.type() === 'error') errors.push(message.text());
+            });
+            page.on('pageerror', (error) => errors.push(error.message));
+            return async () => {
+              if (!errors.length) return;
+              await fs.writeFile(`legacy-idea-screenshots/${label}-errors.txt`, errors.join('\n'));
+              failures.push(`${label}: ${errors.length} browser error(s)`);
+            };
+          }
+
+          try {
+            for (const device of devices) {
+              const label = `legacy-ideas-index-${device.label}`;
+              const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+              const finishWatch = await watch(page, label);
+              const response = await page.goto(`${base}ideias/`, { waitUntil: 'networkidle', timeout: 60000 });
+              if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
+
+              const archive = page.locator('[data-legacy-ideas-archive]');
+              if ((await archive.count()) !== 1) {
+                failures.push(`${label}: archive section missing`);
+              } else {
+                await archive.scrollIntoViewIfNeeded();
+                const cards = archive.locator('[data-legacy-idea-card]');
+                if ((await cards.count()) !== 4) failures.push(`${label}: expected 4 legacy idea cards`);
+
+                for (const [slug] of entries) {
+                  const link = archive.locator(`[data-legacy-idea-card="${slug}"]`);
+                  if ((await link.count()) !== 1) failures.push(`${label}: missing card ${slug}`);
+                  const href = await link.getAttribute('href');
+                  if (href !== `/${slug}`) failures.push(`${label}: wrong href for ${slug}: ${href}`);
+                }
+
+                await archive.screenshot({ path: `legacy-idea-screenshots/${label}.png` });
+              }
+              await finishWatch();
+              await page.close();
+            }
+
+            for (const [slug, title] of entries) {
+              for (const device of devices) {
+                const label = `${slug}-${device.label}`;
+                const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+                const finishWatch = await watch(page, label);
+                const response = await page.goto(`${base}${slug}/`, { waitUntil: 'networkidle', timeout: 60000 });
+                if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
+
+                const h1 = (await page.locator('h1').first().textContent())?.trim();
+                if (h1 !== title) failures.push(`${label}: unexpected h1: ${h1}`);
+
+                const body = await page.locator('body').innerText();
+                for (const required of ['ARQUIVO AUTORAL', 'NOTA DE ARQUIVO', 'O NÚCLEO DO TEXTO', 'LEITURA ATUAL']) {
+                  if (!body.includes(required)) failures.push(`${label}: missing ${required}`);
+                }
+
+                const ideasLink = page.locator('a[href="/ideias"]');
+                if ((await ideasLink.count()) < 1) failures.push(`${label}: missing return link to /ideias`);
+
+                await page.screenshot({ path: `legacy-idea-screenshots/${label}.png`, fullPage: true });
+                await finishWatch();
+                await page.close();
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+
+          if (failures.length) {
+            console.error('Legacy author archive audit failed:');
+            for (const failure of failures) console.error(`- ${failure}`);
+            process.exit(1);
+          }
+
+          console.log('Legacy author archive audit OK: 4 preserved root slugs + Ideas archive index, desktop/mobile.');
+          EOF
+          node legacy-ideas-audit.mjs
+
+      - name: Upload author archive visual audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-legacy-author-visual-audit
+          path: legacy-idea-screenshots
+          retention-days: 3
+
+      - name: Publish author archive audit on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo Autoral concluída ✍️\n\nDesktop + mobile: 4 slugs antigos preservados em páginas próprias + índice secundário em /ideias ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-legacy-author-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"

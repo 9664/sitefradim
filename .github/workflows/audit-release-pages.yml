@@ -1,0 +1,157 @@
+name: Audit final release pages
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - app/trajetoria/**
+      - app/contato/**
+      - app/[slug]/page.tsx
+      - app/[slug]/LegacyMemoryPage.tsx
+      - .github/workflows/audit-release-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  visual-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SITE_ENV: production
+      NEXT_PUBLIC_BASE_PATH: ""
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build release candidate
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-audit --no-fund --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start local production export
+        run: |
+          python3 -m http.server 4175 --directory out > /tmp/release-pages.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4175/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/release-pages.log
+          exit 1
+
+      - name: Assert and capture Trajetória and Contato
+        run: |
+          mkdir -p release-screenshots
+          cat > release-audit.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = 'http://127.0.0.1:4175/';
+          const pages = [
+            {
+              name: 'trajetoria',
+              route: 'trajetoria/',
+              h1: 'Da imagem aos sistemas inteligentes.',
+              required: ['CINCO CAMADAS', 'O FIO CONDUTOR', 'POSIÇÃO ATUAL'],
+            },
+            {
+              name: 'contato',
+              route: 'contato/',
+              h1: 'Projetos interessantes começam antes da proposta.',
+              required: ['ASSUNTOS', 'CANAIS PÚBLICOS', 'LinkedIn', 'Instagram', 'GitHub'],
+            },
+          ];
+          const devices = [
+            { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+            { label: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+          const failures = [];
+          const browser = await chromium.launch({ headless: true });
+
+          try {
+            for (const target of pages) {
+              for (const device of devices) {
+                const label = `${target.name}-${device.label}`;
+                const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+                const browserErrors = [];
+                page.on('console', (message) => {
+                  if (message.type() === 'error') browserErrors.push(message.text());
+                });
+                page.on('pageerror', (error) => browserErrors.push(error.message));
+
+                const response = await page.goto(`${base}${target.route}`, { waitUntil: 'networkidle', timeout: 60000 });
+                if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
+
+                const h1 = (await page.locator('h1').first().innerText()).trim();
+                if (!h1.startsWith(target.h1)) failures.push(`${label}: unexpected h1: ${h1}`);
+
+                const body = await page.locator('body').innerText();
+                if (body.includes('Este território está sendo construído')) failures.push(`${label}: construction placeholder leaked`);
+                for (const text of target.required) {
+                  if (!body.includes(text)) failures.push(`${label}: missing ${text}`);
+                }
+
+                const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
+                if (!canonical?.startsWith('https://fradim.com.br/')) failures.push(`${label}: invalid canonical ${canonical}`);
+
+                if (browserErrors.length) {
+                  await fs.writeFile(`release-screenshots/${label}-errors.txt`, browserErrors.join('\n'));
+                  failures.push(`${label}: ${browserErrors.length} browser error(s)`);
+                }
+
+                await page.screenshot({ path: `release-screenshots/${label}.png`, fullPage: true });
+                await page.close();
+              }
+            }
+
+            const unknown = await browser.newPage();
+            const unknownResponse = await unknown.goto(`${base}slug-que-nao-existe/`, { waitUntil: 'networkidle', timeout: 60000 });
+            if (unknownResponse?.status() !== 404) {
+              failures.push(`unknown-slug: expected 404, got ${unknownResponse?.status() ?? 'no response'}`);
+            }
+            await unknown.close();
+          } finally {
+            await browser.close();
+          }
+
+          if (failures.length) {
+            console.error('Final release page audit failed:');
+            for (const failure of failures) console.error(`- ${failure}`);
+            process.exit(1);
+          }
+
+          console.log('Final release page audit OK: Trajetória + Contato desktop/mobile; unknown slug 404; no construction placeholder.');
+          EOF
+          node release-audit.mjs
+
+      - name: Upload final release screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-final-release-pages
+          path: release-screenshots
+          retention-days: 3
+
+      - name: Publish final page audit on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria final de páginas públicas concluída ✅\n\nTrajetória + Contato em desktop/mobile; canonical de produção; nenhum placeholder ‘em construção’; slug desconhecido → 404.\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-final-release-pages\`\nCommit: \`${GITHUB_SHA}\`"

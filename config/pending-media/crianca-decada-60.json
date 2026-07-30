@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "description": "Registro técnico das duas variantes recuperadas da página legado /crianca-decada-de-60/. Ambas foram revisadas e permanecem fora de publicação por falta de proveniência suficiente.",
+  "maxBytes": 25000000,
+  "items": [
+    {
+      "assetId": "crianca-decada-60-07b",
+      "slug": "crianca-decada-de-60",
+      "sourcePage": "https://fradim.com.br/crianca-decada-de-60/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-07b.jpg",
+      "filename": "crianca-decada-60-07b.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "b242eac16354fc9acd390e3c83d863748bf186536dc7725875ab15d22ce424d9",
+      "status": "reviewed-hold-provenance",
+      "audit": false,
+      "note": "Revisão visual confirma fotografia em preto e branco, sem marca de banco de imagem visível. A página antiga não documenta fotógrafo, local, data exata ou origem do retrato; o arquivo permanece fora de publicação."
+    },
+    {
+      "assetId": "crianca-decada-60-07",
+      "slug": "crianca-decada-de-60",
+      "sourcePage": "https://fradim.com.br/crianca-decada-de-60/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/colorizada-por-Marcelo-Fradim-em-fradim.com_.br-brasil-07.jpg",
+      "filename": "crianca-decada-60-07.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "2fe82efbc25958f2db8db72fd9ff89a817aa5a52c5829cf09d874475a4c3ad4f",
+      "status": "reviewed-hold-provenance",
+      "audit": false,
+      "note": "Revisão visual confirma versão colorizada com assinatura de Marcelo Fradim para restauração/colorização. Isso documenta a intervenção, não a proveniência da fotografia original; o arquivo permanece fora de publicação."
+    }
+  ]
+}

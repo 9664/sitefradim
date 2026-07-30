@@ -1,0 +1,287 @@
+name: Audit curated legacy pages
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - app/[slug]/page.tsx
+      - app/[slug]/LegacyMemoryPage.module.css
+      - app/memoria/page.tsx
+      - components/MemoryArchiveIndex.tsx
+      - components/MemoryArchiveIndex.module.css
+      - lib/legacyMemory.ts
+      - public/memoria/arquivo/**
+      - config/legacy-media.json
+      - config/legacy-media-published.json
+      - .github/workflows/audit-legacy-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  visual-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate published media provenance
+        run: npm run validate:legacy-media
+
+      - name: Build static site for audit
+        env:
+          NEXT_PUBLIC_SITE_ENV: staging
+          NEXT_PUBLIC_BASE_PATH: ""
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-audit --no-fund --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start local static server
+        run: |
+          python3 -m http.server 4173 --directory out > /tmp/legacy-audit-server.log 2>&1 &
+          echo $! > /tmp/legacy-audit-server.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/legacy-audit-server.log
+          exit 1
+
+      - name: Capture and assert curated archive states
+        run: |
+          mkdir -p legacy-screenshots
+          cat > legacy-audit.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = 'http://127.0.0.1:4173/';
+          const targets = [
+            {
+              name: 'legacy-magazine',
+              route: 'primeira-loja-do-magazine-luiza-em-1957/',
+              published: true,
+              expectedAlt: 'Fachada da primeira loja do Magazine Luiza em Franca',
+            },
+            {
+              name: 'legacy-estacao',
+              route: 'locomotiva-em-1925/',
+              published: true,
+              expectedAlt: 'Comparativo da Estação Mogiana de Franca em 1925',
+            },
+            {
+              name: 'legacy-avenida',
+              route: 'av-central-rio-de-janeiro-em-1910/',
+              published: false,
+              expectedNote: 'ASSET NÃO PUBLICADO',
+            },
+            {
+              name: 'legacy-copacabana',
+              route: 'copacabana-rio-de-janeiro-anos-40/',
+              published: false,
+              expectedNote: 'ASSET NÃO PUBLICADO',
+            },
+            {
+              name: 'legacy-crianca',
+              route: 'crianca-decada-de-60/',
+              published: false,
+              expectedNote: 'ASSET NÃO PUBLICADO',
+            },
+          ];
+
+          const devices = [
+            { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+            { label: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+
+          async function collectErrors(page, label, errors) {
+            if (!errors.length) return;
+            await fs.writeFile(`legacy-screenshots/${label}-errors.txt`, errors.join('\n'));
+            failures.push(`${label}: ${errors.length} browser error(s)`);
+          }
+
+          try {
+            for (const target of targets) {
+              for (const device of devices) {
+                const label = `${target.name}-${device.label}`;
+                const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+                const errors = [];
+                page.on('console', (message) => {
+                  if (message.type() === 'error') errors.push(message.text());
+                });
+                page.on('pageerror', (error) => errors.push(error.message));
+
+                const response = await page.goto(`${base}${target.route}`, {
+                  waitUntil: 'networkidle',
+                  timeout: 60000,
+                });
+                if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
+
+                const title = await page.locator('h1').first().textContent();
+                if (!title?.trim()) failures.push(`${label}: missing h1`);
+
+                const archiveImages = page.locator('figure img');
+                const imageCount = await archiveImages.count();
+
+                if (target.published) {
+                  if (imageCount !== 1) {
+                    failures.push(`${label}: expected one published archive image, found ${imageCount}`);
+                  } else {
+                    const image = archiveImages.first();
+                    await image.scrollIntoViewIfNeeded();
+                    await image.waitFor({ state: 'visible', timeout: 10000 });
+                    await page.waitForFunction(
+                      (element) => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0,
+                      await image.elementHandle(),
+                      { timeout: 10000 },
+                    );
+                    const dimensions = await image.evaluate((element) => ({
+                      width: element.naturalWidth,
+                      height: element.naturalHeight,
+                    }));
+                    const alt = await image.getAttribute('alt');
+                    if (!dimensions.width || !dimensions.height) failures.push(`${label}: archive image did not decode`);
+                    if (!alt?.includes(target.expectedAlt)) failures.push(`${label}: unexpected alt text`);
+
+                    const caption = page.locator('figcaption');
+                    if ((await caption.count()) !== 1 || !(await caption.innerText()).includes('ARQUIVO REINTEGRADO')) {
+                      failures.push(`${label}: provenance caption missing`);
+                    }
+                  }
+                } else {
+                  if (imageCount !== 0) failures.push(`${label}: non-published asset leaked into page`);
+                  const bodyText = await page.locator('body').innerText();
+                  if (!bodyText.includes(target.expectedNote)) failures.push(`${label}: curation hold/rejection note missing`);
+                }
+
+                await collectErrors(page, label, errors);
+                await page.screenshot({ path: `legacy-screenshots/${label}.png`, fullPage: true });
+                await page.close();
+              }
+            }
+
+            for (const device of devices) {
+              const label = `memory-index-${device.label}`;
+              const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+              const errors = [];
+              page.on('console', (message) => {
+                if (message.type() === 'error') errors.push(message.text());
+              });
+              page.on('pageerror', (error) => errors.push(error.message));
+
+              const response = await page.goto(`${base}memoria/`, {
+                waitUntil: 'networkidle',
+                timeout: 60000,
+              });
+              if (!response?.ok()) failures.push(`${label}: HTTP ${response?.status() ?? 'no response'}`);
+
+              const archive = page.locator('[data-memory-archive]');
+              if ((await archive.count()) !== 1) {
+                failures.push(`${label}: archive section missing`);
+              } else {
+                await archive.scrollIntoViewIfNeeded();
+
+                const publishedCards = archive.locator('[data-media-state="published"]');
+                const unpublishedCards = archive.locator('[data-media-state="unpublished"]');
+                const publishedCount = await publishedCards.count();
+                const unpublishedCount = await unpublishedCards.count();
+
+                if (publishedCount !== 2) failures.push(`${label}: expected 2 published cards, found ${publishedCount}`);
+                if (unpublishedCount !== 3) failures.push(`${label}: expected 3 unpublished cards, found ${unpublishedCount}`);
+
+                const images = archive.locator('img[data-archive-media="published"]');
+                const imageCount = await images.count();
+                if (imageCount !== 2) failures.push(`${label}: expected exactly 2 published thumbnails, found ${imageCount}`);
+
+                for (let index = 0; index < imageCount; index += 1) {
+                  const image = images.nth(index);
+                  await image.scrollIntoViewIfNeeded();
+                  await page.waitForTimeout(250);
+                  await image.waitFor({ state: 'visible', timeout: 10000 });
+                  const handle = await image.elementHandle();
+                  if (!handle) {
+                    failures.push(`${label}: thumbnail ${index + 1} has no element handle`);
+                    continue;
+                  }
+                  await page.waitForFunction(
+                    (element) => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0,
+                    handle,
+                    { timeout: 10000 },
+                  );
+                  const dimensions = await image.evaluate((element) => ({
+                    width: element.naturalWidth,
+                    height: element.naturalHeight,
+                  }));
+                  if (!dimensions.width || !dimensions.height) failures.push(`${label}: thumbnail ${index + 1} did not decode`);
+                }
+
+                const unpublishedMedia = archive.locator('[data-archive-media="unpublished"]');
+                if ((await unpublishedMedia.count()) !== 3) {
+                  failures.push(`${label}: expected exactly 3 unpublished visual states`);
+                }
+
+                const archiveText = await archive.innerText();
+                for (const requiredText of [
+                  'MÍDIA REINTEGRADA',
+                  'PROVENIÊNCIA EM PESQUISA',
+                  'MÍDIA NÃO REPUBLICADA',
+                ]) {
+                  if (!archiveText.includes(requiredText)) failures.push(`${label}: missing state label "${requiredText}"`);
+                }
+
+                await archive.scrollIntoViewIfNeeded();
+                await page.waitForTimeout(250);
+                await archive.screenshot({ path: `legacy-screenshots/memory-archive-index-${device.label}.png` });
+              }
+
+              await collectErrors(page, label, errors);
+              await page.close();
+            }
+          } finally {
+            await browser.close();
+          }
+
+          if (failures.length) {
+            console.error('Legacy visual audit failed:');
+            for (const failure of failures) console.error(`- ${failure}`);
+            process.exit(1);
+          }
+
+          console.log('Legacy visual audit OK: 2 published assets + 3 intentionally unpublished pages + decoded memory index states, desktop/mobile.');
+          EOF
+          node legacy-audit.mjs
+
+      - name: Upload curated legacy visual audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-curated-legacy-visual-audit
+          path: legacy-screenshots
+          retention-days: 3
+
+      - name: Publish audit result on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual do Arquivo de Memória concluída 🧪\n\nDesktop + mobile: Magazine 1957 e Estação 1925 com mídia reintegrada; Avenida Central, Copacabana e Criança década de 60 sem asset publicado; índice de Memória com 2 thumbnails decodificados + 3 estados sem mídia ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-curated-legacy-visual-audit\`\nCommit: \`${GITHUB_SHA}\`"

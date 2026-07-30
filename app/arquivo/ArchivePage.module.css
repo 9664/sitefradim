@@ -1,0 +1,442 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 72% 10%, rgba(124, 149, 177, 0.12), transparent 28rem),
+    #07090c;
+  color: #f4f7fb;
+}
+
+.hero,
+.collections,
+.timeline,
+.protocol,
+.closing {
+  width: min(1280px, calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+
+.hero {
+  min-height: 88svh;
+  display: grid;
+  align-content: end;
+  padding: 10rem 0 5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.hero h1,
+.sectionHeader h2,
+.protocol h2,
+.closing h2 {
+  margin: 0;
+  font-weight: 450;
+  letter-spacing: -0.06em;
+}
+
+.hero h1 {
+  max-width: 1120px;
+  font-size: clamp(3.6rem, 8.4vw, 8rem);
+  line-height: 0.9;
+}
+
+.hero h1 span,
+.closing h2 span {
+  display: block;
+  color: #8d9baa;
+}
+
+.intro {
+  max-width: 780px;
+  margin: 2rem 0 0;
+  color: #c1cad4;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.7;
+}
+
+.heroMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: #8e9aa8;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+}
+
+.heroMeta strong {
+  color: #dfe7ef;
+  font-weight: 700;
+}
+
+.collections,
+.timeline,
+.protocol,
+.closing {
+  padding: 7rem 0;
+}
+
+.sectionHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+  gap: 3rem;
+  align-items: end;
+  margin-bottom: 3rem;
+}
+
+.sectionHeader h2,
+.protocol h2,
+.closing h2 {
+  font-size: clamp(2.5rem, 5vw, 5.2rem);
+  line-height: 0.96;
+}
+
+.sectionHeader > p,
+.closing > p:not(:first-child) {
+  margin: 0;
+  color: #9eabb8;
+  line-height: 1.7;
+}
+
+.collectionGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.collectionCard {
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.018);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.collectionCard:hover,
+.collectionCard:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.collectionIndex,
+.collectionCard small,
+.open,
+.entryMeta,
+.entryCopy strong {
+  font-size: 0.63rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.collectionIndex {
+  color: #657382;
+}
+
+.collectionCard small {
+  margin-top: 4rem;
+  color: #8ea1b5;
+}
+
+.collectionCard h3 {
+  margin: 0.75rem 0 0;
+  font-size: 1.35rem;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 520;
+}
+
+.collectionCard p {
+  margin: 1rem 0 0;
+  color: #9aa7b4;
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+.open {
+  margin-top: auto;
+  padding-top: 2rem;
+  color: #dce5ee;
+}
+
+.timeline {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.yearList {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.yearBlock {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.yearRail {
+  position: relative;
+  padding: 2rem 2rem 2rem 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.yearRail span {
+  position: sticky;
+  top: 6rem;
+  display: block;
+  color: #dce6f0;
+  font-size: clamp(2rem, 4vw, 4rem);
+  letter-spacing: -0.06em;
+}
+
+.yearRail i {
+  position: absolute;
+  top: 2.5rem;
+  right: -4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #c9d6e3;
+  box-shadow: 0 0 20px rgba(201, 214, 227, 0.4);
+}
+
+.entries {
+  display: grid;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 155px 1fr auto;
+  gap: 2rem;
+  align-items: start;
+  padding: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 180ms ease;
+}
+
+.entry:last-child {
+  border-bottom: 0;
+}
+
+.entry:hover,
+.entry:focus-visible {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.entryMeta {
+  display: grid;
+  gap: 0.65rem;
+  color: #7f8d9c;
+}
+
+.entryMeta small {
+  color: #aab8c6;
+  font-size: inherit;
+}
+
+.entryCopy h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 2.15rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.entryCopy p {
+  max-width: 760px;
+  margin: 0.85rem 0 0;
+  color: #9aa7b4;
+  line-height: 1.65;
+}
+
+.entryCopy strong {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #d3dde7;
+  font-weight: 700;
+}
+
+.entryArrow {
+  color: #6f7e8e;
+  font-size: 1.1rem;
+}
+
+.protocol {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.protocolGrid {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.protocolGrid article {
+  display: grid;
+  grid-template-columns: 52px 150px 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.protocolGrid span {
+  color: #637181;
+  font-size: 0.7rem;
+}
+
+.protocolGrid h3,
+.protocolGrid p {
+  margin: 0;
+}
+
+.protocolGrid h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.protocolGrid p {
+  color: #9ba8b5;
+  line-height: 1.6;
+}
+
+.closing {
+  min-height: 70svh;
+  display: grid;
+  align-content: center;
+}
+
+.closing h2 {
+  max-width: 980px;
+}
+
+.closing > p:not(:first-child) {
+  max-width: 720px;
+  margin-top: 2rem;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.links a {
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d4dde6;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.links a:hover,
+.links a:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 1050px) {
+  .collectionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .collectionCard:last-child {
+    grid-column: span 2;
+    min-height: 240px;
+  }
+
+  .protocol {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .collections,
+  .timeline,
+  .protocol,
+  .closing {
+    width: min(100% - 2rem, 1280px);
+  }
+
+  .hero {
+    min-height: 78svh;
+    padding-top: 8rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.25rem, 16vw, 5.4rem);
+  }
+
+  .heroMeta,
+  .sectionHeader {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .heroMeta {
+    gap: 0.75rem;
+  }
+
+  .sectionHeader {
+    gap: 1.5rem;
+  }
+
+  .collectionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .collectionCard,
+  .collectionCard:last-child {
+    min-height: 260px;
+    grid-column: auto;
+  }
+
+  .yearBlock {
+    grid-template-columns: 1fr;
+  }
+
+  .yearRail {
+    padding: 1.5rem 0 0.8rem;
+    border-right: 0;
+  }
+
+  .yearRail span {
+    position: static;
+    font-size: 2.4rem;
+  }
+
+  .yearRail i {
+    display: none;
+  }
+
+  .entry {
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    padding: 1.5rem 0;
+  }
+
+  .entryMeta {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .protocol {
+    gap: 2.5rem;
+  }
+
+  .protocolGrid article {
+    grid-template-columns: 38px 1fr;
+  }
+
+  .protocolGrid p {
+    grid-column: 2;
+  }
+}

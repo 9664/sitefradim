@@ -1,0 +1,108 @@
+name: Audit pending child-era media
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - config/pending-media/crianca-decada-60.json
+      - scripts/audit-legacy-media.mjs
+      - .github/workflows/audit-pending-child-media.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Download only still-pending variants into isolated quarantine
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p pending-quarantine
+
+          node <<'NODE' > pending-quarantine/downloads.tsv
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('config/pending-media/crianca-decada-60.json', 'utf8'));
+          for (const item of config.items) {
+            if (item.audit === false || typeof item.legacyUrl !== 'string' || item.legacyUrl.length === 0) continue;
+            process.stdout.write(`${item.filename}\t${item.legacyUrl}\n`);
+          }
+          NODE
+
+          while IFS=$'\t' read -r filename url; do
+            [ -n "${filename}" ] || continue
+            echo "Fetching ${filename}"
+            curl \
+              --fail \
+              --location \
+              --silent \
+              --show-error \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 60 \
+              --max-filesize 25000000 \
+              --proto '=https' \
+              --tlsv1.2 \
+              --output "pending-quarantine/${filename}" \
+              "${url}"
+          done < pending-quarantine/downloads.tsv
+
+      - name: Validate still-pending JPEG structure and hashes
+        run: node scripts/audit-legacy-media.mjs config/pending-media/crianca-decada-60.json pending-quarantine pending-quarantine/media-audit.json
+
+      - name: Build isolated review summary
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync('pending-quarantine/media-audit.json', 'utf8'));
+          let md = '### Quarentena — Criança década de 60\n\n';
+          md += `Validated now: **${report.validated}/${report.count}** · skipped after completed review: **${report.skipped ?? 0}**\n\n`;
+          if (report.items.length) {
+            md += '| Arquivo | Dimensões | Bytes | SHA-256 |\n';
+            md += '| --- | ---: | ---: | --- |\n';
+            for (const item of report.items) {
+              if (item.status === 'validated') {
+                md += `| ${item.filename} | ${item.width}×${item.height} | ${item.bytes} | \`${item.sha256}\` |\n`;
+              } else {
+                md += `| ${item.filename} | falhou | — | ${item.error ?? 'erro'} |\n`;
+              }
+            }
+          }
+          md += '\n**Política:** variantes com revisão encerrada e `audit:false` não são mais baixadas. Nenhum arquivo desta quarentena pode ser publicado automaticamente.\n';
+          md += `\nRun ID: \`${process.env.GITHUB_RUN_ID}\` · Commit: \`${process.env.GITHUB_SHA}\`\n`;
+          fs.writeFileSync('pending-quarantine/summary.md', md);
+          console.log(md);
+          NODE
+
+      - name: Upload isolated pending-media audit record
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-pending-child-media-quarantine
+          path: |
+            pending-quarantine/*.jpg
+            pending-quarantine/media-audit.json
+            pending-quarantine/summary.md
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Publish quarantine result on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body-file pending-quarantine/summary.md

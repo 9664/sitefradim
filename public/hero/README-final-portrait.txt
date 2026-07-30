@@ -1,0 +1,1 @@
+The final hero portrait is derived from the transparent user-provided PNG and stored as WebP at public/hero/marcelo-fradim-hero-final.webp.

@@ -1,0 +1,123 @@
+name: Promote approved legacy media
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+    paths:
+      - config/legacy-media.json
+      - .github/workflows/promote-legacy-media.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: agent/immersive-foundation
+
+      - name: Install lossless JPEG tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libjpeg-turbo-progs
+
+      - name: Build approved promotion list
+        run: |
+          mkdir -p promotion
+          node <<'NODE' > promotion/approved.tsv
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('config/legacy-media.json', 'utf8'));
+          for (const item of config.items) {
+            if (item.status !== 'approved-for-promotion') continue;
+            if (typeof item.legacyUrl !== 'string' || !item.legacyUrl.startsWith('https://fradim.com.br/wp-content/uploads/')) {
+              throw new Error(`Approved item has invalid legacy origin: ${item.slug}`);
+            }
+            if (!/^[a-f0-9]{64}$/.test(item.expectedSha256 ?? '')) {
+              throw new Error(`Approved item is missing pinned SHA-256: ${item.slug}`);
+            }
+            if (typeof item.publishPath !== 'string' || !item.publishPath.startsWith('public/memoria/arquivo/') || !item.publishPath.endsWith('.jpg')) {
+              throw new Error(`Approved item has invalid publishPath: ${item.slug}`);
+            }
+            process.stdout.write(`${item.slug}\t${item.filename}\t${item.legacyUrl}\t${item.expectedSha256}\t${item.publishPath}\n`);
+          }
+          NODE
+          test -s promotion/approved.tsv
+
+      - name: Download, verify and sanitize approved media
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > promotion/published.tsv
+
+          while IFS=$'\t' read -r slug filename url expected publish_path; do
+            echo "Promoting ${slug}"
+            source_file="promotion/${filename}"
+            mkdir -p "$(dirname "${publish_path}")"
+
+            curl \
+              --fail \
+              --location \
+              --silent \
+              --show-error \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 60 \
+              --max-filesize 25000000 \
+              --proto '=https' \
+              --tlsv1.2 \
+              --output "${source_file}" \
+              "${url}"
+
+            actual="$(sha256sum "${source_file}" | awk '{print $1}')"
+            if [ "${actual}" != "${expected}" ]; then
+              echo "SHA-256 mismatch for ${slug}: expected ${expected}, got ${actual}" >&2
+              exit 1
+            fi
+
+            # Lossless DCT copy while removing EXIF/IPTC/comments and other copied metadata.
+            jpegtran -copy none -optimize -outfile "${publish_path}" "${source_file}"
+            test -s "${publish_path}"
+            published_sha="$(sha256sum "${publish_path}" | awk '{print $1}')"
+            bytes="$(stat -c '%s' "${publish_path}")"
+            printf '%s\t%s\t%s\t%s\t%s\n' "${slug}" "${expected}" "${published_sha}" "${bytes}" "${publish_path}" >> promotion/published.tsv
+          done < promotion/approved.tsv
+
+      - name: Write publication provenance manifest
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const rows = fs.readFileSync('promotion/published.tsv', 'utf8').trim().split('\n').filter(Boolean).map((line) => {
+            const [slug, sourceSha256, publishedSha256, bytes, path] = line.split('\t');
+            return { slug, sourceSha256, publishedSha256, bytes: Number(bytes), path };
+          });
+          fs.writeFileSync('config/legacy-media-published.json', JSON.stringify({
+            version: 1,
+            generatedBy: 'promote-legacy-media.yml',
+            sanitization: 'jpegtran -copy none -optimize (lossless DCT, metadata stripped)',
+            items: rows,
+          }, null, 2) + '\n');
+          NODE
+
+      - name: Commit sanitized media
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/memoria/arquivo config/legacy-media-published.json
+
+          if git diff --cached --quiet; then
+            echo "Approved media already matches repository state."
+            exit 0
+          fi
+
+          git commit -m "feat: publish curated legacy memory media"
+          git push origin HEAD:agent/immersive-foundation

@@ -1,0 +1,105 @@
+{
+  "version": 5,
+  "generatedBy": "manual-curation-from-private-uploads",
+  "sanitization": "validated source masters were decoded and re-encoded as WebP without inherited metadata; source and published SHA-256 hashes are pinned",
+  "items": [
+    {
+      "slug": "largo-do-rosario-em-1900",
+      "sourceSha256": "9c80029aa72e1a169e819bc515ce59d1852ad0c873b361f7c1b2ab561303c2ba",
+      "publishedSha256": "666a9f98e826a98b4812574cdabc3d581ad84f452a9652de39ac82391ceb8d9d",
+      "bytes": 7238,
+      "path": "public/memoria/arquivo/largo-conceicao-1900.webp"
+    },
+    {
+      "slug": "rua-do-comercio-em-1908",
+      "sourceSha256": "df7247f062259fd31241dd590e1b0777c176e543c24b83cffb5638aeae0aa201",
+      "publishedSha256": "2f6c84bd381bb805362e86a11bafaf301c6752fd5d49e4446b3e5e5f3c65a22b",
+      "bytes": 19910,
+      "path": "public/memoria/arquivo/rua-comercio-1908.webp"
+    },
+    {
+      "slug": "inauguracao-da-praca-em-1909",
+      "sourceSha256": "d034a87074fef56ae8e46e99c70c99308a716831ee33de4508c485e86e3d5a56",
+      "publishedSha256": "9b880bb61d94c8fc9d694fb9e03bef03701ce02fe69e488b700b850337b9872d",
+      "bytes": 5614,
+      "path": "public/memoria/arquivo/inauguracao-praca-1909.webp"
+    },
+    {
+      "slug": "estacao-mogiana-em-1909",
+      "sourceSha256": "b3a7053d5be02d5f9843b062975d6194545952d930b2d72f9c37a4e183803ede",
+      "publishedSha256": "bc20eeed4588d6181b1eba7cb957c651bc65fb59c962c434bd4faff47d0d2f1d",
+      "bytes": 5758,
+      "path": "public/memoria/arquivo/estacao-mogiana-1909.webp"
+    },
+    {
+      "slug": "padre-alonso-1926",
+      "sourceSha256": "f14f046f90319e2522d4df85fb731b851b7610ea48c5a9e6db22a6b2250addfb",
+      "publishedSha256": "dfc98a0b20cb463417501f42fadeb793365c395ff8f7cffd6cc3accaed7cf024",
+      "bytes": 3024,
+      "path": "public/memoria/arquivo/padre-alonso-1926.webp"
+    },
+    {
+      "slug": "locomotiva-em-1925",
+      "sourceSha256": "cf7c09b4f2fa0166eb748937d42948a76adeabbb97cf28fa705508f89d5b1d43",
+      "publishedSha256": "609102d1a162c10151d7402c2408e4506346a7f9a9e588885e5c17452248204e",
+      "bytes": 738763,
+      "path": "public/memoria/arquivo/estacao-mogiana-1925.jpg"
+    },
+    {
+      "slug": "estacao-em-1930",
+      "sourceSha256": "7345ddf6d87cdbba5192b7e7d8a8ab6ae3d056aa4dd7182ade22fb7d4683d1cc",
+      "publishedSha256": "0804339f2b342067ab834f766c27f3868045063e3857bad85f32def4f4519cf9",
+      "bytes": 5242,
+      "path": "public/memoria/arquivo/estacao-mogiana-1930.webp"
+    },
+    {
+      "slug": "vista-aerea-de-franca-em-1950",
+      "sourceSha256": "2846a904c55f96dc97a360bf978be11a1ee086c4037c16bbe34db1fcb31359f0",
+      "publishedSha256": "7fa9ccb6d356a41bed91d315b034a8543e6386e427f592e3427b649a40a419b7",
+      "bytes": 8192,
+      "path": "public/memoria/arquivo/vista-aerea-franca-1950.webp"
+    },
+    {
+      "slug": "taxis-na-praca-barao-decada-de-1950",
+      "sourceSha256": "db87d443fc4089706cc3c0bb7ba09c931166b8c7922bf4fd6e7a71b96fb8e8cd",
+      "publishedSha256": "ece28abc5aba054da583ea6858f380a0faf33f243fb0e061796d289c3c5a5287",
+      "bytes": 35608,
+      "path": "public/memoria/arquivo/taxis-franca-1950.webp"
+    },
+    {
+      "slug": "emporio-cruzeiro-do-sul-em-1952",
+      "sourceSha256": "79f90089fb047b36af3dff3ffc64ec6ea3823530684e408c865f77566410216d",
+      "publishedSha256": "f4f64c71d45f6f601d329fa595c4c10a8d05efbbac83382f96a8a832abc7ba3a",
+      "bytes": 19281,
+      "path": "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp"
+    },
+    {
+      "slug": "primeira-loja-do-magazine-luiza-em-1957",
+      "sourceSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "publishedSha256": "18c68870d69a34b90890e1dfc8a3bab1f64fe9de58b4a850da51729ac15bc05b",
+      "bytes": 409352,
+      "path": "public/memoria/arquivo/magazine-luiza-1957.jpg"
+    },
+    {
+      "slug": "franca-em-1928",
+      "sourceSha256": "e61200e0f7d638832f14955212ce1e3531ed9d3058e8cd8ce795316a5c525334",
+      "publishedSha256": "3db790deaa66e4602bc286d40af94c9e9ee9b5904cb4c33713b1ea9441878fea",
+      "bytes": 7880,
+      "path": "public/memoria/arquivo/franca-1928.webp"
+    },
+    {
+      "slug": "casa-andrade-em-1924",
+      "sourceSha256": "ca636ae438dcee2341ce18b593f091c593bfa36620d0ed64b43544ebf36afa93",
+      "publishedSha256": "8af0c3b3e064857e12c423012d12a3f7debb46d74666a9a6eabf1bab3c21173a",
+      "bytes": 14392,
+      "path": "public/memoria/arquivo/casa-andrade-1924.webp"
+    },
+    {
+      "slug": "bar-tubarao-decada-de-60",
+      "sourceSha256": "9bd7565414db5f6dd39996ee2592706acc15066b7936820b86f857d6b24083e4",
+      "publishedSha256": "bbb9740b5ad233117aa2843701d517c5a081730ff123be52e64d6df535d4f67c",
+      "bytes": 14874,
+      "path": "public/memoria/arquivo/bar-tubarao-1960.webp"
+    }
+  ]
+}

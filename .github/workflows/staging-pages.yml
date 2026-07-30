@@ -1,0 +1,458 @@
+name: Deploy Fradim 2.0 staging
+
+on:
+  push:
+    branches:
+      - agent/immersive-foundation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  issues: write
+  pull-requests: write
+
+env:
+  NEXT_PUBLIC_SITE_ENV: staging
+  NEXT_PUBLIC_BASE_PATH: /sitefradim
+
+concurrency:
+  group: "pages-staging"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build static staging
+        run: npm run build
+
+      - name: Preserve Next.js asset directories
+        run: touch out/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./out
+
+  deploy:
+    environment:
+      name: fradim-staging
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Smoke test public staging
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          routes=(
+            ""
+            "universo/"
+            "sobre/"
+            "spock/"
+            "lab/"
+            "memoria/"
+            "restauracao-fotografica/"
+            "primeira-loja-do-magazine-luiza-em-1957/"
+            "locomotiva-em-1925/"
+            "crianca-decada-de-60/"
+            "projetos/"
+            "campanhas/"
+            "ideias/"
+            "somos-simples-naufragos/"
+            "nada-acontece-por-acaso/"
+            "porque-o-tempo-nao-para-nos-tornamos-velhos/"
+            "a-diferenca-entre-vida-simples-minimalismo-e-frugalidade/"
+          )
+
+          for route in "${routes[@]}"; do
+            url="${PAGE_URL}${route}"
+            echo "Checking ${url}"
+            body="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${url}")"
+            test -n "${body}"
+          done
+
+          home="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}")"
+          echo "${home}" | grep -qi "Marcelo Fradim"
+          echo "${home}" | grep -qi 'name="robots"'
+          echo "${home}" | grep -qi "noindex"
+          echo "${home}" | grep -qi "MEMÓRIA VIVA / A COR RETORNA"
+          echo "${home}" | grep -qi "estacao-mogiana-1925.jpg"
+          echo "${home}" | grep -qi "magazine-luiza-1957.jpg"
+
+          campanhas="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}campanhas/")"
+          echo "${campanhas}" | grep -qi "ARQUIVO VISUAL"
+          echo "${campanhas}" | grep -qi "assets antigos ainda não migrados"
+
+          child="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}crianca-decada-de-60/")"
+          echo "${child}" | grep -qi "ASSET NÃO PUBLICADO"
+
+          legacy_idea="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 2 "${PAGE_URL}somos-simples-naufragos/")"
+          echo "${legacy_idea}" | grep -qi "ARQUIVO AUTORAL"
+          echo "${legacy_idea}" | grep -qi "NOTA DE ARQUIVO"
+
+      - name: Publish staging URL on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Staging publicado ✅\n\n${PAGE_URL}\n\nSmoke test: Home + Memória Viva + Universo + Memória + Restauração + 5 registros de Memória + Campanhas + 4 registros do Arquivo Autoral + rotas críticas ✅\n\nCommit: \`${GITHUB_SHA}\`"
+
+  visual-audit:
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+
+      - name: Capture desktop and mobile screenshots
+        run: |
+          cat > audit.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = process.env.PAGE_URL;
+          if (!base) throw new Error('PAGE_URL missing');
+          await fs.mkdir('screenshots', { recursive: true });
+
+          const targets = [
+            ['home', ''],
+            ['universo-page', 'universo/'],
+            ['sobre', 'sobre/'],
+            ['spock', 'spock/'],
+            ['lab', 'lab/'],
+            ['memoria', 'memoria/'],
+            ['campanhas', 'campanhas/'],
+            ['ideias', 'ideias/'],
+            ['legacy-idea', 'somos-simples-naufragos/'],
+            ['legacy-child', 'crianca-decada-de-60/'],
+          ];
+
+          const devices = [
+            { label: 'desktop', viewport: { width: 1440, height: 1000 } },
+            { label: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+          try {
+            for (const [name, route] of targets) {
+              for (const device of devices) {
+                const page = await browser.newPage({ viewport: device.viewport, deviceScaleFactor: 1 });
+                const errors = [];
+                page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
+                page.on('pageerror', err => errors.push(err.message));
+                const response = await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
+                if (!response?.ok()) failures.push(`${name}/${device.label}: HTTP ${response?.status() ?? 'no response'}`);
+
+                await page.evaluate(() => {
+                  document.documentElement.style.scrollBehavior = 'auto';
+                  document.body.style.scrollBehavior = 'auto';
+                });
+
+                if (name === 'home' && device.label === 'mobile') {
+                  await page.locator('.hero').dispatchEvent('pointerdown');
+                  await page.locator('.hero-scene canvas').waitFor({ state: 'visible', timeout: 12000 });
+                }
+
+                if (name === 'campanhas') {
+                  const body = await page.locator('body').innerText();
+                  if (!body.includes('ARQUIVO VISUAL') || !body.includes('assets antigos ainda não migrados')) {
+                    failures.push(`${name}/${device.label}: campaign archive state missing`);
+                  }
+                }
+
+                if (name === 'ideias') {
+                  const archive = page.locator('[data-legacy-ideas-archive]');
+                  if ((await archive.count()) !== 1) {
+                    failures.push(`${name}/${device.label}: legacy author archive missing`);
+                  } else if ((await archive.locator('[data-legacy-idea-card]').count()) !== 4) {
+                    failures.push(`${name}/${device.label}: expected 4 legacy author cards`);
+                  }
+                }
+
+                if (name === 'legacy-idea') {
+                  const body = await page.locator('body').innerText();
+                  for (const required of ['ARQUIVO AUTORAL', 'NOTA DE ARQUIVO', 'O NÚCLEO DO TEXTO', 'LEITURA ATUAL']) {
+                    if (!body.includes(required)) failures.push(`${name}/${device.label}: missing ${required}`);
+                  }
+                }
+
+                if (name === 'legacy-child') {
+                  const body = await page.locator('body').innerText();
+                  if (!body.includes('ASSET NÃO PUBLICADO') || !body.includes('proveniência')) {
+                    failures.push(`${name}/${device.label}: child-era provenance hold missing`);
+                  }
+                  if ((await page.locator('figure img').count()) !== 0) {
+                    failures.push(`${name}/${device.label}: child-era image leaked into publication`);
+                  }
+                }
+
+                await page.waitForTimeout(2500);
+                await page.screenshot({ path: `screenshots/${name}-${device.label}.png`, fullPage: true });
+
+                if (name === 'home') {
+                  const universe = page.locator('#universo-fradim');
+                  if (await universe.count()) {
+                    await universe.scrollIntoViewIfNeeded();
+                    await page.waitForTimeout(700);
+                    await universe.screenshot({ path: `screenshots/universe-${device.label}.png` });
+                  }
+
+                  const journey = page.locator('#trajetoria-em-movimento');
+                  if (await journey.count()) {
+                    const metrics = await journey.evaluate((element) => {
+                      const rect = element.getBoundingClientRect();
+                      return {
+                        top: window.scrollY + rect.top,
+                        height: rect.height,
+                        viewport: window.innerHeight,
+                      };
+                    });
+                    const scrollable = Math.max(1, metrics.height - metrics.viewport);
+                    const ratios = [0.02, 0.25, 0.5, 0.75, 0.94];
+                    for (let index = 0; index < ratios.length; index += 1) {
+                      await page.evaluate(({ top, scrollable, ratio }) => {
+                        window.scrollTo(0, top + scrollable * ratio);
+                        window.dispatchEvent(new Event('scroll'));
+                      }, { top: metrics.top, scrollable, ratio: ratios[index] });
+                      await page.waitForTimeout(1100);
+                      await page.screenshot({
+                        path: `screenshots/trajectory-${String(index + 1).padStart(2, '0')}-${device.label}.png`,
+                        fullPage: false,
+                      });
+                    }
+                  }
+
+                  const memory = page.locator('#memoria-viva');
+                  if ((await memory.count()) !== 1) {
+                    failures.push(`home/${device.label}: memory revival section missing`);
+                  } else {
+                    const cards = memory.locator('[data-memory-index]');
+                    if ((await cards.count()) !== 3) {
+                      failures.push(`home/${device.label}: expected 3 memory revival stages`);
+                    }
+
+                    for (let index = 0; index < 3; index += 1) {
+                      const card = cards.nth(index);
+                      await card.scrollIntoViewIfNeeded();
+                      await page.waitForTimeout(1400);
+
+                      const stage = await memory.getAttribute('data-stage');
+                      if (stage !== String(index)) {
+                        failures.push(`home/${device.label}: memory stage ${index} did not activate; received ${stage}`);
+                      }
+
+                      if (index < 2) {
+                        const image = card.locator('img');
+                        const imageState = await image.evaluate((element) => ({
+                          complete: element.complete,
+                          width: element.naturalWidth,
+                          height: element.naturalHeight,
+                        }));
+                        if (!imageState.complete || imageState.width < 300 || imageState.height < 180) {
+                          failures.push(`home/${device.label}: memory image ${index} invalid ${JSON.stringify(imageState)}`);
+                        }
+                      }
+
+                      await page.screenshot({
+                        path: `screenshots/memory-revival-${String(index + 1).padStart(2, '0')}-${device.label}.png`,
+                        fullPage: false,
+                      });
+                    }
+                  }
+                }
+
+                if (errors.length) {
+                  await fs.writeFile(`screenshots/${name}-${device.label}-errors.txt`, errors.join('\n'));
+                  failures.push(`${name}/${device.label}: ${errors.length} browser error(s)`);
+                }
+                await page.close();
+              }
+            }
+          } finally {
+            await browser.close();
+          }
+
+          if (failures.length) {
+            console.error('Staging visual audit failed:');
+            for (const failure of failures) console.error(`- ${failure}`);
+            process.exit(1);
+          }
+          EOF
+          node audit.mjs
+
+      - name: Upload visual audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-staging-visual-audit
+          path: screenshots
+          retention-days: 3
+
+      - name: Publish visual audit run on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body "### Auditoria visual concluída 🧪\n\nDesktop + mobile: Home + Memória Viva em 3 estágios + Universo + trajetória + Sobre + Spock + Lab + Memória + Campanhas + Arquivo Autoral + registro Criança década de 60 ✅\n\nRun ID: \`${GITHUB_RUN_ID}\`\nArtefato: \`fradim-staging-visual-audit\`\n\nCommit: \`${GITHUB_SHA}\`"
+
+  performance-audit:
+    runs-on: ubuntu-latest
+    needs: deploy
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    env:
+      PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Lighthouse
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund lighthouse
+          chrome="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "${chrome}"
+          echo "CHROME_PATH=${chrome}" >> "$GITHUB_ENV"
+
+      - name: Run Lighthouse baseline
+        run: |
+          set -euo pipefail
+          mkdir -p lighthouse
+
+          audit() {
+            name="$1"
+            url="$2"
+            device="$3"
+            extra=()
+            if [ "${device}" = "desktop" ]; then
+              extra+=(--preset=desktop)
+            fi
+            npx lighthouse "${url}" \
+              --quiet \
+              --output=json \
+              --output-path="lighthouse/${name}-${device}.json" \
+              --only-categories=performance,accessibility,best-practices \
+              --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+              "${extra[@]}"
+          }
+
+          for device in mobile desktop; do
+            audit home "${PAGE_URL}" "${device}"
+            audit universo "${PAGE_URL}universo/" "${device}"
+            audit memoria "${PAGE_URL}memoria/" "${device}"
+          done
+
+      - name: Build performance summary
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const names = { home: 'Home', universo: 'Universo', memoria: 'Memória' };
+          const files = fs.readdirSync('lighthouse').filter((file) => file.endsWith('.json')).sort();
+          const rows = [];
+
+          const pct = (value) => Math.round((value ?? 0) * 100);
+          const sec = (value) => `${((value ?? 0) / 1000).toFixed(2)}s`;
+          const ms = (value) => `${Math.round(value ?? 0)}ms`;
+          const cls = (value) => Number(value ?? 0).toFixed(3);
+          const mb = (value) => `${((value ?? 0) / 1024 / 1024).toFixed(2)}MB`;
+
+          for (const file of files) {
+            const report = JSON.parse(fs.readFileSync(path.join('lighthouse', file), 'utf8'));
+            const stem = file.replace('.json', '');
+            const device = stem.endsWith('-desktop') ? 'desktop' : 'mobile';
+            const pageKey = stem.replace(/-(desktop|mobile)$/, '');
+            const a = report.audits;
+            rows.push({
+              page: names[pageKey] ?? pageKey,
+              device: device === 'desktop' ? 'Desktop' : 'Mobile',
+              performance: pct(report.categories.performance?.score),
+              accessibility: pct(report.categories.accessibility?.score),
+              best: pct(report.categories['best-practices']?.score),
+              fcp: sec(a['first-contentful-paint']?.numericValue),
+              lcp: sec(a['largest-contentful-paint']?.numericValue),
+              tbt: ms(a['total-blocking-time']?.numericValue),
+              cls: cls(a['cumulative-layout-shift']?.numericValue),
+              bytes: mb(a['total-byte-weight']?.numericValue),
+            });
+          }
+
+          let md = '### Lighthouse baseline 📊\n\n';
+          md += '| Página | Dispositivo | Performance | Acessibilidade | Best Practices | FCP | LCP | TBT | CLS | Peso |\n';
+          md += '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n';
+          for (const row of rows) {
+            md += `| ${row.page} | ${row.device} | ${row.performance} | ${row.accessibility} | ${row.best} | ${row.fcp} | ${row.lcp} | ${row.tbt} | ${row.cls} | ${row.bytes} |\n`;
+          }
+          md += '\nBaseline informativo: ainda não bloqueia deploy. SEO foi omitido porque o staging é deliberadamente `noindex`.\n';
+          md += `\nRun ID: \`${process.env.GITHUB_RUN_ID}\`\nArtefato: \`fradim-lighthouse-baseline\`\nCommit: \`${process.env.GITHUB_SHA}\`\n`;
+          fs.writeFileSync('lighthouse/summary.md', md);
+          console.log(md);
+          NODE
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fradim-lighthouse-baseline
+          path: lighthouse
+          retention-days: 5
+
+      - name: Publish Lighthouse baseline on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment 1 --repo "${GITHUB_REPOSITORY}" --body-file lighthouse/summary.md

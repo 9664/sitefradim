@@ -1,0 +1,150 @@
+name: Audit recovered memory
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/memoria/**"
+      - "app/padre-alonso-1926/**"
+      - "app/estacao-em-1930/**"
+      - "app/vista-aerea-de-franca-em-1950/**"
+      - "app/rua-do-comercio-em-1908/**"
+      - "app/emporio-cruzeiro-do-sul-em-1952/**"
+      - "app/taxis-na-praca-barao-decada-de-1950/**"
+      - "app/franca-em-1928/**"
+      - "app/casa-andrade-em-1924/**"
+      - "app/bar-tubarao-decada-de-60/**"
+      - "components/RecoveredMemory*"
+      - "lib/recoveredMemoryBatch2.ts"
+      - "lib/recoveredMemoryBatch3.ts"
+      - "lib/recoveredMemoryBatch4.ts"
+      - "assets/memory/**"
+      - "scripts/materialize-recovered-memory.mjs"
+      - ".github/workflows/audit-recovered-memory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: recovered-memory-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install audit runtime
+        run: |
+          npm install --no-save playwright@1.55.0 serve@14.2.4
+          npx playwright install --with-deps chromium
+
+      - name: Build staging export
+        env:
+          NEXT_PUBLIC_SITE_ENV: staging
+          NEXT_PUBLIC_BASE_PATH: /sitefradim
+        run: npm run build
+
+      - name: Audit desktop and mobile
+        run: |
+          mkdir -p artifacts/recovered-memory served/sitefradim
+          cp -R out/. served/sitefradim/
+          npx serve served -l 4173 > /tmp/recovered-memory-serve.log 2>&1 &
+          for attempt in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/sitefradim/memoria/ >/dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4173/sitefradim/memoria/ >/dev/null
+
+          node --input-type=module <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs/promises';
+
+          const base = 'http://127.0.0.1:4173/sitefradim';
+          const routes = [
+            { slug: 'padre-alonso-1926', title: 'Padre Alonso Ferreira de Carvalho' },
+            { slug: 'estacao-em-1930', title: 'Estação Mogiana em 1930' },
+            { slug: 'vista-aerea-de-franca-em-1950', title: 'Vista aérea de Franca em 1950' },
+            { slug: 'rua-do-comercio-em-1908', title: 'Rua do Comércio em 1908' },
+            { slug: 'emporio-cruzeiro-do-sul-em-1952', title: 'Empório Cruzeiro do Sul em 1952' },
+            { slug: 'taxis-na-praca-barao-decada-de-1950', title: 'Táxis na Praça Barão' },
+            { slug: 'franca-em-1928', title: 'Franca em 1928' },
+            { slug: 'casa-andrade-em-1924', title: 'Casa Andrade em 1924' },
+            { slug: 'bar-tubarao-decada-de-60', title: 'Bar Tubarão' },
+          ];
+          const viewports = [
+            { name: 'desktop', width: 1440, height: 1100 },
+            { name: 'mobile', width: 390, height: 844 },
+          ];
+
+          await fs.mkdir('artifacts/recovered-memory', { recursive: true });
+          const browser = await chromium.launch({ headless: true });
+
+          try {
+            for (const viewport of viewports) {
+              const context = await browser.newContext({ viewport });
+              const page = await context.newPage();
+
+              await page.goto(`${base}/memoria/`, { waitUntil: 'networkidle' });
+              const cards = page.locator('[data-recovered-memory-index] [data-archive-card]');
+              if (await cards.count() !== 9) throw new Error(`Memory index: expected 9 recovered cards, found ${await cards.count()}`);
+              if (await page.locator('[data-recovered-batch="3"]').count() !== 3) {
+                throw new Error('Memory index: batch 3 does not contain exactly 3 cards');
+              }
+              if (await page.locator('[data-recovered-batch="4"]').count() !== 3) {
+                throw new Error('Memory index: batch 4 does not contain exactly 3 cards');
+              }
+              await page.screenshot({ path: `artifacts/recovered-memory/index-${viewport.name}.png`, fullPage: true });
+
+              for (const route of routes) {
+                await page.goto(`${base}/${route.slug}/`, { waitUntil: 'networkidle' });
+                await page.locator(`[data-recovered-memory="${route.slug}"]`).waitFor();
+                await page.getByRole('heading', { name: route.title }).first().waitFor();
+
+                const media = page.locator('[data-recovered-memory-image]');
+                await media.waitFor();
+                const imageState = await media.evaluate((image) => ({
+                  complete: image.complete,
+                  naturalWidth: image.naturalWidth,
+                  naturalHeight: image.naturalHeight,
+                }));
+                if (!imageState.complete || imageState.naturalWidth < 300 || imageState.naturalHeight < 200) {
+                  throw new Error(`${route.slug}: invalid decoded image ${JSON.stringify(imageState)}`);
+                }
+
+                const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+                if (overflow > 2) throw new Error(`${route.slug}: horizontal overflow ${overflow}px at ${viewport.name}`);
+
+                await page.screenshot({
+                  path: `artifacts/recovered-memory/${route.slug}-${viewport.name}.png`,
+                  fullPage: true,
+                });
+              }
+
+              await context.close();
+            }
+          } finally {
+            await browser.close();
+          }
+          EOF
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovered-memory-visual-audit
+          path: artifacts/recovered-memory
+          if-no-files-found: error
+          retention-days: 14
