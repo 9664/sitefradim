@@ -71,10 +71,10 @@ const assets = [
       "assets/memory/lote3/taxis-small-02.b64",
     ],
     output: "public/memoria/arquivo/taxis-franca-1950.webp",
-    bytes: 14742,
-    width: 600,
+    bytes: 35608,
+    width: 344,
     height: 212,
-    sha256: "d9ad68c299fd1c9764618abea7dd21749032aa19e5ccace6773fd10b95b4d3b8",
+    sha256: "ece28abc5aba054da583ea6858f380a0faf33f243fb0e061796d289c3c5a5287",
   },
   {
     slug: "franca-em-1928",
