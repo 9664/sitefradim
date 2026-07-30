@@ -39,6 +39,40 @@ const assets = [
     height: 228,
     sha256: "7fa9ccb6d356a41bed91d315b034a8543e6386e427f592e3427b649a40a419b7",
   },
+  {
+    slug: "rua-do-comercio-em-1908",
+    parts: ["assets/memory/rua-comercio-1908.part-01.b64"],
+    output: "public/memoria/arquivo/rua-comercio-1908.webp",
+    bytes: 19910,
+    width: 720,
+    height: 227,
+    sha256: "2f6c84bd381bb805362e86a11bafaf301c6752fd5d49e4446b3e5e5f3c65a22b",
+  },
+  {
+    slug: "emporio-cruzeiro-do-sul-em-1952",
+    parts: [
+      "assets/memory/emporio-cruzeiro-sul-1952.part-01.b64",
+      "assets/memory/emporio-cruzeiro-sul-1952.part-02.b64",
+      "assets/memory/emporio-cruzeiro-sul-1952.part-03.b64",
+    ],
+    output: "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp",
+    bytes: 43704,
+    width: 640,
+    height: 447,
+    sha256: "8be4fa558159e6849a8ca218042aea9fd0eb40a3ff2fc9f3a44a00fbcdc3fbba",
+  },
+  {
+    slug: "taxis-na-praca-barao-decada-de-1950",
+    parts: [
+      "assets/memory/taxis-franca-1950.part-01.b64",
+      "assets/memory/taxis-franca-1950.part-02.b64",
+    ],
+    output: "public/memoria/arquivo/taxis-franca-1950.webp",
+    bytes: 40510,
+    width: 720,
+    height: 254,
+    sha256: "21e31a8305b7255f1dd3a6425a313b3f47ea8f2e5772bda36508a6d13fe4908e",
+  },
 ];
 
 function readVp8Dimensions(buffer) {
