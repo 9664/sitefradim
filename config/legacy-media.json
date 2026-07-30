@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "description": "Inventário de mídia do WordPress legado com estados explícitos de curadoria. Somente itens approved-for-promotion podem ser promovidos para public/ e sempre com verificação SHA-256.",
   "maxBytes": 25000000,
   "items": [
@@ -37,15 +37,15 @@
       "note": "Arquivo colorizado relacionado ao post 1453 e ao anexo 781. O post indica 1909 e o nome do anexo indica 1908; o 2.0 publica como c. 1908–1909 e preserva a divergência."
     },
     {
-      "slug": "primeira-loja-do-magazine-luiza-em-1957",
-      "sourcePage": "https://fradim.com.br/primeira-loja-do-magazine-luiza-em-1957/",
-      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/magazine-luiza-colorida-p.jpg",
-      "filename": "magazine-luiza-colorida-p.jpg",
+      "slug": "padre-alonso-1926",
+      "sourcePage": "https://fradim.com.br/padre-alonso-1926/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/PADRE-ALONSO.jpg",
+      "filename": "PADRE-ALONSO.jpg",
       "expectedFormat": "jpeg",
-      "expectedSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "expectedSha256": "f14f046f90319e2522d4df85fb731b851b7610ea48c5a9e6db22a6b2250addfb",
       "status": "approved-for-promotion",
-      "publishPath": "public/memoria/arquivo/magazine-luiza-1957.jpg",
-      "note": "Revisão visual confirma a fotografia colorizada com assinatura 'Colorização Marcelo Fradim'. Página antiga declara a intervenção e há crédito externo à imagem em matéria da InfoMoney."
+      "publishPath": "public/memoria/arquivo/padre-alonso-1926.webp",
+      "note": "Comparativo original/restauração localizado no backup privado, vinculado ao post 1449 e ao anexo 790. Informações biográficas do texto legado permanecem classificadas como pistas de pesquisa."
     },
     {
       "slug": "locomotiva-em-1925",
@@ -57,6 +57,39 @@
       "status": "approved-for-promotion",
       "publishPath": "public/memoria/arquivo/estacao-mogiana-1925.jpg",
       "note": "Revisão visual confirma o comparativo da fotografia original com a restauração/colorização assinada por Marcelo Fradim."
+    },
+    {
+      "slug": "estacao-em-1930",
+      "sourcePage": "https://fradim.com.br/estacao-em-1930/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/Decada-de-30-Estação-final-p.jpg",
+      "filename": "Decada-de-30-Estação-final-p.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "7345ddf6d87cdbba5192b7e7d8a8ab6ae3d056aa4dd7182ade22fb7d4683d1cc",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/estacao-mogiana-1930.webp",
+      "note": "Locomotiva 404 na plataforma de passageiros, vinculada ao post 1457 e ao anexo 785. Data editorial original: 2014-08-25."
+    },
+    {
+      "slug": "vista-aerea-de-franca-em-1950",
+      "sourcePage": "https://fradim.com.br/vista-aerea-de-franca-em-1950/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/A%C3%A9rea-1950.jpg",
+      "filename": "Aérea-1950.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "2846a904c55f96dc97a360bf978be11a1ee086c4037c16bbe34db1fcb31359f0",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/vista-aerea-franca-1950.webp",
+      "note": "Comparativo que o texto legado identifica como a primeira colorização de Marcelo Fradim, vinculado ao post 1459 e ao anexo 794."
+    },
+    {
+      "slug": "primeira-loja-do-magazine-luiza-em-1957",
+      "sourcePage": "https://fradim.com.br/primeira-loja-do-magazine-luiza-em-1957/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/magazine-luiza-colorida-p.jpg",
+      "filename": "magazine-luiza-colorida-p.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/magazine-luiza-1957.jpg",
+      "note": "Revisão visual confirma a fotografia colorizada com assinatura 'Colorização Marcelo Fradim'. Página antiga declara a intervenção e há crédito externo à imagem em matéria da InfoMoney."
     },
     {
       "slug": "av-central-rio-de-janeiro-em-1910",
