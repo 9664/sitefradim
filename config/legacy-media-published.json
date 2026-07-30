@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "generatedBy": "manual-curation-from-private-uploads",
   "sanitization": "validated source masters were decoded and re-encoded as WebP without inherited metadata; source and published SHA-256 hashes are pinned",
   "items": [
@@ -62,15 +62,15 @@
     {
       "slug": "taxis-na-praca-barao-decada-de-1950",
       "sourceSha256": "db87d443fc4089706cc3c0bb7ba09c931166b8c7922bf4fd6e7a71b96fb8e8cd",
-      "publishedSha256": "21e31a8305b7255f1dd3a6425a313b3f47ea8f2e5772bda36508a6d13fe4908e",
-      "bytes": 40510,
+      "publishedSha256": "d9ad68c299fd1c9764618abea7dd21749032aa19e5ccace6773fd10b95b4d3b8",
+      "bytes": 14742,
       "path": "public/memoria/arquivo/taxis-franca-1950.webp"
     },
     {
       "slug": "emporio-cruzeiro-do-sul-em-1952",
       "sourceSha256": "79f90089fb047b36af3dff3ffc64ec6ea3823530684e408c865f77566410216d",
-      "publishedSha256": "8be4fa558159e6849a8ca218042aea9fd0eb40a3ff2fc9f3a44a00fbcdc3fbba",
-      "bytes": 43704,
+      "publishedSha256": "51e95f10596b8dbb4c4b084afb8358d31724ebd7d26af1c92bfd19815ac049e5",
+      "bytes": 10862,
       "path": "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp"
     },
     {
@@ -79,6 +79,27 @@
       "publishedSha256": "18c68870d69a34b90890e1dfc8a3bab1f64fe9de58b4a850da51729ac15bc05b",
       "bytes": 409352,
       "path": "public/memoria/arquivo/magazine-luiza-1957.jpg"
+    },
+    {
+      "slug": "franca-em-1928",
+      "sourceSha256": "e61200e0f7d638832f14955212ce1e3531ed9d3058e8cd8ce795316a5c525334",
+      "publishedSha256": "3db790deaa66e4602bc286d40af94c9e9ee9b5904cb4c33713b1ea9441878fea",
+      "bytes": 7880,
+      "path": "public/memoria/arquivo/franca-1928.webp"
+    },
+    {
+      "slug": "casa-andrade-em-1924",
+      "sourceSha256": "ca636ae438dcee2341ce18b593f091c593bfa36620d0ed64b43544ebf36afa93",
+      "publishedSha256": "8af0c3b3e064857e12c423012d12a3f7debb46d74666a9a6eabf1bab3c21173a",
+      "bytes": 14392,
+      "path": "public/memoria/arquivo/casa-andrade-1924.webp"
+    },
+    {
+      "slug": "bar-tubarao-decada-de-60",
+      "sourceSha256": "9bd7565414db5f6dd39996ee2592706acc15066b7936820b86f857d6b24083e4",
+      "publishedSha256": "bbb9740b5ad233117aa2843701d517c5a081730ff123be52e64d6df535d4f67c",
+      "bytes": 14874,
+      "path": "public/memoria/arquivo/bar-tubarao-1960.webp"
     }
   ]
 }

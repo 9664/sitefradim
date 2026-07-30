@@ -86,6 +86,10 @@ for (const required of [
   "Rua do Comércio em 1908",
   "Empório Cruzeiro do Sul em 1952",
   "Táxis na Praça Barão",
+  "LOTE 4 / A CIDADE VISTA DE CIMA, POR DENTRO E EM CONVIVÊNCIA",
+  "Franca em 1928",
+  "Casa Andrade em 1924",
+  "Bar Tubarão",
 ]) {
   if (!memoryIndex.includes(required)) {
     throw new Error(`Memory index is missing recovered batch marker: ${required}`);
@@ -99,6 +103,9 @@ const recoveredRoutes = [
   { slug: "rua-do-comercio-em-1908", title: "Rua do Comércio em 1908", image: "rua-comercio-1908.webp" },
   { slug: "emporio-cruzeiro-do-sul-em-1952", title: "Empório Cruzeiro do Sul em 1952", image: "emporio-cruzeiro-sul-1952.webp" },
   { slug: "taxis-na-praca-barao-decada-de-1950", title: "Táxis na Praça Barão", image: "taxis-franca-1950.webp" },
+  { slug: "franca-em-1928", title: "Franca em 1928", image: "franca-1928.webp" },
+  { slug: "casa-andrade-em-1924", title: "Casa Andrade em 1924", image: "casa-andrade-1924.webp" },
+  { slug: "bar-tubarao-decada-de-60", title: "Bar Tubarão", image: "bar-tubarao-1960.webp" },
 ];
 
 for (const route of recoveredRoutes) {

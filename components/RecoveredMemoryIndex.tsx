@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { recoveredMemoryBatch2 } from "@/lib/recoveredMemoryBatch2";
 import { recoveredMemoryBatch3 } from "@/lib/recoveredMemoryBatch3";
+import { recoveredMemoryBatch4 } from "@/lib/recoveredMemoryBatch4";
 import styles from "./MemoryArchiveIndex.module.css";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -17,6 +18,12 @@ const batches = [
     title: "A cidade entra na modernidade pelas fachadas, pelo trabalho e pelos veículos.",
     text: "Este lote acompanha a transformação do centro entre 1908 e os anos 1950: da rua de terra ao varejo de bairro e à frota de táxis.",
     entries: recoveredMemoryBatch3,
+  },
+  {
+    label: "LOTE 4 / A CIDADE VISTA DE CIMA, POR DENTRO E EM CONVIVÊNCIA",
+    title: "A memória urbana ganha panorama, interior e presença humana.",
+    text: "Três comparativos atravessam a praça central, o comércio por dentro e a sociabilidade de um bar entre 1924 e os anos 1960.",
+    entries: recoveredMemoryBatch4,
   },
 ] as const;
 

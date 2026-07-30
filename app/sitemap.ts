@@ -4,6 +4,7 @@ import { legacyIdeaEntries } from "@/lib/legacyIdeas";
 import { legacyMemoryEntries } from "@/lib/legacyMemory";
 import { recoveredMemoryBatch2 } from "@/lib/recoveredMemoryBatch2";
 import { recoveredMemoryBatch3 } from "@/lib/recoveredMemoryBatch3";
+import { recoveredMemoryBatch4 } from "@/lib/recoveredMemoryBatch4";
 
 export const dynamic = "force-static";
 
@@ -31,6 +32,7 @@ const routes = [
   ...legacyMemoryEntries.map((entry) => `/${entry.slug}`),
   ...recoveredMemoryBatch2.map((entry) => `/${entry.slug}`),
   ...recoveredMemoryBatch3.map((entry) => `/${entry.slug}`),
+  ...recoveredMemoryBatch4.map((entry) => `/${entry.slug}`),
   ...legacyIdeaEntries.map((entry) => `/${entry.slug}`),
   ...ideas.map((idea) => `/ideias/${idea.slug}`),
 ];
@@ -56,7 +58,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 ? 0.7
                 : legacyMemoryEntries.some((entry) => route === `/${entry.slug}`) ||
                     recoveredMemoryBatch2.some((entry) => route === `/${entry.slug}`) ||
-                    recoveredMemoryBatch3.some((entry) => route === `/${entry.slug}`)
+                    recoveredMemoryBatch3.some((entry) => route === `/${entry.slug}`) ||
+                    recoveredMemoryBatch4.some((entry) => route === `/${entry.slug}`)
                   ? 0.72
                   : legacyIdeaEntries.some((entry) => route === `/${entry.slug}`)
                     ? 0.68
