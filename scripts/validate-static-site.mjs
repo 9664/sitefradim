@@ -76,6 +76,45 @@ for (const required of ["fradim@gmail.com", "+55 16 98180-4590", "CONTATO / PROJ
   }
 }
 
+const memoryIndex = await readFile(path.join(out, "memoria", "index.html"), "utf8");
+for (const required of [
+  "NOVOS DOCUMENTOS REINTEGRADOS",
+  "Padre Alonso Ferreira de Carvalho",
+  "Estação Mogiana em 1930",
+  "Vista aérea de Franca em 1950",
+]) {
+  if (!memoryIndex.includes(required)) {
+    throw new Error(`Memory index is missing recovered batch marker: ${required}`);
+  }
+}
+
+const recoveredRoutes = [
+  {
+    slug: "padre-alonso-1926",
+    title: "Padre Alonso Ferreira de Carvalho",
+    image: "padre-alonso-1926.webp",
+  },
+  {
+    slug: "estacao-em-1930",
+    title: "Estação Mogiana em 1930",
+    image: "estacao-mogiana-1930.webp",
+  },
+  {
+    slug: "vista-aerea-de-franca-em-1950",
+    title: "Vista aérea de Franca em 1950",
+    image: "vista-aerea-franca-1950.webp",
+  },
+];
+
+for (const route of recoveredRoutes) {
+  const html = await readFile(path.join(out, route.slug, "index.html"), "utf8");
+  for (const required of [route.title, route.image, "ARQUIVO TEMPORAL", "CADEIA DE PROVENIÊNCIA"]) {
+    if (!html.includes(required)) {
+      throw new Error(`${route.slug}: generated page is missing ${required}`);
+    }
+  }
+}
+
 console.log(
-  `Static site validated: approved Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; Atlas Vivo, Memory Revival and contact route present.`,
+  `Static site validated: approved Hero portrait ${width}x${height}, ${portraitStats.size} bytes, sha256=${digest}; Atlas Vivo, Memory Revival, contact route and ${recoveredRoutes.length} recovered memory routes present.`,
 );
