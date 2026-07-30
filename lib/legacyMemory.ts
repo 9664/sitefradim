@@ -28,30 +28,101 @@ export type LegacyMemoryEntry = {
 
 export const legacyMemoryEntries: LegacyMemoryEntry[] = [
   {
-    slug: "primeira-loja-do-magazine-luiza-em-1957",
-    title: "Primeira loja do Magazine Luiza em 1957",
-    year: "1957",
-    location: "Franca, SP",
+    slug: "largo-do-rosario-em-1900",
+    title: "Largo do Rosário em 1900",
+    year: "1900",
+    location: "Largo da Conceição, Franca, SP",
     summary:
-      "Registro ligado ao início do Magazine Luiza em Franca e preservado como parte do antigo acervo de fotografias colorizadas do Fradim.com.br.",
+      "Uma das imagens mais antigas do centro de Franca retorna ao acervo mostrando o largo antes da praça e a nova Igreja Matriz ainda em construção.",
     context: [
-      "A história institucional do Magazine Luiza começa em 1957, em Franca, quando Luiza Trajano Donato e Pelegrino José Donato adquiriram uma pequena loja conhecida como A Cristaleira.",
-      "O material visual publicado no antigo Fradim.com.br recebeu intervenção de colorização. Nesta nova versão, a página passa a separar claramente o contexto histórico da intervenção visual.",
+      "O texto preservado no WordPress antigo descrevia esta fotografia como um dos raros registros do centro de Franca no início do século XX. A cena mostra o atual entorno da Praça Nossa Senhora da Conceição quando o espaço ainda era tratado como largo.",
+      "Ao fundo aparece a estrutura da nova Igreja Matriz em construção. A data editorial original do post, recuperada pelo metadado _wp_old_date, é 11 de julho de 2014; a imagem histórica é identificada no próprio material como sendo de 1900.",
     ],
     intervention:
-      "Colorização digital realizada por Marcelo Fradim sobre uma fotografia histórica. O arquivo visual foi recuperado do acervo legado, conferido por hash e migrado somente depois da revisão técnica e visual.",
-    sourceLabel: "Magazine Luiza — histórico institucional",
-    sourceHref:
-      "https://ri.magazineluiza.com.br/Download/Formulario-de-Referencia-_Magazine-Luiza_2025?=gQNv6Vxr6lTdEY6ilO%2FqdA%3D%3D",
+      "O arquivo recuperado já apresenta a fotografia histórica e a interpretação restaurada/colorizada em uma composição comparativa assinada por Marcelo Fradim. A nova publicação preserva essa distinção para que documento e intervenção possam ser vistos lado a lado.",
+    sourceNote:
+      "Fonte primária: texto, metadados e anexo recuperados do Fradim.com.br legado. O arquivo físico foi cruzado com o caminho 2013/06/Largo-da-Conceição-1900.jpg no snapshot privado de uploads. A atribuição da fotografia histórica original permanece como pesquisa separada da autoria da restauração.",
     image: {
-      src: "/memoria/arquivo/magazine-luiza-1957.jpg",
-      alt: "Fachada da primeira loja do Magazine Luiza em Franca, em fotografia histórica colorizada por Marcelo Fradim.",
-      caption: "Primeira loja do Magazine Luiza em Franca. Intervenção de colorização: Marcelo Fradim.",
+      src: "/memoria/arquivo/largo-conceicao-1900.webp",
+      alt: "Comparativo do Largo da Conceição em Franca em 1900, com fotografia histórica e versão restaurada e colorizada por Marcelo Fradim.",
+      caption: "Largo da Conceição, 1900: fotografia histórica e interpretação restaurada/colorizada por Marcelo Fradim.",
       provenance:
-        "Arquivo recuperado do Fradim.com.br legado, validado por SHA-256 e republicado após remoção lossless de metadados. A autoria da intervenção está inscrita na própria imagem; a identificação da fotografia histórica original permanece separada dessa autoria.",
+        "Mestre localizado no backup privado de wp-content/uploads, relacionado ao anexo 798 do WordPress e ao post 1451. Publicado no 2.0 após validação de formato, hash SHA-256 e recodificação WebP sem metadados herdados.",
     },
     mediaNote:
-      "Asset aprovado e reintegrado ao novo acervo. A cadeia técnica da migração registra o hash do arquivo legado e o hash da cópia sanitizada publicada.",
+      "Asset aprovado e reintegrado ao novo acervo. A composição comparativa preserva a leitura do documento e deixa a intervenção visual explícita.",
+  },
+  {
+    slug: "inauguracao-da-praca-em-1909",
+    title: "Inauguração da Praça em 1909",
+    year: "1909",
+    location: "Praça Nossa Senhora da Conceição, Franca, SP",
+    summary:
+      "A praça central de Franca aparece ornamentada e ocupada pela população em um registro restaurado e colorizado que devolve escala humana ao início do século XX.",
+    context: [
+      "Segundo o texto original recuperado do antigo Fradim.com.br, a imagem registra a inauguração da Praça Nossa Senhora da Conceição em 1909 e relaciona a organização do evento à Associação dos Empregados no Comércio.",
+      "A publicação original foi registrada em 9 de setembro de 2014. A fotografia permite observar jardins, coretos, bandeiras, edificações do entorno e a presença da população em uma das áreas mais reconhecíveis da cidade.",
+    ],
+    intervention:
+      "Restauração e colorização realizadas por Marcelo Fradim. A intervenção busca recuperar leitura de arquitetura, vegetação, vestuário e ocupação urbana, sem apresentar as cores reconstruídas como evidência cromática original.",
+    sourceNote:
+      "Fonte primária: post 1447 e anexo 791 do WordPress legado, cruzados com o mestre físico preservado no backup privado de uploads. O texto histórico foi sanitizado e a data original foi restaurada pelo metadado _wp_old_date.",
+    image: {
+      src: "/memoria/arquivo/inauguracao-praca-1909.webp",
+      alt: "Vista da inauguração da Praça Nossa Senhora da Conceição em Franca em 1909, restaurada e colorizada por Marcelo Fradim.",
+      caption: "Inauguração da Praça Nossa Senhora da Conceição, 1909. Restauração e colorização: Marcelo Fradim.",
+      provenance:
+        "Mestre localizado no backup privado de wp-content/uploads e vinculado ao conjunto editorial do post 1447. Publicado no 2.0 após validação técnica, fixação de hash e recodificação WebP sem metadados herdados.",
+    },
+    mediaNote:
+      "Asset aprovado e reintegrado. O registro passa a integrar a linha temporal de Franca com data editorial, texto original recuperado e intervenção visual identificada.",
+  },
+  {
+    slug: "estacao-mogiana-em-1909",
+    title: "Estação Mogiana — c. 1908–1909",
+    year: "c. 1908–1909",
+    location: "Estação Mogiana, Franca, SP",
+    summary:
+      "Uma rara vista da Estação Mogiana cercada por charretes retorna ao arquivo com a divergência de data preservada, em vez de apagada.",
+    context: [
+      "O post antigo identificava a cena como Estação Mogiana de Franca em 1909 e destacava as charretes usadas no transporte de passageiros, em função semelhante à dos táxis.",
+      "O nome do anexo preservado no WordPress, porém, é 1908-estação-final-p.jpg. Como as duas evidências divergem, o 2.0 adota provisoriamente o intervalo c. 1908–1909 até que uma fonte documental independente permita fixar a data com maior segurança.",
+    ],
+    intervention:
+      "A versão recuperada apresenta colorização digital da estação, veículos, animais e paisagem do entorno. A publicação mantém a intervenção identificada e registra explicitamente a incerteza cronológica encontrada na migração.",
+    sourceNote:
+      "Fonte primária: post 1453, anexo 781 e arquivo físico 2013/06/1908-estação-final-p.jpg. A data editorial original do post foi recuperada como 28 de agosto de 2014; a data da fotografia permanece em revisão.",
+    image: {
+      src: "/memoria/arquivo/estacao-mogiana-1909.webp",
+      alt: "Estação Mogiana de Franca por volta de 1908 a 1909, com charretes e passageiros, em versão colorizada por Marcelo Fradim.",
+      caption: "Estação Mogiana de Franca, c. 1908–1909. Colorização digital: Marcelo Fradim.",
+      provenance:
+        "Mestre recuperado do backup privado de uploads e vinculado ao anexo 781. Publicado no 2.0 após validação de formato, hash SHA-256 e recodificação WebP sem metadados herdados; divergência de data registrada na própria página.",
+    },
+    mediaNote:
+      "Asset aprovado e reintegrado. A divergência entre o título do post e o nome do anexo permanece documentada como parte da cadeia de evidências.",
+  },
+  {
+    slug: "av-central-rio-de-janeiro-em-1910",
+    title: "Avenida Central / Rio Branco — c. 1910–1915",
+    year: "c. 1910–1915",
+    location: "Centro, Rio de Janeiro, RJ",
+    summary:
+      "Página preservada do antigo acervo de colorizações do Fradim.com.br, dedicada à antiga Avenida Central — atual Avenida Rio Branco — no início do século XX. A data exata do registro permanece em revisão.",
+    context: [
+      "A Avenida Central foi uma das principais obras da reforma urbana do Rio de Janeiro no início do século XX e, em 1912, passou a se chamar Avenida Rio Branco. Acervos institucionais preservam diversos registros da via produzidos entre a década de 1900 e meados da década de 1910.",
+      "O WordPress antigo titulava este registro como 1910. Durante a nova curadoria, a mesma cena foi localizada em uma publicação identificada como trânsito na Avenida Rio Branco em 1915. Como a fotografia histórica de origem ainda não foi identificada de forma inequívoca, esta página abandona a data rígida e trabalha provisoriamente com c. 1910–1915, preservando o slug antigo apenas por continuidade de URL.",
+    ],
+    intervention:
+      "A versão colorizada do acervo legado foi localizada, validada tecnicamente e revisada visualmente. A assinatura de Marcelo Fradim está presente no arquivo, mas a fotografia histórica de origem ainda precisa de uma atribuição documental mais sólida antes da republicação.",
+    sourceLabel: "Brasiliana Fotográfica — Avenida Central, atual Rio Branco",
+    sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=avenida-central",
+    researchSource: {
+      label: "Motor1 — cena publicada como Avenida Rio Branco em 1915",
+      href: "https://motor1.uol.com.br/features/736303/historia-ranking-vendas-brasil-1912/",
+    },
+    mediaNote:
+      "Arquivo colorizado localizado e tecnicamente íntegro, mas mantido fora do novo site enquanto autoria, proveniência e data exata da fotografia original permanecem em pesquisa.",
   },
   {
     slug: "locomotiva-em-1925",
@@ -79,28 +150,6 @@ export const legacyMemoryEntries: LegacyMemoryEntry[] = [
       "Asset aprovado e reintegrado ao novo acervo. A composição preserva o comparativo que já existia no site antigo e a assinatura da intervenção.",
   },
   {
-    slug: "av-central-rio-de-janeiro-em-1910",
-    title: "Avenida Central / Rio Branco — c. 1910–1915",
-    year: "c. 1910–1915",
-    location: "Centro, Rio de Janeiro, RJ",
-    summary:
-      "Página preservada do antigo acervo de colorizações do Fradim.com.br, dedicada à antiga Avenida Central — atual Avenida Rio Branco — no início do século XX. A data exata do registro permanece em revisão.",
-    context: [
-      "A Avenida Central foi uma das principais obras da reforma urbana do Rio de Janeiro no início do século XX e, em 1912, passou a se chamar Avenida Rio Branco. Acervos institucionais preservam diversos registros da via produzidos entre a década de 1900 e meados da década de 1910.",
-      "O WordPress antigo titulava este registro como 1910. Durante a nova curadoria, a mesma cena foi localizada em uma publicação identificada como trânsito na Avenida Rio Branco em 1915. Como a fotografia histórica de origem ainda não foi identificada de forma inequívoca, esta página abandona a data rígida e trabalha provisoriamente com c. 1910–1915, preservando o slug antigo apenas por continuidade de URL.",
-    ],
-    intervention:
-      "A versão colorizada do acervo legado foi localizada, validada tecnicamente e revisada visualmente. A assinatura de Marcelo Fradim está presente no arquivo, mas a fotografia histórica de origem ainda precisa de uma atribuição documental mais sólida antes da republicação.",
-    sourceLabel: "Brasiliana Fotográfica — Avenida Central, atual Rio Branco",
-    sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=avenida-central",
-    researchSource: {
-      label: "Motor1 — cena publicada como Avenida Rio Branco em 1915",
-      href: "https://motor1.uol.com.br/features/736303/historia-ranking-vendas-brasil-1912/",
-    },
-    mediaNote:
-      "Arquivo colorizado localizado e tecnicamente íntegro, mas mantido fora do novo site enquanto autoria, proveniência e data exata da fotografia original permanecem em pesquisa.",
-  },
-  {
     slug: "copacabana-rio-de-janeiro-anos-40",
     title: "Copacabana — Rio de Janeiro, anos 40",
     year: "década de 1940",
@@ -117,6 +166,32 @@ export const legacyMemoryEntries: LegacyMemoryEntry[] = [
     sourceHref: "https://brasilianafotografica.bn.gov.br/?tag=copacabana",
     mediaNote:
       "Asset legado revisado e rejeitado para migração por conter marca de terceiro. A URL histórica permanece preservada por seu contexto editorial, sem republicar a imagem.",
+  },
+  {
+    slug: "primeira-loja-do-magazine-luiza-em-1957",
+    title: "Primeira loja do Magazine Luiza em 1957",
+    year: "1957",
+    location: "Franca, SP",
+    summary:
+      "Registro ligado ao início do Magazine Luiza em Franca e preservado como parte do antigo acervo de fotografias colorizadas do Fradim.com.br.",
+    context: [
+      "A história institucional do Magazine Luiza começa em 1957, em Franca, quando Luiza Trajano Donato e Pelegrino José Donato adquiriram uma pequena loja conhecida como A Cristaleira.",
+      "O material visual publicado no antigo Fradim.com.br recebeu intervenção de colorização. Nesta nova versão, a página passa a separar claramente o contexto histórico da intervenção visual.",
+    ],
+    intervention:
+      "Colorização digital realizada por Marcelo Fradim sobre uma fotografia histórica. O arquivo visual foi recuperado do acervo legado, conferido por hash e migrado somente depois da revisão técnica e visual.",
+    sourceLabel: "Magazine Luiza — histórico institucional",
+    sourceHref:
+      "https://ri.magazineluiza.com.br/Download/Formulario-de-Referencia-_Magazine-Luiza_2025?=gQNv6Vxr6lTdEY6ilO%2FqdA%3D%3D",
+    image: {
+      src: "/memoria/arquivo/magazine-luiza-1957.jpg",
+      alt: "Fachada da primeira loja do Magazine Luiza em Franca, em fotografia histórica colorizada por Marcelo Fradim.",
+      caption: "Primeira loja do Magazine Luiza em Franca. Intervenção de colorização: Marcelo Fradim.",
+      provenance:
+        "Arquivo recuperado do Fradim.com.br legado, validado por SHA-256 e republicado após remoção lossless de metadados. A autoria da intervenção está inscrita na própria imagem; a identificação da fotografia histórica original permanece separada dessa autoria.",
+    },
+    mediaNote:
+      "Asset aprovado e reintegrado ao novo acervo. A cadeia técnica da migração registra o hash do arquivo legado e o hash da cópia sanitizada publicada.",
   },
   {
     slug: "crianca-decada-de-60",

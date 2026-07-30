@@ -1,8 +1,41 @@
 {
-  "version": 2,
+  "version": 3,
   "description": "Inventário de mídia do WordPress legado com estados explícitos de curadoria. Somente itens approved-for-promotion podem ser promovidos para public/ e sempre com verificação SHA-256.",
   "maxBytes": 25000000,
   "items": [
+    {
+      "slug": "largo-do-rosario-em-1900",
+      "sourcePage": "https://fradim.com.br/largo-do-rosario-em-1900/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/Largo-da-Concei%C3%A7%C3%A3o-1900.jpg",
+      "filename": "Largo-da-Conceição-1900.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "9c80029aa72e1a169e819bc515ce59d1852ad0c873b361f7c1b2ab561303c2ba",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/largo-conceicao-1900.webp",
+      "note": "Comparativo original/restauração assinado por Marcelo Fradim, localizado no backup privado de uploads e relacionado ao anexo 798 e ao post 1451. Data editorial original recuperada: 2014-07-11."
+    },
+    {
+      "slug": "inauguracao-da-praca-em-1909",
+      "sourcePage": "https://fradim.com.br/inauguracao-da-praca-em-1909/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/Pra%C3%A7a-1909.jpg",
+      "filename": "Inauguração-da-Praça-1909-foto-Colorizada-por-Marcelo-Fradim.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "d034a87074fef56ae8e46e99c70c99308a716831ee33de4508c485e86e3d5a56",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/inauguracao-praca-1909.webp",
+      "note": "Restauração/colorização assinada por Marcelo Fradim, cruzada com post 1447, anexo 791 e backup privado de uploads. Data editorial original recuperada: 2014-09-09."
+    },
+    {
+      "slug": "estacao-mogiana-em-1909",
+      "sourcePage": "https://fradim.com.br/estacao-mogiana-em-1909/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/1908-esta%C3%A7%C3%A3o-final-p.jpg",
+      "filename": "1908-estação-final-p.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "b3a7053d5be02d5f9843b062975d6194545952d930b2d72f9c37a4e183803ede",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/estacao-mogiana-1909.webp",
+      "note": "Arquivo colorizado relacionado ao post 1453 e ao anexo 781. O post indica 1909 e o nome do anexo indica 1908; o 2.0 publica como c. 1908–1909 e preserva a divergência."
+    },
     {
       "slug": "primeira-loja-do-magazine-luiza-em-1957",
       "sourcePage": "https://fradim.com.br/primeira-loja-do-magazine-luiza-em-1957/",

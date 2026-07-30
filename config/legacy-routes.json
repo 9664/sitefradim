@@ -1,7 +1,28 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Manifesto independente de provedor para decisões de migração do WordPress legado do Fradim.com.br.",
   "resolved": [
+    {
+      "source": "/largo-do-rosario-em-1900/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL histórica recriada no mesmo slug com texto sanitizado, data original recuperada e comparativo visual reintegrado ao Arquivo de Memória."
+    },
+    {
+      "source": "/inauguracao-da-praca-em-1909/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL histórica recriada no mesmo slug com texto sanitizado, data original recuperada e fotografia restaurada/colorizada reintegrada ao Arquivo de Memória."
+    },
+    {
+      "source": "/estacao-mogiana-em-1909/",
+      "action": "preserve",
+      "status": 200,
+      "target": null,
+      "reason": "URL histórica recriada no mesmo slug. A divergência 1908/1909 encontrada entre post e anexo permanece explicitamente documentada."
+    },
     {
       "source": "/primeira-loja-do-magazine-luiza-em-1957/",
       "action": "preserve",

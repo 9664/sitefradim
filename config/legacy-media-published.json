@@ -1,8 +1,29 @@
 {
-  "version": 1,
-  "generatedBy": "promote-legacy-media.yml",
-  "sanitization": "jpegtran -copy none -optimize (lossless DCT, metadata stripped)",
+  "version": 2,
+  "generatedBy": "manual-curation-from-private-uploads",
+  "sanitization": "decoded from validated JPEG master and re-encoded as WebP with no inherited metadata; SHA-256 pinned for source and published derivative",
   "items": [
+    {
+      "slug": "largo-do-rosario-em-1900",
+      "sourceSha256": "9c80029aa72e1a169e819bc515ce59d1852ad0c873b361f7c1b2ab561303c2ba",
+      "publishedSha256": "666a9f98e826a98b4812574cdabc3d581ad84f452a9652de39ac82391ceb8d9d",
+      "bytes": 7238,
+      "path": "public/memoria/arquivo/largo-conceicao-1900.webp"
+    },
+    {
+      "slug": "inauguracao-da-praca-em-1909",
+      "sourceSha256": "d034a87074fef56ae8e46e99c70c99308a716831ee33de4508c485e86e3d5a56",
+      "publishedSha256": "9b880bb61d94c8fc9d694fb9e03bef03701ce02fe69e488b700b850337b9872d",
+      "bytes": 5614,
+      "path": "public/memoria/arquivo/inauguracao-praca-1909.webp"
+    },
+    {
+      "slug": "estacao-mogiana-em-1909",
+      "sourceSha256": "b3a7053d5be02d5f9843b062975d6194545952d930b2d72f9c37a4e183803ede",
+      "publishedSha256": "bc20eeed4588d6181b1eba7cb957c651bc65fb59c962c434bd4faff47d0d2f1d",
+      "bytes": 5758,
+      "path": "public/memoria/arquivo/estacao-mogiana-1909.webp"
+    },
     {
       "slug": "primeira-loja-do-magazine-luiza-em-1957",
       "sourceSha256": "a46f8715d74e1dfe63ea8d950262db3e754083adcb78c5f76d8adc900ad7c89e",
