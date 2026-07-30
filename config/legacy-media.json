@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "description": "Inventário de mídia do WordPress legado com estados explícitos de curadoria. Somente itens approved-for-promotion podem ser promovidos para public/ e sempre com verificação SHA-256.",
   "maxBytes": 25000000,
   "items": [
@@ -13,6 +13,17 @@
       "status": "approved-for-promotion",
       "publishPath": "public/memoria/arquivo/largo-conceicao-1900.webp",
       "note": "Comparativo original/restauração assinado por Marcelo Fradim, localizado no backup privado de uploads e relacionado ao anexo 798 e ao post 1451. Data editorial original recuperada: 2014-07-11."
+    },
+    {
+      "slug": "rua-do-comercio-em-1908",
+      "sourcePage": "https://fradim.com.br/rua-do-comercio-em-1908/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/Rua-do-Com%C3%A9rcio-1908-colorida-scaled-e1587507424416.jpg",
+      "filename": "Rua-do-Comércio-1908-colorida-scaled-e1587507424416.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "df7247f062259fd31241dd590e1b0777c176e543c24b83cffb5638aeae0aa201",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/rua-comercio-1908.webp",
+      "note": "Comparativo produzido a partir dos anexos 2739 (preto e branco, SHA-256 22b029e8ce93edf96a61a29707d0c9da13d1a877d5bafd6e88585e283f63b9a6) e 2740 (colorizado). Ambos foram localizados no backup privado e identificados pelo WordPress como Rua do Comércio em 1908."
     },
     {
       "slug": "inauguracao-da-praca-em-1909",
@@ -79,6 +90,28 @@
       "status": "approved-for-promotion",
       "publishPath": "public/memoria/arquivo/vista-aerea-franca-1950.webp",
       "note": "Comparativo que o texto legado identifica como a primeira colorização de Marcelo Fradim, vinculado ao post 1459 e ao anexo 794."
+    },
+    {
+      "slug": "taxis-na-praca-barao-decada-de-1950",
+      "sourcePage": "https://fradim.com.br/taxis-na-praca-barao-decada-de-1950/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2020/04/Taxis-decada-50-p.jpg",
+      "filename": "Taxis-decada-50-p.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "db87d443fc4089706cc3c0bb7ba09c931166b8c7922bf4fd6e7a71b96fb8e8cd",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/taxis-franca-1950.webp",
+      "note": "Comparativo produzido a partir dos anexos 2737 (preto e branco, SHA-256 48772001281d2da78bf6efdd7895b90083076954bcb0308db262e053d952105e) e 2738 (colorizado), identificados no arquivo legado como frota na Praça Barão na década de 1950."
+    },
+    {
+      "slug": "emporio-cruzeiro-do-sul-em-1952",
+      "sourcePage": "https://fradim.com.br/emporio-cruzeiro-do-sul-em-1952/",
+      "legacyUrl": "https://fradim.com.br/wp-content/uploads/2013/06/1952-Emp%C3%B3rio-Cruzeiro-do-Sul-Gal-Os%C3%B3rio-final-p.jpg",
+      "filename": "1952-Empório-Cruzeiro-do-Sul-Gal-Osório-final-p.jpg",
+      "expectedFormat": "jpeg",
+      "expectedSha256": "79f90089fb047b36af3dff3ffc64ec6ea3823530684e408c865f77566410216d",
+      "status": "approved-for-promotion",
+      "publishPath": "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp",
+      "note": "Mestre colorizado localizado no backup privado e relacionado aos anexos 784 e 792. O título do anexo registra Empório Cruzeiro do Sul, Rua General Osório, 1952."
     },
     {
       "slug": "primeira-loja-do-magazine-luiza-em-1957",
