@@ -11,7 +11,7 @@ const assets = [
     bytes: 3024,
     width: 360,
     height: 293,
-    sha256: "dfc98b8aba999a595a3080222a34025fed85751eca00e520c9f67c34cc7e2046",
+    sha256: "dfc98a0b20cb463417501f42fadeb793365c395ff8f7cffd6cc3accaed7cf024",
   },
   {
     slug: "estacao-em-1930",
