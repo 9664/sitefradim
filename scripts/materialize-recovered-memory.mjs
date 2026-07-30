@@ -59,10 +59,10 @@ const assets = [
       "assets/memory/lote3/emporio-small-02.b64",
     ],
     output: "public/memoria/arquivo/emporio-cruzeiro-sul-1952.webp",
-    bytes: 10862,
+    bytes: 19281,
     width: 480,
     height: 335,
-    sha256: "51e95f10596b8dbb4c4b084afb8358d31724ebd7d26af1c92bfd19815ac049e5",
+    sha256: "f4f64c71d45f6f601d329fa595c4c10a8d05efbbac83382f96a8a832abc7ba3a",
   },
   {
     slug: "taxis-na-praca-barao-decada-de-1950",
