@@ -41,7 +41,11 @@ const assets = [
   },
   {
     slug: "rua-do-comercio-em-1908",
-    parts: ["assets/memory/rua-comercio-1908.part-01.b64"],
+    parts: [
+      "assets/memory/lote3/rua-01.b64",
+      "assets/memory/lote3/rua-02.b64",
+      "assets/memory/lote3/rua-03.b64",
+    ],
     output: "public/memoria/arquivo/rua-comercio-1908.webp",
     bytes: 19910,
     width: 720,
