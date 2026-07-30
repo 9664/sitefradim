@@ -6,16 +6,19 @@ import process from "node:process";
 const assets = [
   {
     slug: "padre-alonso-1926",
-    parts: ["assets/memory/padre-alonso-1926.part-01.b64"],
+    parts: ["assets/memory/padre-alonso-1926-small.b64"],
     output: "public/memoria/arquivo/padre-alonso-1926.webp",
-    bytes: 4656,
-    width: 480,
-    height: 391,
-    sha256: "b831b94a70a18447dd5f7e174807a8473193064692ecc10f5ab1ddcda30517cd",
+    bytes: 3024,
+    width: 360,
+    height: 293,
+    sha256: "dfc98b8aba999a595a3080222a34025fed85751eca00e520c9f67c34cc7e2046",
   },
   {
     slug: "estacao-em-1930",
-    parts: ["assets/memory/estacao-mogiana-1930.b64"],
+    parts: [
+      "assets/memory/estacao-mogiana-1930.part-01.b64",
+      "assets/memory/estacao-mogiana-1930.part-02.b64",
+    ],
     output: "public/memoria/arquivo/estacao-mogiana-1930.webp",
     bytes: 5242,
     width: 360,
@@ -24,7 +27,12 @@ const assets = [
   },
   {
     slug: "vista-aerea-de-franca-em-1950",
-    parts: ["assets/memory/vista-aerea-franca-1950.b64"],
+    parts: [
+      "assets/memory/vista-aerea-franca-1950.part-01.b64",
+      "assets/memory/vista-aerea-franca-1950.part-02.b64",
+      "assets/memory/vista-aerea-franca-1950.part-03.b64",
+      "assets/memory/vista-aerea-franca-1950.part-04.b64",
+    ],
     output: "public/memoria/arquivo/vista-aerea-franca-1950.webp",
     bytes: 8192,
     width: 360,
