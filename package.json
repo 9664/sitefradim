@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/materialize-hero-portrait.mjs",
+    "prebuild": "node scripts/materialize-hero-portrait.mjs && node scripts/materialize-recovered-memory.mjs",
     "build": "next build",
     "postbuild": "node scripts/validate-static-site.mjs",
     "start": "next start",
@@ -12,7 +12,7 @@
     "audit:wxr": "python3 scripts/sanitize-wordpress-wxr.py",
     "validate:wxr-recovery": "node scripts/validate-wxr-recovery.mjs",
     "validate:legacy": "node scripts/validate-legacy-routes.mjs && npm run validate:wxr-recovery",
-    "validate:legacy-media": "node scripts/validate-published-legacy-media.mjs",
+    "validate:legacy-media": "node scripts/materialize-recovered-memory.mjs && node scripts/validate-published-legacy-media.mjs",
     "generate:cloudflare": "node scripts/generate-cloudflare-routing.mjs",
     "test:cloudflare-worker": "node scripts/test-cloudflare-worker.mjs",
     "validate:cloudflare-output": "node scripts/validate-cloudflare-output.mjs",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react-dom": "^19.2.0",
     "@types/three": "^0.180.0",
     "typescript": "^5.9.0"
   }
