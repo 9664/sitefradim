@@ -49,7 +49,7 @@ jobs:
       - name: Build preview and partial integration overlay
         run: |
           python3 redesign/fetch_and_build.py --output production-overlay --production
-          python3 redesign/build.py --output preview --offline
+          python3 redesign/fetch_and_build.py --output preview --offline
           cp redesign/README.md production-overlay/LEIA-ANTES-DE-PUBLICAR.md
       - name: Test desktop, tablet, mobile, accessibility and GEO output
         run: |

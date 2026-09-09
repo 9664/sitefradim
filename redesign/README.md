@@ -1,45 +1,39 @@
 # Fradim: presença visual + SEO/GEO
 
-Proposta implementada em setembro de 2026. O domínio público serve uma versão de setembro diferente da branch Next.js recuperada (julho). Por isso esta proposta é **isolada**: nenhum deploy de produção, domínio, DNS, página histórica ou aplicação existente é substituído automaticamente.
+Implementação de setembro de 2026. O domínio público serve uma versão diferente da branch Next.js recuperada. Esta proposta é isolada: não altera domínio, DNS, conteúdo histórico nem o site de produção.
 
-## Conteúdo
+## O que foi implementado
 
-- Nova home editorial responsiva: retrato já publicado, projetos, acervo, áreas de atuação, Marcelo × Spock, FAQ e contato.
-- Página factual `/marcelo-fradim/`, distinta da narrativa já existente em `/sobre/`.
-- Person + WebSite + WebPage + FAQPage; ProfilePage e BreadcrumbList na página de perfil.
-- Conteúdo e imagens funcionam sem JavaScript. JS é usado somente para ampliar imagens e fechar o menu móvel.
-- Imagens otimizadas localmente no build, com procedência em `assets/provenance.json`. Sem retratos sintéticos novos, depoimentos inventados ou métricas fictícias.
-- Nenhuma fonte binária é incluída. Tipografia usa fontes de sistema.
-- `llms.txt` é um índice opcional, não um mecanismo de posicionamento e não substitui HTML rastreável.
+Nova home editorial responsiva com retrato já publicado, projetos, galeria ampliável do acervo, áreas de atuação, Marcelo × Spock, perguntas e contato. Página factual `/marcelo-fradim/` distinta da narrativa existente em `/sobre/`. Imagens WebP com procedência em `assets/provenance.json`. Nenhum retrato sintético novo, depoimento inventado ou métrica fictícia.
 
-## Build
+Person, WebSite, WebPage e FAQPage na home; ProfilePage e BreadcrumbList no perfil. Conteúdo, links e navegação funcionam sem JavaScript; a ampliação das fotos é um aprimoramento. Fontes de sistema, sem fontes binárias distribuídas. `llms.txt` é somente um índice opcional, não um mecanismo de posicionamento.
 
-Python 3 + Pillow. O workflow captura a página pública do CartazAI antes do build. Os demais arquivos vêm de imagens já publicadas no próprio fradim.com.br.
+## Build reproduzível
 
-`python redesign/build.py --output preview`
+Python 3 + Pillow e ferramentas isoladas Playwright + axe para a revisão. O workflow captura a página pública do CartazAI e obtém as demais imagens no próprio fradim.com.br.
 
-`python redesign/build.py --output production-overlay --production`
+Entrada recomendada: `python redesign/fetch_and_build.py --output preview`.
 
-A opção `--offline` reutiliza `redesign/.asset-cache/` e exige o cache completo.
+Pacote parcial de integração: `python redesign/fetch_and_build.py --output production-overlay --production`.
 
-## Publicação
+A opção `--offline` exige o cache completo em `redesign/.asset-cache/`, inclusive `cartazai.png` e, para produção, `sitemap.xml`. `fetch_and_build.py` identifica as requisições públicas e aplica o acabamento de contenção das linhas decorativas. `build.py` é o gerador interno. A imagem social de 1200 × 630 é capturada pelo script de revisão a partir da própria home.
 
-O workflow publica **somente no endereço de staging do GitHub Pages**. A home de staging anterior é substituída pela proposta, mas o histórico do repositório e o site em fradim.com.br não mudam.
+## Publicação e segurança da integração
 
-`production-overlay` é **um pacote parcial**, não o site inteiro. Não executar `wrangler deploy` nem substituir a pasta de produção com esse pacote isoladamente. Mesclar os arquivos no build completo e atual de setembro de 2026, após recuperar a origem correta. Preservar as rotas atuais, os assets do Next.js, redirecionamentos e respostas 404/410.
+O workflow publica somente no staging do GitHub Pages. Isso substitui a home antiga de staging, não a produção. O histórico do repositório permanece preservado.
 
-Na integração final com Next.js, converter a home e o perfil para rotas do projeto atual; não apenas substituir index.html e deixar o payload RSC antigo. Validar navegação de ida e volta entre páginas antigas e novas. Se o host atual for puramente estático, também confirmar que a navegação cliente do site anterior não reintroduz a home antiga.
+**`production-overlay` é um pacote PARCIAL, não o site inteiro. Não executar `wrangler deploy` nem substituir a pasta de produção com ele isoladamente.** A integração exige o projeto completo e atual: converter home e perfil para suas rotas, preservar os assets do Next.js, payloads RSC, conteúdo, redirecionamentos e respostas 404/410. Não substituir apenas index.html deixando o payload cliente antigo, pois a navegação pode reintroduzir a versão anterior.
 
-O build de produção mescla a nova URL no sitemap existente, sem remover URLs históricas. O robots atual permitia todos os agentes; a proposta explicita OAI-SearchBot sem alterar a política de treinamento existente. Confirmar também permissões no CDN/WAF, que não podem ser verificadas apenas por robots.txt.
+O sitemap de produção mantém todas as URLs atuais e acrescenta o perfil. A política existente permitia todos os agentes; o pacote explicita OAI-SearchBot sem mudar a política de treinamento. Também é necessário conferir as permissões do CDN/WAF, pois robots.txt sozinho não garante acesso.
 
-Não alterar DNS nem publicar uma cópia antiga do projeto como substituta da produção atual. Manter snapshot e rollback da origem atual. Depois de publicar, verificar HTML renderizado, recursos, links, Search Console e indexação. Nenhuma posição no Google ou citação por sistemas de IA é garantida.
+A prévia usa `noindex` e canonical do domínio oficial. Para publicar definitivamente, recuperar a origem atual, validar a integração, guardar rollback e então realizar o deploy pelo ambiente correto, sem mudar DNS desnecessariamente. Nenhuma posição no Google ou citação em respostas de IA é garantida.
+
+## Verificações
+
+O workflow verifica quatro larguras, carregamento de imagens após rolagem, overflow horizontal, H1, canonical, dados estruturados, menu móvel, galeria, foco após fechamento, funcionamento sem JavaScript e acessibilidade automatizada com axe. Os resultados e capturas estão no artefato. Esses testes não equivalem a uma auditoria humana completa de acessibilidade nem a resultados reais de indexação.
 
 ## Referências técnicas
 
 - https://developers.google.com/search/docs/appearance/ai-features
 - https://developers.google.com/search/docs/appearance/structured-data/profile-page
 - https://developers.openai.com/api/docs/bots
-
-## Testes
-
-O workflow verifica duas larguras, imagens após rolagem, ausência de overflow horizontal, H1/canonical, dados estruturados, menu móvel, lightbox, funcionamento sem JavaScript e acessibilidade automatizada com axe. Os resultados e capturas são entregues no artefato; não equivalem a uma auditoria humana completa de acessibilidade nem a resultados reais de indexação.

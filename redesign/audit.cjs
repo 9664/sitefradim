@@ -24,7 +24,8 @@ async function scrollAll(page) {
   const browser = await chromium.launch();
   try {
     for (const [name, width, height] of [['desktop', 1440, 1000], ['tablet', 768, 1024], ['mobile', 390, 844], ['small-mobile', 360, 800]]) {
-      const page = await browser.newPage({ viewport: { width, height }, reducedMotion: 'reduce' });
+      const context = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce' });
+      const page = await context.newPage();
       const errors = []; page.on('pageerror', e => errors.push(String(e)));
       const response = await page.goto(BASE, { waitUntil: 'networkidle' });
       await scrollAll(page);
@@ -74,21 +75,23 @@ async function scrollAll(page) {
       if (name === 'desktop' || name === 'mobile') await page.screenshot({ path: 'review/profile-' + name + '.png', fullPage: true });
       check(errors.length === 0, name + ': no browser JavaScript errors', errors);
       report.views.push({ name, width, height, imageCount: images.length, uniqueImages: new Set(images.map(x => x.src)).size });
-      await page.close();
+      await context.close();
     }
-    const nojs = await browser.newPage({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+    const nojsContext = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+    const nojs = await nojsContext.newPage();
     await nojs.goto(BASE, { waitUntil: 'networkidle' });
     check((await nojs.locator('h1').textContent()).includes('Impacto real.'), 'Core content renders without JavaScript');
     await nojs.locator('.mobile-nav summary').click();
     check(await nojs.locator('.mobile-nav').getAttribute('open') !== null, 'Navigation opens without JavaScript');
     check((await nojs.locator('[data-lightbox]').first().getAttribute('href')).endsWith('.webp'), 'Gallery has native image-link fallback');
-    await nojs.close();
-    const social = await browser.newPage({ viewport: { width: 1200, height: 630 }, reducedMotion: 'reduce' });
+    await nojsContext.close();
+    const socialContext = await browser.newContext({ viewport: { width: 1200, height: 630 }, reducedMotion: 'reduce' });
+    const social = await socialContext.newPage();
     await social.goto(BASE, { waitUntil: 'networkidle' });
     await social.addStyleTag({ content: '.site-header{height:78px}.hero{min-height:540px;padding-top:25px;padding-bottom:0}.hero-visual{height:520px}.hero-portrait{height:520px}.hero-location{display:none}.hero h1{font-size:86px;margin:20px 0}.hero-description{font-size:15px}.actions{margin-top:20px}.portrait-signature{bottom:35px}' });
     await social.screenshot({ path: 'preview/assets/fradim-social.jpg', type: 'jpeg', quality: 90 });
     fs.copyFileSync('preview/assets/fradim-social.jpg', 'production-overlay/assets/fradim-social.jpg');
-    await social.close();
+    await socialContext.close();
     const request = await browser.newContext();
     for (const url of ['/site.css','/site.js','/assets/fradim-social.jpg','/assets/favicon.svg','/robots.txt','/llms.txt','/marcelo-fradim/']) {
       const res = await request.request.get(BASE + url); check(res.status() === 200, 'Asset/route HTTP 200: ' + url);
