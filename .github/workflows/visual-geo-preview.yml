@@ -1,0 +1,111 @@
+name: Fradim visual GEO preview
+on:
+  push:
+    branches: [agent/visual-geo-2026-09]
+    paths: ['redesign/**', '.github/workflows/visual-geo-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages-staging
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated image and browser audit tools
+        run: |
+          python3 -m pip install Pillow
+          mkdir -p /tmp/fradim-browser
+          cd /tmp/fradim-browser
+          npm init -y >/dev/null
+          npm install playwright@1.58.2 @axe-core/playwright --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Capture real public project image
+        run: |
+          mkdir -p redesign/.asset-cache
+          NODE_PATH=/tmp/fradim-browser/node_modules node <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch();
+            try {
+              const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+              const response=await page.goto('https://cartazai.com.br/',{waitUntil:'networkidle',timeout:60000});
+              if(!response.ok())throw new Error('CartazAI screenshot HTTP '+response.status());
+              const title=await page.title();
+              if(!/cartaz/i.test(title)||/suspend|not found|error/i.test(title))throw new Error('Unexpected project page: '+title);
+              await page.screenshot({path:'redesign/.asset-cache/cartazai.png'});
+              console.log('Captured real public project:',title);
+            } finally {await browser.close();}
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Build preview and partial integration overlay
+        run: |
+          python3 redesign/fetch_and_build.py --output production-overlay --production
+          python3 redesign/fetch_and_build.py --output preview --offline
+          cp redesign/README.md production-overlay/LEIA-ANTES-DE-PUBLICAR.md
+      - name: Test desktop, tablet, mobile, accessibility and GEO output
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory preview >/tmp/fradim-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for n in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/ >/dev/null && break || sleep 1; done
+          NODE_PATH=/tmp/fradim-browser/node_modules node redesign/audit.cjs
+      - name: Upload implementation and review package
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fradim-visual-geo-delivery
+          path: |
+            preview/
+            production-overlay/
+            review/
+            redesign/*.html
+            redesign/*.css
+            redesign/*.js
+            redesign/*.cjs
+            redesign/*.py
+            redesign/*.md
+          retention-days: 21
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: preview/
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: fradim-staging
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish staging only; production and DNS are unchanged
+        uses: actions/deploy-pages@v4
+        id: deployment
+      - name: Verify public preview
+        env:
+          PREVIEW_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python3 - <<'PY'
+          import os,urllib.request,time
+          url=os.environ['PREVIEW_URL']
+          for attempt in range(6):
+              try:
+                  request=urllib.request.Request(url+'?visual-geo=202609',headers={'User-Agent':'FradimVisualAudit/1.0'})
+                  with urllib.request.urlopen(request,timeout=30) as r:
+                      text=r.read().decode('utf-8')
+                      assert 'fradim-visual-geo' in text.lower() or 'Fradim Visual GEO' in text
+                      assert 'Impacto real.' in text and 'noindex' in text
+                  print('Verified live staging:',url)
+                  break
+              except Exception:
+                  if attempt==5:raise
+                  time.sleep(5)
+          PY
