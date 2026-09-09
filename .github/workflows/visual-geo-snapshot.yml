@@ -1,0 +1,98 @@
+name: Visual GEO public baseline
+on:
+  push:
+    branches: [agent/visual-geo-2026-09]
+    paths: [.github/workflows/visual-geo-snapshot.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Capture public HTML and image assets
+        run: |
+          mkdir -p baseline
+          python3 - <<'PY'
+          import urllib.request, urllib.parse, json, pathlib, re, concurrent.futures
+          root=pathlib.Path('baseline'); origin='https://fradim.com.br'
+          urls=['/','/sobre/','/projetos/','/contato/','/memoria/','/spock/','/ia/','/robots.txt','/sitemap.xml','/llms.txt']
+          manifest=[]; images=set()
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'FradimVisualAudit/1.0'})
+              with urllib.request.urlopen(req,timeout=35) as r:
+                  body=r.read(8_000_001)
+                  if len(body)>8_000_000: raise ValueError('Asset too large')
+                  return body,dict(r.headers),r.status
+          for path in urls:
+              url=origin+path
+              try:
+                  body,headers,status=get(url)
+                  name='home.html' if path=='/' else path.strip('/').replace('/','--')+('' if '.' in path.split('/')[-1] else '.html')
+                  (root/name).write_bytes(body)
+                  manifest.append({'url':url,'file':name,'status':status,'headers':headers})
+                  if 'html' in headers.get('Content-Type',headers.get('content-type','')):
+                      text=body.decode('utf-8','replace')
+                      for tag in re.findall(r'<img\b[^>]*>',text):
+                          m=re.search(r'\bsrc=[\"\']([^\"\']+)',tag)
+                          if m:
+                              u=urllib.parse.urljoin(url,m.group(1).replace('&amp;','&'))
+                              if urllib.parse.urlsplit(u).hostname=='fradim.com.br': images.add(u)
+              except Exception as e: manifest.append({'url':url,'error':str(e)})
+          (root/'images').mkdir(exist_ok=True)
+          def image(u):
+              try:
+                  b,h,s=get(u); ext=pathlib.Path(urllib.parse.urlsplit(u).path).suffix.lower()
+                  if ext not in ['.png','.jpg','.jpeg','.webp','.avif','.svg']: return {'url':u,'skipped':True}
+                  import hashlib
+                  name=hashlib.sha256(u.encode()).hexdigest()[:12]+ext
+                  (root/'images'/name).write_bytes(b)
+                  return {'url':u,'file':'images/'+name,'bytes':len(b),'status':s}
+              except Exception as e: return {'url':u,'error':str(e)}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool: im=list(pool.map(image,sorted(images)))
+          (root/'manifest.json').write_text(json.dumps({'pages':manifest,'images':im},ensure_ascii=False,indent=2))
+          print(json.dumps({'pages':len(manifest),'images':len(im),'errors':[x for x in manifest+im if 'error' in x]},ensure_ascii=False))
+          PY
+      - name: Install isolated browser audit tools
+        run: |
+          mkdir -p /tmp/fradim-browser
+          cd /tmp/fradim-browser
+          npm init -y >/dev/null
+          npm install playwright@1.58.2 --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Capture current desktop and mobile
+        run: |
+          NODE_PATH=/tmp/fradim-browser/node_modules node <<'JS'
+          const {chromium}=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await chromium.launch();
+            const report=[];
+            for(const [name,width,height] of [['desktop',1440,1000],['mobile',390,844]]){
+              const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
+              const errors=[]; page.on('pageerror',e=>errors.push(String(e)));
+              await page.goto('https://fradim.com.br/',{waitUntil:'networkidle',timeout:60000}).catch(()=>{});
+              await page.screenshot({path:'baseline/'+name+'.png',fullPage:true});
+              report.push({name,errors,images:await page.locator('img').evaluateAll(xs=>xs.map(i=>({src:i.currentSrc,loaded:i.complete&&i.naturalWidth>0}))),title:await page.title()});
+              await page.close();
+            }
+            for(const [name,url] of [['amo-franca','https://amofranca.com.br/'],['intelig-cloud','https://intelig.cloud/'],['cartazai','https://cartazai.com.br/']]){
+              const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+              try{await page.goto(url,{waitUntil:'networkidle',timeout:45000});await page.screenshot({path:'baseline/images/project-'+name+'.png'});report.push({name,url,title:await page.title(),screenshot:'images/project-'+name+'.png'});}catch(e){report.push({name,error:String(e)});}
+              await page.close();
+            }
+            fs.writeFileSync('baseline/browser-report.json',JSON.stringify(report,null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fradim-public-baseline
+          path: baseline/
+          retention-days: 14
