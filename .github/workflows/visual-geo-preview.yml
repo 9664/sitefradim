@@ -48,7 +48,7 @@ jobs:
           JS
       - name: Build preview and partial integration overlay
         run: |
-          python3 redesign/build.py --output production-overlay --production
+          python3 redesign/fetch_and_build.py --output production-overlay --production
           python3 redesign/build.py --output preview --offline
           cp redesign/README.md production-overlay/LEIA-ANTES-DE-PUBLICAR.md
       - name: Test desktop, tablet, mobile, accessibility and GEO output
@@ -98,7 +98,8 @@ jobs:
           url=os.environ['PREVIEW_URL']
           for attempt in range(6):
               try:
-                  with urllib.request.urlopen(url+'?visual-geo=202609',timeout=30) as r:
+                  request=urllib.request.Request(url+'?visual-geo=202609',headers={'User-Agent':'FradimVisualAudit/1.0'})
+                  with urllib.request.urlopen(request,timeout=30) as r:
                       text=r.read().decode('utf-8')
                       assert 'fradim-visual-geo' in text.lower() or 'Fradim Visual GEO' in text
                       assert 'Impacto real.' in text and 'noindex' in text
